@@ -1,7 +1,11 @@
 ﻿using Blog.Application.Interfaces;
+using Blog.Application.Interfaces.Authentication;
 using Blog.Application.Services;
+using Blog.Application.Services.Authentication;
 using Blog.Domain.Entities;
 using Blog.Domain.Interfaces;
+using Blog.Infrastructure.Authentication.Configurations;
+using Blog.Infrastructure.Authentication.Services;
 using Blog.Persistence.Contexts;
 using Blog.Persistence.Repositories;
 using Blog.Persistence.Transactions;
@@ -40,7 +44,10 @@ builder.Services.AddScoped<IMediaService, MediaService>();
 builder.Services.AddScoped<IReactionService, ReactionService>();
 builder.Services.AddScoped<ITagService, TagService>();
 
-
+//token service
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<JwtService>();
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
 #region JWT Token
 //add package microsoft.aspnetcore.authentication.jwtbearer
 //add package microsoft.identitymodel.tokens
@@ -84,12 +91,35 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
-        Title = "Blazor MasterClass API",
+        Title = "Blog API",
         Version = "v1",
-        Description = "API Documentation for Blazor MasterClass"
+        Description = "API Documentation for Blazor Blog"
+    });
+  
+    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme()
+    {
+        Name = "Authorization",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description = "توکن خود را وارد نمایید."
     });
 
-
+    options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
 });
 
 var app = builder.Build();
@@ -101,7 +131,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Blazor MasterClass API v1");
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Blazor Blog API v1");
         options.RoutePrefix = string.Empty;
     });
 }
@@ -121,8 +151,6 @@ app.Use(async (context, next)=>
 });
 
 app.UseHttpsRedirection();
-
-app.UseAuthorization();
 
 app.MapControllers();
 

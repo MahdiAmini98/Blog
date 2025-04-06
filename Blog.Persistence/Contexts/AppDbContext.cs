@@ -26,6 +26,7 @@ namespace Blog.Persistence.Contexts
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Reaction> Reactions { get; set; }
         public DbSet<Media> Media { get; set; }
+        public DbSet<UserToken> UserTokens { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
