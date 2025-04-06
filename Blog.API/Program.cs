@@ -5,6 +5,7 @@ using Blog.Domain.Interfaces;
 using Blog.Persistence.Contexts;
 using Blog.Persistence.Repositories;
 using Blog.Persistence.Transactions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,7 +41,40 @@ builder.Services.AddScoped<IReactionService, ReactionService>();
 builder.Services.AddScoped<ITagService, TagService>();
 
 
+#region JWT Token
+//add package microsoft.aspnetcore.authentication.jwtbearer
+//add package microsoft.identitymodel.tokens
+//add package system.identitymodel.tokens.jwt
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    {
+        //سازنده توکن (پروژه ای که این را ساخته) اعتبار سنجی کن)
+        ValidateIssuer = true,
+        //مقصدی که این توکن به دستش می رسه را اعتبار سنجی کن
+        ValidateAudience = true,
+        //مدت اعتبار توکن را اعتبار سنجی کن
+        ValidateLifetime = true,
+        // امضای توکن را اعتبار سنجی کن
+        ValidateIssuerSigningKey = true,
+       // سازنده توکن معریفی می کنه
+       //این اطلاعات از appsetting می گیره
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
+});
 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+});
+#endregion
 
 
 builder.Services.AddControllers();
@@ -71,6 +105,20 @@ if (app.Environment.IsDevelopment())
         options.RoutePrefix = string.Empty;
     });
 }
+//اضافه کردن میدلویر های مورد نظر
+app.UseAuthentication();
+app.UseAuthorization();
+app.Use(async (context, next)=>
+{
+    try
+    {
+        await next();
+    }
+    catch (UnauthorizedAccessException)
+    {
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+    }
+});
 
 app.UseHttpsRedirection();
 
