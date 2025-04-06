@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -14,7 +15,7 @@ namespace Blog.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     public class AuthController(
         ITokenService tokenService,
         JwtService jwtService,
@@ -50,6 +51,53 @@ namespace Blog.API.Controllers
             var token = jwtService.GenerateToken(new GenerateTokenRequest(user.Id, claims));
 
             return Ok(token);
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterRequestDto request)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var existingUser = await _userManager.FindByEmailAsync(request.Email);
+            if (existingUser != null)
+            {
+                return Conflict(new { message = "A user with this email already exists." });
+            }
+
+            var user = new User
+            {
+                Email = request.Email,
+                UserName = request.Email,
+
+            };
+
+            var result = await _userManager.CreateAsync(user, request.Password);
+            if (!result.Succeeded)
+            {
+                return BadRequest(new { message = "Failed to create user.", errors = result.Errors });
+            }
+
+            return Ok(new { message = "User registered successfully." });
+
+        }
+
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDto request)
+        {
+            try
+            {
+                var token = await jwtService.RenewAccessTokenAsync(request.RefreshToken);
+                return Ok(token);
+            }
+            catch (SecurityTokenException ex)
+            {
+                return Unauthorized(new { message = "رفرش توکن معتبر نیست" });
+            }
         }
     }
 }

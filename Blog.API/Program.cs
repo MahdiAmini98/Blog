@@ -151,6 +151,7 @@ app.Use(async (context, next)=>
 });
 
 app.UseHttpsRedirection();
+app.UseAuthorization();
 
 app.MapControllers();
 

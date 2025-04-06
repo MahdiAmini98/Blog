@@ -1,7 +1,9 @@
 ﻿using Blog.Application.Contracts.Authentication;
 using Blog.Application.Interfaces.Authentication;
+using Blog.Domain.Entities;
 using Blog.Infrastructure.Authentication.Configurations;
 using Blog.Infrastructure.Hasher;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -18,15 +20,16 @@ namespace Blog.Infrastructure.Authentication.Services
     public class JwtService
     {
         private readonly JwtSettings _jwtSettings;
-        private readonly ITokenService tokenService;
-        public JwtService(IOptions<JwtSettings> optionsJWTSettings, ITokenService tokenService)
+        private readonly ITokenService _tokenService;
+        private readonly UserManager<User> _userManager;
+        public JwtService(IOptions<JwtSettings> optionsJWTSettings, ITokenService tokenService, UserManager<User> userManager)
         {
             _jwtSettings = optionsJWTSettings.Value;
-            this.tokenService = tokenService;
-
+            this._tokenService = tokenService;
+            this._userManager = userManager;
         }
 
-        public TokenResponse GenerateToken(GenerateTokenRequest tokenRequest)
+        public async Task<TokenResponse> GenerateToken(GenerateTokenRequest tokenRequest)
         {
 
             var accessToken = GenerateAccessToken(tokenRequest.Claims);
@@ -36,7 +39,7 @@ namespace Blog.Infrastructure.Authentication.Services
             var hashedAccessToken = TokenHasher.HashToken(accessToken);
             var hashedRefreshToken = TokenHasher.HashToken(refreshToken);
 
-            tokenService.SaveRefreshTokenAsync(tokenRequest.UserId, hashedAccessToken, hashedRefreshToken, DateTime.UtcNow.AddDays(7));
+           await _tokenService.SaveRefreshTokenAsync(tokenRequest.UserId, hashedAccessToken, hashedRefreshToken, DateTime.UtcNow.AddDays(7));
 
             return new TokenResponse
             {
@@ -50,24 +53,28 @@ namespace Blog.Infrastructure.Authentication.Services
         {
 
             var hashedRefreshToken = TokenHasher.HashToken(refreshToken);
-            var userToken = await tokenService.GetRefreshTokenAsync(hashedRefreshToken);
+            var userToken = await _tokenService.GetRefreshTokenAsync(hashedRefreshToken);
 
             if (userToken == null)
                 throw new SecurityTokenException("Invalid or expired refresh token.");
 
-            //تکمیل شود
-            var claims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, "testUser"),
-            };
+            var claims = new List<Claim>();
+            var user = await _userManager.FindByIdAsync(userToken.User.ToString());
+            var userClaims = await _userManager.GetClaimsAsync(user);
+            claims.AddRange(userClaims);
+
+            var rolse = await _userManager.GetRolesAsync(user);
+            claims.AddRange(rolse.Select(role => new Claim(ClaimTypes.Role, role)));
+
+
 
             var accessToken = GenerateAccessToken(claims);
-            await tokenService.RevokeRefreshTokenAsync(hashedRefreshToken);
+            await _tokenService.RevokeRefreshTokenAsync(hashedRefreshToken);
 
             var newRefreshToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
             var newHashedRefreshToken = TokenHasher.HashToken(newRefreshToken);
 
-            await tokenService.SaveRefreshTokenAsync(userToken.UserId, newRefreshToken,
+            await _tokenService.SaveRefreshTokenAsync(userToken.UserId, newRefreshToken,
                 newHashedRefreshToken, DateTime.UtcNow.AddDays(7));
 
 

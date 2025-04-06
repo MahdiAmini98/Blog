@@ -61,6 +61,14 @@ namespace Blog.Persistence.Contexts
                 .HasForeignKey(r => r.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Seed Role
+            var adminRoleId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+            modelBuilder.Entity<Role>().HasData(new Role
+            {
+                Id = adminRoleId,
+                Name = "Admin",
+                NormalizedName = "ADMIN"
+            });
         }
 
     }
