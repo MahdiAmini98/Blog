@@ -86,7 +86,9 @@ builder.Services.AddAuthentication(options =>
     {
         OnTokenValidated = async context =>
         {
-           var token = (context.SecurityToken as JsonWebToken)?.EncodedToken;
+            Console.WriteLine("✅ Token Validated Event Triggered");
+
+            var token = (context.SecurityToken as JsonWebToken)?.EncodedToken;
             if (token == null)
             {
                 context.Fail("Invalid token");
