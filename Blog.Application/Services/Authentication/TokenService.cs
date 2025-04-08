@@ -32,6 +32,20 @@ namespace Blog.Application.Services.Authentication
             return tokens.FirstOrDefault();
         }
 
+        public async Task<bool> IsTokenValidAsync(string hashedAccessToken)
+        {
+            var usertokens = await _userTokenRepository.FindAsync(t => t.AccessToken == hashedAccessToken);
+
+            var userToken = usertokens.FirstOrDefault();
+
+            if (userToken == null || !userToken.IsValid())
+            {
+                return false;//توکن معتبر نیست
+            }
+            return true;//توکن معتبر است
+
+        }
+
         public async Task RevokeRefreshTokenAsync(string hashedRefreshToken)
         {
             var userToken = await GetRefreshTokenAsync(hashedRefreshToken);

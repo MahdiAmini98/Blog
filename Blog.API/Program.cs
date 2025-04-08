@@ -12,6 +12,7 @@ using Blog.Persistence.Transactions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,6 +59,8 @@ builder.Services.AddAuthentication(options =>
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(options =>
 {
+    var serviceProvider = builder.Services.BuildServiceProvider();
+    var jwtService = serviceProvider.GetRequiredService<JwtService>();
     options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
     {
         //سازنده توکن (پروژه ای که این را ساخته) اعتبار سنجی کن)
@@ -68,12 +71,36 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         // امضای توکن را اعتبار سنجی کن
         ValidateIssuerSigningKey = true,
-       // سازنده توکن معریفی می کنه
-       //این اطلاعات از appsetting می گیره
+        ClockSkew = TimeSpan.Zero, // زمان اضافی برای اعتبار سنجی توکن (به طور پیش فرض 5 دقیقه است)- زمان را دقیق محاسبه می کند
+
+        // سازنده توکن معریفی می کنه
+        //این اطلاعات از appsetting می گیره
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     };
+
+    //token validate
+    
+    options.Events = new JwtBearerEvents
+    {
+        OnTokenValidated = async context =>
+        {
+           var token = (context.SecurityToken as JsonWebToken)?.EncodedToken;
+            if (token == null)
+            {
+                context.Fail("Invalid token");
+            }
+            else
+            {
+                bool validToken = await jwtService.IsTokenValidAsync(token);
+                if (!validToken)
+                {
+                    context.Fail("Tken is Not Valid in DB"); 
+                }
+            }
+        }
+    }; 
 });
 
 builder.Services.AddAuthentication(options =>
@@ -147,9 +174,10 @@ app.Use(async (context, next)=>
     catch (UnauthorizedAccessException)
     {
         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        await context.Response.WriteAsync("Unauthorized");
     }
 });
-
+ 
 app.UseHttpsRedirection();
 app.UseAuthorization();
 

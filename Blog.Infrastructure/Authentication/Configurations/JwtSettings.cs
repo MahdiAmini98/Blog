@@ -11,6 +11,6 @@ namespace Blog.Infrastructure.Authentication.Configurations
         public string Issuer { get; set; }
         public string Audience { get; set; }
         public string Key { get; set; }
-        public int ExpireTime { get; set; }
+        public int TokenExpirationMinutes { get; set; }
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -20,13 +21,14 @@ namespace Blog.Infrastructure.Authentication.Services
     public class JwtService
     {
         private readonly JwtSettings _jwtSettings;
-        private readonly ITokenService _tokenService;
+        private readonly ITokenService tokenService;
         private readonly UserManager<User> _userManager;
-        public JwtService(IOptions<JwtSettings> optionsJWTSettings, ITokenService tokenService, UserManager<User> userManager)
+        public JwtService(IOptions<JwtSettings> optionsJWTSettings, ITokenService tokenService
+            , UserManager<User> userManager)
         {
             _jwtSettings = optionsJWTSettings.Value;
-            this._tokenService = tokenService;
-            this._userManager = userManager;
+            this.tokenService = tokenService;
+            _userManager = userManager;
         }
 
         public async Task<TokenResponse> GenerateToken(GenerateTokenRequest tokenRequest)
@@ -39,7 +41,7 @@ namespace Blog.Infrastructure.Authentication.Services
             var hashedAccessToken = TokenHasher.HashToken(accessToken);
             var hashedRefreshToken = TokenHasher.HashToken(refreshToken);
 
-           await _tokenService.SaveRefreshTokenAsync(tokenRequest.UserId, hashedAccessToken, hashedRefreshToken, DateTime.UtcNow.AddDays(7));
+            await tokenService.SaveRefreshTokenAsync(tokenRequest.UserId, hashedAccessToken, hashedRefreshToken, DateTime.UtcNow.AddDays(7));
 
             return new TokenResponse
             {
@@ -53,28 +55,31 @@ namespace Blog.Infrastructure.Authentication.Services
         {
 
             var hashedRefreshToken = TokenHasher.HashToken(refreshToken);
-            var userToken = await _tokenService.GetRefreshTokenAsync(hashedRefreshToken);
+            var userToken = await tokenService.GetRefreshTokenAsync(hashedRefreshToken);
 
             if (userToken == null)
                 throw new SecurityTokenException("Invalid or expired refresh token.");
 
+
             var claims = new List<Claim>();
-            var user = await _userManager.FindByIdAsync(userToken.User.ToString());
+
+            var user = await _userManager.FindByIdAsync(userToken.UserId.ToString());
+
             var userClaims = await _userManager.GetClaimsAsync(user);
             claims.AddRange(userClaims);
 
-            var rolse = await _userManager.GetRolesAsync(user);
-            claims.AddRange(rolse.Select(role => new Claim(ClaimTypes.Role, role)));
+            var roles = await _userManager.GetRolesAsync(user);
+            claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
 
 
             var accessToken = GenerateAccessToken(claims);
-            await _tokenService.RevokeRefreshTokenAsync(hashedRefreshToken);
+            await tokenService.RevokeRefreshTokenAsync(hashedRefreshToken);
 
             var newRefreshToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
             var newHashedRefreshToken = TokenHasher.HashToken(newRefreshToken);
 
-            await _tokenService.SaveRefreshTokenAsync(userToken.UserId, newRefreshToken,
+            await tokenService.SaveRefreshTokenAsync(userToken.UserId, newRefreshToken,
                 newHashedRefreshToken, DateTime.UtcNow.AddDays(7));
 
 
@@ -88,6 +93,13 @@ namespace Blog.Infrastructure.Authentication.Services
 
         }
 
+        public async Task<bool> IsTokenValidAsync(string token)
+        {
+            var hashedAccessToken = TokenHasher.HashToken(token);
+            var userTokenIsValid = await tokenService.IsTokenValidAsync(hashedAccessToken);
+            return userTokenIsValid;
+        }
+
         private string GenerateAccessToken(IEnumerable<Claim> claims)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
@@ -97,7 +109,7 @@ namespace Blog.Infrastructure.Authentication.Services
                 issuer: _jwtSettings.Issuer,
                 audience: _jwtSettings.Audience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(_jwtSettings.ExpireTime),
+                expires: DateTime.UtcNow.AddMinutes(_jwtSettings.TokenExpirationMinutes),
                 signingCredentials: creds
             );
 

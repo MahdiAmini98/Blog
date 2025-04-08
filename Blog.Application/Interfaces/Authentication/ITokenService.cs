@@ -13,5 +13,6 @@ namespace Blog.Application.Interfaces.Authentication
         Task SaveRefreshTokenAsync(Guid userId, string hashedAccessToken, string hashedRefreshToken, DateTime expirationTime);
         Task<UserToken?> GetRefreshTokenAsync(string hashedRefreshToken);
         Task RevokeRefreshTokenAsync(string hashedRefreshToken);
+        Task<bool> IsTokenValidAsync(string hashedAccessToken);
     }
 }

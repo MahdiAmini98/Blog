@@ -16,12 +16,13 @@ namespace Blog.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     //[Authorize(Roles = "Admin")]
+
     public class AuthController(
-        ITokenService tokenService,
-        JwtService jwtService,
-        UserManager<User> _userManager,
-        SignInManager<User> _signInManager
-        ) : ControllerBase
+         ITokenService tokenService,
+         JwtService jwtService,
+         UserManager<User> _userManager,
+         SignInManager<User> _signInManager
+         ) : ControllerBase
     {
 
         [HttpPost("login")]
@@ -48,7 +49,7 @@ namespace Blog.API.Controllers
             claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
 
-            var token = jwtService.GenerateToken(new GenerateTokenRequest(user.Id, claims));
+            var token = await jwtService.GenerateToken(new GenerateTokenRequest(user.Id, claims));
 
             return Ok(token);
         }
@@ -84,7 +85,6 @@ namespace Blog.API.Controllers
             return Ok(new { message = "User registered successfully." });
 
         }
-
 
         [HttpPost("refresh")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDto request)
