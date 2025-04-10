@@ -151,6 +151,23 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+
+
+//add cors => برای اجازه اینکه پروژه 
+//Blog.PanelAdmin اجازه دسترسی به پروژه
+//api داشته باشع
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin", policy =>
+    {
+        policy.WithOrigins("https://localhost:7173")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -164,6 +181,12 @@ if (app.Environment.IsDevelopment())
         options.RoutePrefix = string.Empty;
     });
 }
+
+
+//add midelware cors
+app.UseCors("AllowSpecificOrigin");
+
+
 //اضافه کردن میدلویر های مورد نظر
 app.UseAuthentication();
 app.UseAuthorization();

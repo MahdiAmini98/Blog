@@ -1,5 +1,8 @@
 ﻿using Blog.PanelAdmin;
 using Blog.PanelAdmin.Services.Authentication;
+using Blog.PanelAdmin.Services.AuthenticationStateProvider;
+using Blog.PanelAdmin.Services.LocalStorage;
+using Blog.PanelAdmin.Services.TokenService;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -25,5 +28,16 @@ builder.Services.AddAuthorizationCore();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 
+
 #endregion
+
+//add http service
+builder.Services.AddHttpClient<IAuthService, AuthService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7230/");
+});
+
+//add services
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<ILocalStorageService, LocalStorageService>();
 await builder.Build().RunAsync();

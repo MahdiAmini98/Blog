@@ -1,0 +1,43 @@
+﻿@page "/login"
+@using Blog.PanelAdmin.Models.Authentication
+@using Blog.PanelAdmin.Services.Authentication
+
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+
+
+<EditForm Model="LoginModel" OnValidSubmit="HandleLogin">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label for="email">Email</label>
+        <InputText id="email" @bind-Value="LoginModel.Email" />
+    </div>
+
+    <div>
+        <label for="password">Password</label>
+        <InputText id="password" @bind-Value="LoginModel.Password" type="password" />
+    </div>
+
+    <button type="submit">Login</button>
+</EditForm>
+
+
+@code {
+    private LoginRequestDto LoginModel = new LoginRequestDto();
+    private string ErrorMessage = string.Empty;
+
+    private async Task HandleLogin()
+    {
+        var success = await AuthService.LoginAsync(LoginModel);
+        if (success)
+        {
+            Navigation.NavigateTo("/dashboard");
+        }
+        else
+        {
+            ErrorMessage = "ایمیل یا پسورد اشتباه است";
+        }
+    }
+}
