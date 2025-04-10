@@ -1,5 +1,4 @@
-﻿using Blog.Application.Interfaces.Authentication;
-using Blog.PanelAdmin.Services.LocalStorage;
+﻿using Blog.PanelAdmin.Services.LocalStorage;
 
 namespace Blog.PanelAdmin.Services.TokenService
 {

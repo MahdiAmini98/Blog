@@ -11,16 +11,18 @@
             <AuthorizeView>
                 @*             کاربر Authorized است
  *@           
-
- <Authorized>
-
+            <Authorized>
                     <div>
                         <span>
                             سلام , @context.User.Identity?.Name
                         </span>
+
+                        <span>
+                            @context.User.FindFirst("sub")?.Value
+                        </span>
                         <a href="/logout" class="btn btn-sm btn-outline-primary ms-2">Logout</a>
                     </div>
- </Authorized>
+                </Authorized>
 
                 @*             کاربر Authorized نیست
  *@          

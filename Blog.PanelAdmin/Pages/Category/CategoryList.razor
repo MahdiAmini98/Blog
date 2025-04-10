@@ -1,0 +1,51 @@
+﻿@page "/categories"
+@using Blog.PanelAdmin.Models.Category
+@using Blog.PanelAdmin.Services.Category
+
+@inject ICategoryService CategoryService
+
+
+<h3>Category List</h3>
+@if (Categories == null)
+{
+    <p>Loading...</p>
+}
+else if (!Categories.Any())
+{
+    <p>No categories found.</p>
+}
+else
+{
+    <ul>
+        @foreach (var category in Categories)
+        {
+            <li>
+                <strong>@category.Name</strong> - @category.Description
+            </li>
+        }
+    </ul>
+}
+
+<b class="text-danger">@ErrorMessage</b>
+
+
+@code {
+    private List<CategoryDto>? Categories;
+    private string ErrorMessage = string.Empty;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            Categories = await CategoryService.GetCategoriesAsync();
+
+        }
+        catch (HttpRequestException ex)
+        {
+            ErrorMessage = $"Error fetching categories: {ex.Message}";
+        }
+    }
+
+
+}

@@ -1,11 +1,13 @@
 ﻿using Blog.PanelAdmin;
 using Blog.PanelAdmin.Services.Authentication;
+using Blog.PanelAdmin.Services.Category;
 using Blog.PanelAdmin.Services.AuthenticationStateProvider;
 using Blog.PanelAdmin.Services.LocalStorage;
 using Blog.PanelAdmin.Services.TokenService;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Blog.PanelAdmin.Handlers;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -30,14 +32,24 @@ builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStat
 
 
 #endregion
-
-//add http service
-builder.Services.AddHttpClient<IAuthService, AuthService>(client =>
-{
-    client.BaseAddress = new Uri("https://localhost:7230/");
-});
-
 //add services
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ILocalStorageService, LocalStorageService>();
+
+//add handler service
+builder.Services.AddScoped<JwtAuthorizationMessageHandler>();
+
+//add http service
+builder.Services.AddHttpClient("ApiWithAuth", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7230/");
+
+}).AddHttpMessageHandler<JwtAuthorizationMessageHandler>();
+
+builder.Services.AddScoped<ICategoryService, CategoryService>(sp =>
+{
+    var httpClient = sp.GetRequiredService<IHttpClientFactory>().CreateClient("ApiWithAuth");
+    return new CategoryService(httpClient);
+});
+
 await builder.Build().RunAsync();
