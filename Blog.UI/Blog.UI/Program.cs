@@ -2,6 +2,7 @@
 using Blog.Persistence.Contexts;
 using Blog.UI.Client.Pages;
 using Blog.UI.Components;
+using Blog.UI.CustomClaimsFactory;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -48,6 +49,9 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 #endregion
+
+builder.Services.AddScoped<IUserClaimsPrincipalFactory<User>, CustomClaimsPrincipalFactory>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

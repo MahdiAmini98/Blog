@@ -1,4 +1,5 @@
-﻿@inherits LayoutComponentBase
+﻿@using System.Security.Claims
+@inherits LayoutComponentBase
 
 <div class="page">
     <div class="sidebar">
@@ -9,13 +10,26 @@
         <div class="top-row px-4">
             <AuthorizeView>
                 <Authorized>
-                    <form action="/Account/logout" method="post" data-enhance="true">
-                        <AntiforgeryToken />
-                        <input type="hidden" name="returnUrl" value="/" />
-                        <button type="submit" class="btn btn-outline-danger">
-                            خروج
-                        </button>
-                    </form>
+                    <div class="d-flex align-items-center">
+                        <img src="/images/avatar_placeholder.webp" alt="Avatar" width="32" height="32"
+                             class="rounded-circle me-2" />
+
+                        <span class="me-3">
+                            خوش آمدید، @context.User.FindFirst(ClaimTypes.GivenName)?.Value
+                        </span>
+
+                        <NavLink href="/account/profile" class="btn btn-outline-primary me-2">
+                            پروفایل
+                        </NavLink>
+
+                        <form action="/Account/logout" method="post" data-enhance="true">
+                            <AntiforgeryToken />
+                            <input type="hidden" name="returnUrl" value="/" />
+                            <button type="submit" class="btn btn-outline-danger">
+                                خروج
+                            </button>
+                        </form>
+                    </div>
                 </Authorized>
                 <NotAuthorized>
                     <NavLink href="/account/login" class="btn btn-primary">
