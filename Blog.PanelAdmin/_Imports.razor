@@ -1,5 +1,6 @@
 ﻿@using System.Net.Http
 @using System.Net.Http.Json
+@using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
@@ -10,3 +11,7 @@
 @using Blog.PanelAdmin.Layout
 @* -------------------------------------------*@
 @using Microsoft.AspNetCore.Components.Authorization    
+
+@* همه کامپوننت ها برایشان این اتریبیوت قرار می گیرد
+ *@
+ @attribute [Authorize(Roles = "Admin")]

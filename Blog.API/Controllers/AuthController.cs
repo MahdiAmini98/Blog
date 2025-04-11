@@ -18,11 +18,11 @@ namespace Blog.API.Controllers
     //[Authorize(Roles = "Admin")]
 
     public class AuthController(
-         ITokenService tokenService,
-         JwtService jwtService,
-         UserManager<User> _userManager,
-         SignInManager<User> _signInManager
-         ) : ControllerBase
+        ITokenService tokenService,
+        JwtService jwtService,
+        UserManager<User> _userManager,
+        SignInManager<User> _signInManager
+        ) : ControllerBase
     {
 
         [HttpPost("login")]
@@ -40,7 +40,8 @@ namespace Blog.API.Controllers
 
             var claims = new List<Claim>
              {
-               new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+               new Claim(ClaimTypes.Name, user.Name),
+                new Claim(ClaimTypes.Email, user.Email),
                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
              };
 
@@ -73,8 +74,9 @@ namespace Blog.API.Controllers
             {
                 Email = request.Email,
                 UserName = request.Email,
-
             };
+            user.SetName(request.Name);
+
 
             var result = await _userManager.CreateAsync(user, request.Password);
             if (!result.Succeeded)

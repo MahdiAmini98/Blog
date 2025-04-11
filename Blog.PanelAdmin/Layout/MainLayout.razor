@@ -7,35 +7,33 @@
     <main>
         <div class="top-row px-4">
             <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            
 
+           @* این
+               AuthorizeView
+               برای اعتبار سنجی و لاگین یا غیر لاگین کردن کاربر است و سه تا بخش دارد
+               1- اگر کاربر لاگین شد چیو بهش نمایش بدم
+               2- اگه در حال لاگین بود چیو نمایش بدم
+               3- اگه لاگین نبود چیو نمایش بدم
+               4- برای اجرای این باید یک پکیج نصب کنی و در  فایل app.razor نیز تنظیماتی دارد
+               5- میتونی از policy ها و role ها نیز برای آن استفاده کنی
+           *@
             <AuthorizeView>
-                @*             کاربر Authorized است
- *@           
-            <Authorized>
+                <Authorized>
                     <div>
                         <span>
                             سلام , @context.User.Identity?.Name
                         </span>
-
-                        <span>
-                            @context.User.FindFirst("sub")?.Value
-                        </span>
                         <a href="/logout" class="btn btn-sm btn-outline-primary ms-2">Logout</a>
                     </div>
                 </Authorized>
-
-                @*             کاربر Authorized نیست
- *@          
- <NotAuthorized>
-
-
-                    <a href="" class="btn btn-sm btn-primary">ورود</a>
+                <NotAuthorized>
+                    <a href="/login" class="btn btn-sm btn-primary">ورود</a>
                     <a href="" class="btn btn-sm btn-primary">ثبت نام</a>
                 </NotAuthorized>
+                <Authorizing>
 
-                @*                         کاربر Authorized در حال
- *@
-                <Authorizing></Authorizing>
+                </Authorizing>
             </AuthorizeView>
         </div>
 

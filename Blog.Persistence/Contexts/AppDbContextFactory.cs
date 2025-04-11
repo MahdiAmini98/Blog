@@ -13,7 +13,7 @@ namespace Blog.Persistence.Contexts
         public AppDbContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-            optionsBuilder.UseSqlServer("Server=.;Database=Blog_Db;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True");
+            optionsBuilder.UseSqlServer("Server=.;Database=Blog_DB;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True");
 
             return new AppDbContext(optionsBuilder.Options);
         }

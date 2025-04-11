@@ -1,7 +1,33 @@
 ﻿<Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+     @*    AuthorizeRouteView
+        قابلیت 
+        Authorize
+        به همه کامپوننت
+        ها بر اساس
+        اتریبیوت
+        @attribute [Authorize(Roles = "Admin")]
+        در فایل _Imports.razor
+        است امکان پذیر می سازد همراه  با کامپوتتت
+        Authorize در
+        layout *@
+        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+
+            <NotAuthorized>
+   @*              <h1 class="text-danger">شما اجازه دسترسی به این صفحه را ندارید.</h1>
+                <p>برای دسترسی، لطفاً وارد شوید یا با مدیر تماس بگیرید.</p>
+
+                <a href="/login" class="btn btn-sm btn-danger">ورود به حساب کاربری</a> *@
+
+                <Blog.PanelAdmin.Pages.Authentication.Login></Blog.PanelAdmin.Pages.Authentication.Login>
+
+            </NotAuthorized>
+
+            <Authorizing>
+                <p>در حال ورود....لطفا صبر کنید</p>
+            </Authorizing>
+        </AuthorizeRouteView>
+               <FocusOnNavigate RouteData="@routeData" Selector="h1" />
     </Found>
     <NotFound>
         <PageTitle>Not found</PageTitle>
