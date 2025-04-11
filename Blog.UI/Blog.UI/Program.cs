@@ -8,9 +8,17 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+//  .AddAuthenticationStateSerialization()
+//داده های 
+//Authentication را در سمت
+//سرور سریالایز می کند و برای 
+//client همین پروژه می فرستد
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
-    .AddInteractiveWebAssemblyComponents();
+    .AddInteractiveWebAssemblyComponents()
+    .AddAuthenticationStateSerialization();
+
 
 
 //اطلاعات کاربر لاگین شده را به صورت پارامتر به همه کامپوننت ها ارسال می کنه

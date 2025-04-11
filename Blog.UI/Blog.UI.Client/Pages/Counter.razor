@@ -1,10 +1,36 @@
 ﻿@page "/counter"
+@*
+    RendererInfo => اطلاعات 
+    رندر را برگشت می دهد
+*@
 @rendermode InteractiveAuto
+@* @rendermode  InteractiveWebAssembly *@
+@* @rendermode  InteractiveServer *@
+@* @attribute [Authorize(Roles ="superAdmin")] *@
+@attribute [Authorize(Roles = "Admin")]
+
 
 <PageTitle>Counter</PageTitle>
 
 <h1>Counter</h1>
+<h2>  Renderer Mode : @RendererInfo.Name </h2>
+<h2>  Is Interactive : @RendererInfo.IsInteractive </h2>
 
+<AuthorizeView>
+
+    <Authorized>
+        <b class="text-info">
+            شما وارد حساب کاربری خود شده اید
+        </b>
+    </Authorized>
+
+    <NotAuthorized>
+        <b class="text-danger">
+            دسترسی ندارید به این بخش
+        </b>
+    </NotAuthorized>
+
+</AuthorizeView>
 <p role="status">Current count: @currentCount</p>
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
