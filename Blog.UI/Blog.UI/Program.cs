@@ -16,7 +16,10 @@ var builder = WebApplication.CreateBuilder(args);
 //سرور سریالایز می کند و برای 
 //client همین پروژه می فرستد
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents()
+    .AddInteractiveServerComponents(options => 
+    {
+        options.DetailedErrors = true;
+    })
     .AddInteractiveWebAssemblyComponents()
     .AddAuthenticationStateSerialization();
 

@@ -1,6 +1,7 @@
 ﻿using Blog.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Microsoft.AspNetCore.Routing
 {
@@ -27,11 +28,12 @@ namespace Microsoft.AspNetCore.Routing
     public static class IdentityEndpointsExtensions
     {
         public static IEndpointConventionBuilder
-            MapIdentityEndpoints(this IEndpointRouteBuilder endpoint)
+          MapIdentityEndpoints(this IEndpointRouteBuilder endpoint)
         {
             ArgumentNullException.ThrowIfNull(endpoint);
 
-            var accountGroup = endpoint.MapGroup("/Account");
+            var accountGroup = endpoint.MapGroup("/Account")
+                .RequireAuthorization();
 
 
             accountGroup.MapPost("/Logout", async (
@@ -44,6 +46,18 @@ namespace Microsoft.AspNetCore.Routing
 
 
 
+
+            accountGroup.MapGet("/RefreshAuth", async (
+            ClaimsPrincipal user,
+            [FromServices] UserManager<User> userManager,
+            [FromServices] SignInManager<User> signInManager,
+            [FromQuery] string returnUrl = "/account/profile"
+                ) =>
+            {
+                var User = await userManager.GetUserAsync(user);
+                await signInManager.RefreshSignInAsync(User);
+                return TypedResults.LocalRedirect(returnUrl);
+            });
 
             return accountGroup;
 

@@ -1,6 +1,13 @@
 ﻿ @page "/account/profile"
+@using System.Security.Claims
 @attribute [Authorize]
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject UserManager<User> UserManager;
+@rendermode InteractiveServer
+@inject NavigationManager NavigationManager
+
+
+
 <h3>Profile</h3>
 
 @if (authState is null)
@@ -9,6 +16,40 @@
 }
 else
 {
+
+    <EditForm Model="userProfile" OnValidSubmit="UpdateProfile">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="card p-3 shadow-lg">
+            <h3>مشخصات کاربر</h3>
+
+            <div class="mb-3">
+                <label class="form-label">نام  :</label>
+                <InputText class="form-control" @bind-Value="userProfile.FullName" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">ایمیل:</label>
+                <input type="text" class="form-control" value="@authState.User.FindFirst(ClaimTypes.Email)?.Value" disabled />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">شماره موبایل:</label>
+                <InputText class="form-control" @bind-Value="userProfile.PhoneNumber" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">بیوگرافی:</label>
+                <InputTextArea class="form-control" rows="4" @bind-Value="userProfile.Bio" />
+            </div>
+
+            <button class="btn btn-success" type="submit">ذخیره تغییرات</button>
+        </div>
+
+
+    </EditForm>
+
     <hr />
     <h3 class="mt-4">لیست تمام Claims‌های کاربر</h3>
 
@@ -36,8 +77,66 @@ else
 @code {
     private AuthenticationState authState;
 
+    private UserProfileModel userProfile { get; set; } = new();
+    private User user { get; set; }
     protected override async Task OnInitializedAsync()
     {
         authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        var userId = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (!string.IsNullOrEmpty(userId))
+        {
+            user = await UserManager.FindByIdAsync(userId);
+            if (user is not null)
+            {
+                userProfile = new UserProfileModel
+                    {
+                        FullName = user.Name ?? "",
+                        PhoneNumber = user.PhoneNumber ?? "",
+                        Bio = user.Bio ?? ""
+                    };
+            }
+
+        }
+    }
+
+
+
+    private async Task UpdateProfile()
+    {
+        if (user is not null)
+        {
+            user.SetName(userProfile.FullName);
+            user.SetBio(userProfile.Bio);
+            var phoneResult = await UserManager.SetPhoneNumberAsync(user, userProfile.PhoneNumber);
+            if (!phoneResult.Succeeded)
+            {
+                return;
+            }
+
+            var result = await UserManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                NavigationManager.NavigateTo("/Account/RefreshAuth", true);
+
+            }
+            else
+            {
+
+            }
+        }
+    }
+
+    public class UserProfileModel
+    {
+        [Required(ErrorMessage = "نام کامل الزامی است.")]
+        public string FullName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "شماره موبایل الزامی است.")]
+        [RegularExpression(@"^09\d{9}$", ErrorMessage = "شماره موبایل باید با 09 شروع شود و 11 رقم باشد.")]
+        public string PhoneNumber { get; set; } = string.Empty;
+
+        [MaxLength(500, ErrorMessage = "بیوگرافی نمی‌تواند بیشتر از ۵۰۰ کاراکتر باشد.")]
+        public string Bio { get; set; } = string.Empty;
     }
 }
