@@ -12,6 +12,7 @@ namespace Blog.Domain.Entities
     {
         public string? ProfilePictureUrl { get; private set; } // تصویر پروفایل (اختیاری)
         public string? Bio { get; private set; } // توضیحات مختصر کاربر (اختیاری)
+        public string? Name { get; private set; }
 
         // ناوبری‌ها
         private readonly List<Post> _posts = new();
@@ -21,6 +22,20 @@ namespace Blog.Domain.Entities
         public IReadOnlyCollection<Comment> Comments => _comments.AsReadOnly();
         public ICollection<Reaction> Reactions { get; set; } = new List<Reaction>();
 
+        public void SetName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException("Name cannot be null or empty.", nameof(name));
+            }
+
+            if (name.Length > 100)
+            {
+                throw new ArgumentException("Name cannot exceed 100 characters.", nameof(name));
+            }
+
+            Name = name.Trim();
+        }
         // متد برای تنظیم تصویر پروفایل
         public void SetProfilePictureUrl(string? profilePictureUrl)
         {
