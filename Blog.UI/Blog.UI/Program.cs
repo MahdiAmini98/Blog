@@ -73,4 +73,8 @@ app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(Blog.UI.Client._Imports).Assembly);
 
+//این متد مربوط به کلاس
+//IdentityEndpointsExtensions می باشد که توضیحاتش در بالای این کد نوشته شده است
+app.MapIdentityEndpoints();
+
 app.Run();

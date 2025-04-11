@@ -3,7 +3,7 @@
 
 @inject SignInManager<User> SignInManager
 @inject NavigationManager NavigationManager
-<EditForm Model="loginModel" onsubmit="HandleLogin" FormName="frmLogin" class="needs-validation">
+<EditForm Model="loginModel" onsubmit="HandleLogin" FormName="frmLogin" class="needs-validation" Enhance="true">
     <DataAnnotationsValidator />
     <ValidationSummary class="text-danger mb-3" />
     <div class="mb-3">
@@ -35,7 +35,20 @@
 
         if (result.Succeeded)
         {
-            NavigationManager.NavigateTo("/");
+                //در این صفحه render mode
+                //ssr هست .
+                // یعنی هیچ تمایلی وجود ندارد
+                //چون ما  میخواهیم از
+                //@inject SignInManager<User> SignInManager
+                //استفاده کنیم برای همین نباید تعامل داشته باشد
+                //در فایل IdentityEndpointsExtensions توضیحات بیشتری وجود دارد
+                //حالا مشکل این است که وقتی صفحه ای ssr باشد
+                //و بخواهیم از NavigationManager استفاده کنیم
+                //NavigationManager یک خطا می دهد
+                //قرار است در نسخه های بعدی دات نت این مشکل حل شود
+                //ولی فعلا continue بزنیم 
+                //برطرف می شود
+                NavigationManager.NavigateTo("/", true);
         }
         else
         {
