@@ -13,6 +13,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,14 +48,15 @@ builder.Services.AddScoped<IMediaService, MediaService>();
 builder.Services.AddScoped<IReactionService, ReactionService>();
 builder.Services.AddScoped<ITagService, TagService>();
 
-//token service
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<JwtService>();
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
-#region JWT Token
-//add package microsoft.aspnetcore.authentication.jwtbearer
-//add package microsoft.identitymodel.tokens
-//add package system.identitymodel.tokens.jwt
+
+
+//dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer
+//dotnet add package Microsoft.IdentityModel.Tokens
+//dotnet add package System.IdentityModel.Tokens.Jwt
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -61,9 +65,11 @@ builder.Services.AddAuthentication(options =>
 {
     var serviceProvider = builder.Services.BuildServiceProvider();
     var jwtService = serviceProvider.GetRequiredService<JwtService>();
-    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-    {
+
+    options.TokenValidationParameters = new TokenValidationParameters
+    {      
         //سازنده توکن (پروژه ای که این را ساخته) اعتبار سنجی کن)
+
         ValidateIssuer = true,
         //مقصدی که این توکن به دستش می رسه را اعتبار سنجی کن
         ValidateAudience = true,
@@ -71,46 +77,42 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         // امضای توکن را اعتبار سنجی کن
         ValidateIssuerSigningKey = true,
-        ClockSkew = TimeSpan.Zero, // زمان اضافی برای اعتبار سنجی توکن (به طور پیش فرض 5 دقیقه است)- زمان را دقیق محاسبه می کند
+        // زمان اضافی برای اعتبار سنجی توکن (به طور پیش فرض 5 دقیقه است)- زمان را دقیق محاسبه می کند
 
+        // سازنده توکن معریفی می کنه
+        //این اطلاعات از appsetting می گیره
+        ClockSkew = TimeSpan.Zero,
         // سازنده توکن معریفی می کنه
         //این اطلاعات از appsetting می گیره
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
     };
 
-    //token validate
-    
     options.Events = new JwtBearerEvents
     {
         OnTokenValidated = async context =>
         {
-            Console.WriteLine("✅ Token Validated Event Triggered");
-
             var token = (context.SecurityToken as JsonWebToken)?.EncodedToken;
-            if (token == null)
+            if (token != null)
             {
-                context.Fail("Invalid token");
+                bool isValid = await jwtService.IsTokenValidAsync(token);
+                if (!isValid)
+                {
+                    context.Fail("Token is not valid in the database.");
+                }
             }
             else
             {
-                bool validToken = await jwtService.IsTokenValidAsync(token);
-                if (!validToken)
-                {
-                    context.Fail("Tken is Not Valid in DB"); 
-                }
+                context.Fail("Invalid token format.");
             }
-        }
-    }; 
+        },
+
+    };
 });
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-});
-#endregion
+
+builder.Services.AddAuthorization();
 
 
 builder.Services.AddControllers();
@@ -124,15 +126,16 @@ builder.Services.AddSwaggerGen(options =>
         Version = "v1",
         Description = "API Documentation for Blazor Blog"
     });
-  
-    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme()
+
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
         Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
         Scheme = "Bearer",
         BearerFormat = "JWT",
         In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Description = "توکن خود را وارد نمایید."
+        Description = "توکن خود را اینجا وارد نمایید"
+
     });
 
     options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
@@ -146,7 +149,7 @@ builder.Services.AddSwaggerGen(options =>
                     Id = "Bearer"
                 }
             },
-            new string[] {}
+            Array.Empty<string>()
         }
     });
 });
@@ -182,15 +185,12 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-
-//add midelware cors
 app.UseCors("AllowSpecificOrigin");
 
-
-//اضافه کردن میدلویر های مورد نظر
 app.UseAuthentication();
 app.UseAuthorization();
-app.Use(async (context, next)=>
+
+app.Use(async (context, next) =>
 {
     try
     {
@@ -202,7 +202,7 @@ app.Use(async (context, next)=>
         await context.Response.WriteAsync("Unauthorized");
     }
 });
- 
+
 app.UseHttpsRedirection();
 app.UseAuthorization();
 

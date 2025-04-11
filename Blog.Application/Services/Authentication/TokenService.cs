@@ -34,7 +34,7 @@ namespace Blog.Application.Services.Authentication
 
         public async Task<bool> IsTokenValidAsync(string hashedAccessToken)
         {
-            var usertokens = await _userTokenRepository.FindAsync(t => t.AccessToken == hashedAccessToken);
+            var usertokens = await _userTokenRepository.FindAsync(t => t.AccessToken == hashedAccessToken, true);
 
             var userToken = usertokens.FirstOrDefault();
 

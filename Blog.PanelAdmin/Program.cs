@@ -32,6 +32,11 @@ builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStat
 
 
 #endregion
+builder.Services.AddHttpClient<IAuthService, AuthService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7230/");
+});
+
 //add services
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ILocalStorageService, LocalStorageService>();

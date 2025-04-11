@@ -23,8 +23,7 @@ namespace Blog.Domain.Interfaces
         // عملیات غیرهمگام
         Task<T> GetByIdAsync(Guid id); // گرفتن یک انتیتی بر اساس ID به صورت غیرهمگام
         Task<IEnumerable<T>> GetAllAsync(); // گرفتن تمام انتیتی‌ها به صورت غیرهمگام
-        Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate); // جستجو با شرط به صورت غیرهمگام
-        Task<int> CountAsync(Expression<Func<T, bool>> predicate); // شمارش بر اساس شرط به صورت غیرهمگام
+        Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate, bool asNoTracking = false); // جستجو با شرط به صورت غیرهمگام        Task<int> CountAsync(Expression<Func<T, bool>> predicate); // شمارش بر اساس شرط به صورت غیرهمگام
 
         // پشتیبانی از IQueryable
         IQueryable<T> Query(); // دسترسی به کوئری مستقیم
