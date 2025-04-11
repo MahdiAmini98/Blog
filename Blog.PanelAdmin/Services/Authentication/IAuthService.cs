@@ -81,15 +81,12 @@ namespace Blog.PanelAdmin.Services.Authentication
                 if (result != null)
                 {
                     await tokenService.SetTokenAsync(result.Token, result.RefreshToken);
-                    ((CustomAuthenticationStateProvider)authenticationStateProvider).UpdateAuthenticationState();
                     return result.Token;
                 }
-                else
-                {
-                    await tokenService.ClearTokenAsync();
-                    ((CustomAuthenticationStateProvider)authenticationStateProvider).UpdateAuthenticationState();
-
-                }
+            }
+            else
+            {
+                await tokenService.ClearTokenAsync();
             }
             return null;
         }

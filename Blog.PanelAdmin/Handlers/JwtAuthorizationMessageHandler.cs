@@ -1,5 +1,6 @@
 ﻿using Blog.PanelAdmin.Services.Authentication;
 using Blog.PanelAdmin.Services.TokenService;
+using Microsoft.AspNetCore.Components;
 using System.Net.Http.Headers;
 
 namespace Blog.PanelAdmin.Handlers
@@ -16,11 +17,14 @@ namespace Blog.PanelAdmin.Handlers
     {
         private readonly ITokenService tokenService;
         private readonly IAuthService authService;
-
-        public JwtAuthorizationMessageHandler(ITokenService tokenService, IAuthService authService)
+        private readonly NavigationManager navigationManager;
+        public JwtAuthorizationMessageHandler(ITokenService tokenService,
+            IAuthService authService,
+            NavigationManager navigationManager)
         {
             this.tokenService = tokenService;
             this.authService = authService;
+            this.navigationManager = navigationManager;
 
         }
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -49,6 +53,8 @@ namespace Blog.PanelAdmin.Handlers
                             return await base.SendAsync(request, cancellationToken);
                         }
                     }
+
+                    navigationManager.NavigateTo("login", true);
                 }
                 return response;
             }
