@@ -45,5 +45,16 @@ namespace Blog.PanelAdmin.Services.AuthenticationStateProvider
 
             return new ClaimsPrincipal(identity);
         }
+
+        // وقتی تغییراتی مثل لاگین یا لاگ اوت انجام می شود ما باید آن تغییرلات به گوش کامپوننت ها و برنامه خودمون برسونیم
+        //که کامپوننت ها بتوانند تغییر وضعیت کاربر در 
+        //athorize 
+        //در نظر بگیرند
+        public void MarkUserAsAuthenticated()
+        {
+            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+        }
+
+
     }
 }
