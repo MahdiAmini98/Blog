@@ -1,0 +1,31 @@
+﻿@page "/logout"
+@using Blog.PanelAdmin.Services.Authentication
+@inject NavigationManager Navigation
+@inject IAuthService AuthService
+
+<p>آیا می‌خواهید خارج شوید؟</p>
+<button class="btn btn-danger" @onclick=ConfirmLogout>بله، خروج</button>
+<button class="btn btn-secondary" @onclick=CancelLogout>لغو</button>
+
+@code {
+
+    private async Task ConfirmLogout()
+    {
+        try
+        {
+            await AuthService.LogoutAsync();
+            Navigation.NavigateTo("/login");
+        }
+        catch (Exception ex)
+        {
+            Navigation.NavigateTo("/login");
+            Console.WriteLine($"Logout failed: {ex.Message}");
+        }
+
+    }
+
+    private void CancelLogout()
+    {
+        Navigation.NavigateTo("/");
+    }
+}

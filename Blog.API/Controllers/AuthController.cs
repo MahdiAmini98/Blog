@@ -3,6 +3,7 @@ using Blog.Application.Contracts.Authentication;
 using Blog.Application.Interfaces.Authentication;
 using Blog.Domain.Entities;
 using Blog.Infrastructure.Authentication.Services;
+using Blog.Infrastructure.Hasher;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
@@ -99,6 +100,21 @@ namespace Blog.API.Controllers
             catch (SecurityTokenException ex)
             {
                 return Unauthorized(new { message = "رفرش توکن معتبر نیست" });
+            }
+        }
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout([FromBody] LogoutRequestDto request)
+        {
+            try
+            {
+                var hashedRefreshToken = TokenHasher.HashToken(request.RefreshToken);
+                await tokenService.RevokeRefreshTokenAsync(hashedRefreshToken);
+                return Ok(new { message = "User logged out successfully." });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
             }
         }
     }

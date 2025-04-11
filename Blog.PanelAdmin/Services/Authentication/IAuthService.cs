@@ -9,6 +9,7 @@ namespace Blog.PanelAdmin.Services.Authentication
     {
         Task<bool> LoginAsync(LoginRequestDto loginRequest);
         Task<string?> RefreshTokenAsync(string refreshToken);
+        Task LogoutAsync();
     }
 
     public class AuthService : IAuthService
@@ -39,12 +40,35 @@ namespace Blog.PanelAdmin.Services.Authentication
 
                     //اطلاع رسانی تغییر وضعیت کاربر
 
-                    ((CustomAuthenticationStateProvider)authenticationStateProvider).MarkUserAsAuthenticated();
+                    ((CustomAuthenticationStateProvider)authenticationStateProvider).UpdateAuthenticationState();
                     return true;
                 }
             }
 
             return false;
+        }
+
+        public async Task LogoutAsync()
+        {
+            var refreshToken = await tokenService.GetRefreshTokenAsync();
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                throw new InvalidOperationException("Refresh token not found.");
+            }
+
+            var response = await httpClient.PostAsJsonAsync("/api/Auth/logout", new { RefreshToken = refreshToken });
+            if (response.IsSuccessStatusCode)
+            {
+                await tokenService.ClearTokenAsync();
+                ((CustomAuthenticationStateProvider)authenticationStateProvider).UpdateAuthenticationState();
+
+            }
+            else
+            {
+                await tokenService.ClearTokenAsync();
+                ((CustomAuthenticationStateProvider)authenticationStateProvider).UpdateAuthenticationState();
+                throw new Exception("Failed to logout.");
+            }
         }
 
         public async Task<string?> RefreshTokenAsync(string refreshToken)
@@ -57,11 +81,14 @@ namespace Blog.PanelAdmin.Services.Authentication
                 if (result != null)
                 {
                     await tokenService.SetTokenAsync(result.Token, result.RefreshToken);
-
-                    ((CustomAuthenticationStateProvider)authenticationStateProvider).MarkUserAsAuthenticated();
-
-
+                    ((CustomAuthenticationStateProvider)authenticationStateProvider).UpdateAuthenticationState();
                     return result.Token;
+                }
+                else
+                {
+                    await tokenService.ClearTokenAsync();
+                    ((CustomAuthenticationStateProvider)authenticationStateProvider).UpdateAuthenticationState();
+
                 }
             }
             return null;

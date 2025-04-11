@@ -50,7 +50,7 @@ namespace Blog.PanelAdmin.Services.AuthenticationStateProvider
         //که کامپوننت ها بتوانند تغییر وضعیت کاربر در 
         //athorize 
         //در نظر بگیرند
-        public void MarkUserAsAuthenticated()
+        public void UpdateAuthenticationState()
         {
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }

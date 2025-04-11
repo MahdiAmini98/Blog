@@ -23,6 +23,7 @@ namespace Blog.PanelAdmin.Services.TokenService
         public async Task ClearTokenAsync()
         {
             await _localStorage.RemoveItemAsync("authToken");
+            await _localStorage.RemoveItemAsync("refreshToken");
         }
 
         public async Task<string?> GetAuthTokenAsync()

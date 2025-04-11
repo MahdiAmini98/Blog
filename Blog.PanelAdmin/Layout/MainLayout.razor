@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager nav
+
 <div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -24,12 +26,11 @@
                         <span>
                             سلام , @context.User.Identity?.Name
                         </span>
-                        <a href="/logout" class="btn btn-sm btn-outline-primary ms-2">Logout</a>
+                        <button @onclick="ReturnToLogout" class="btn btn-sm btn-danger">Logout</button>
                     </div>
                 </Authorized>
                 <NotAuthorized>
-                    <a href="/login" class="btn btn-sm btn-primary">ورود</a>
-                    <a href="" class="btn btn-sm btn-primary">ثبت نام</a>
+                    <button @onclick="ReturnToLogin" class="btn btn-sm btn-primary">Login</button>
                 </NotAuthorized>
                 <Authorizing>
 
@@ -42,3 +43,16 @@
         </article>
     </main>
 </div>
+
+
+@code {
+
+    private void ReturnToLogout()
+    {
+        nav.NavigateTo("/logout");
+    }
+    private void ReturnToLogin()
+    {
+        nav.NavigateTo("/login");
+    }
+}
