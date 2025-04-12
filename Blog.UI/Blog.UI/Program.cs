@@ -3,6 +3,8 @@ using Blog.Persistence.Contexts;
 using Blog.UI.Client.Pages;
 using Blog.UI.Components;
 using Blog.UI.CustomClaimsFactory;
+using Blog.UI.Services.AuthenticationStateProvider;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -54,6 +56,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 #endregion
 
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<User>, CustomClaimsPrincipalFactory>();
+builder.Services.AddScoped<AuthenticationStateProvider, AuthStateRevalidator>();
 
 var app = builder.Build();
 

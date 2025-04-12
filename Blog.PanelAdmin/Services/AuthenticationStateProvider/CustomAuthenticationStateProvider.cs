@@ -5,6 +5,14 @@ using System.Security.Claims;
 
 namespace Blog.PanelAdmin.Services.AuthenticationStateProvider
 {
+    // این کلاس برای این است که وضعیت لاگین و لاگ اوت کاربر را در کل برنامه نگه داری کند
+    //و اطلاعات هویتی کاربران را در اختیار کامپوننت ها قرار دهد
+    //و اگر کاربر لاگین یا لاگ اوت شود
+    //NotifyAuthenticationStateChanged متد 
+    //به کامپوننت ها اطلاع رسانی کند
+    // که اطلاعات کاربر تغییر کرده و دوباره رندر بشوید
+    // در blazor server برای این کار کلاس
+    //AuthStateRevalidator نوشتیم
     public class CustomAuthenticationStateProvider : Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider
     {
         private readonly ITokenService tokenService;

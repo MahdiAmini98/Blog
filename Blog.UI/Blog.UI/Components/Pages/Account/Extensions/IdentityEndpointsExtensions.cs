@@ -28,7 +28,7 @@ namespace Microsoft.AspNetCore.Routing
     public static class IdentityEndpointsExtensions
     {
         public static IEndpointConventionBuilder
-          MapIdentityEndpoints(this IEndpointRouteBuilder endpoint)
+            MapIdentityEndpoints(this IEndpointRouteBuilder endpoint)
         {
             ArgumentNullException.ThrowIfNull(endpoint);
 
@@ -37,10 +37,15 @@ namespace Microsoft.AspNetCore.Routing
 
 
             accountGroup.MapPost("/Logout", async (
+             ClaimsPrincipal user,
+             [FromServices] UserManager<User> userManager,
               [FromServices] SignInManager<User> signInManager,
               [FromForm] string returnUrl = "/") =>
             {
                 await signInManager.SignOutAsync();
+                var currentUser = await userManager.FindByEmailAsync(user.Identity.Name);
+                await userManager.UpdateSecurityStampAsync(currentUser);
+
                 return TypedResults.LocalRedirect(returnUrl);
             });
 
