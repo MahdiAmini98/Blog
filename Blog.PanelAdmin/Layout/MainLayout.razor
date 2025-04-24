@@ -1,6 +1,8 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager nav
 @inject IJSRuntime JS
+
+#<!-- #region Mud Blazor -->
 @* اضافه کردن کامپوننت  Mud Blazor *@
 
 @* این برای مدیریت تم در  Mud Blazor*@
@@ -8,6 +10,24 @@
 
 @*  این برای نمایش tooltip ها و popover ها در  Mud Blazor*@
 <MudPopoverProvider />
+
+<!-- #endregion -->
+
+
+#<!-- #region AuthorizeView -->
+@* این
+  AuthorizeView
+  برای اعتبار سنجی و لاگین یا غیر لاگین کردن کاربر است و سه تا بخش دارد
+  1- اگر کاربر لاگین شد چیو بهش نمایش بدم
+  2- اگه در حال لاگین بود چیو نمایش بدم
+  3- اگه لاگین نبود چیو نمایش بدم
+  4- برای اجرای این باید یک پکیج نصب کنی و در  فایل app.razor نیز تنظیماتی دارد
+  5- میتونی از policy ها و role ها نیز برای آن استفاده کنی
+  *@
+
+<!-- #endregion -->
+
+
 
 
 
@@ -18,13 +38,24 @@
         <MudSpacer />
 
         <MudIconButton Icon="@darkLightModeButtonIcon" Color="Color.Inherit" OnClick="ToggleDarkMode" />
-        <MudMenu Icon="@Icons.Material.Filled.Settings"
-        Color="Color.Surface"
-        AriaLabel="Open user menu">
-            <MudMenuItem Label="Profile" />
-            <MudMenuItem Label="My account" />
-            <MudMenuItem Label="خروج از حساب کاربری" Href="/Logout" Icon="@Icons.Material.Rounded.Logout" IconColor="Color.Error" />
-        </MudMenu>
+
+        <AuthorizeView>
+            <Authorized>
+                <MudMenu Icon="@Icons.Material.Filled.Settings"
+                         Color="Color.Warning"
+                         AriaLabel="Open user menu">
+                    <MudMenuItem Label="Profile" />
+                    <MudMenuItem Label="My account" />
+                    <MudMenuItem Label="خروج از حساب کاربری" Href="/logout" Icon="@Icons.Material.Rounded.Logout"
+                                 IconColor="Color.Error" />
+                </MudMenu>
+            </Authorized>
+            <NotAuthorized>
+                <MudButton Href="/login" IconColor="Color.Error" ButtonType="ButtonType.Button" StartIcon="@Icons.Material.Filled.Login">
+                    ورود به حساب کاربری
+                </MudButton>
+            </NotAuthorized>
+        </AuthorizeView>
 
     </MudAppBar>
 
@@ -37,60 +68,6 @@
     </MudMainContent>
 </MudLayout>
 
-
-
-
-
-
-
-
-
-@* 
-
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-
-
-           @* این
-               AuthorizeView
-               برای اعتبار سنجی و لاگین یا غیر لاگین کردن کاربر است و سه تا بخش دارد
-               1- اگر کاربر لاگین شد چیو بهش نمایش بدم
-               2- اگه در حال لاگین بود چیو نمایش بدم
-               3- اگه لاگین نبود چیو نمایش بدم
-               4- برای اجرای این باید یک پکیج نصب کنی و در  فایل app.razor نیز تنظیماتی دارد
-               5- میتونی از policy ها و role ها نیز برای آن استفاده کنی
-           *@
-@*             <AuthorizeView>
-                <Authorized>
-                    <div>
-                        <span>
-                            سلام , @context.User.Identity?.Name
-                        </span>
-                        <button @onclick="ReturnToLogout" class="btn btn-sm btn-danger">Logout</button>
-                    </div>
-                </Authorized>
-                <NotAuthorized>
-                    <button @onclick="ReturnToLogin" class="btn btn-sm btn-primary">Login</button>
-                </NotAuthorized>
-                <Authorizing>
-
-                </Authorizing>
-            </AuthorizeView> *@
-@*         </div>
- *@
-@*     <article class="content px-4">
-            @Body
-        </article> *@
-@*     </main>
-</div> 
-
- *@
 @code {
 
     private bool drawerOpen = true;
