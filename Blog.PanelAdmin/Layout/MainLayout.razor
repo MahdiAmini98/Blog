@@ -2,20 +2,23 @@
 @inject NavigationManager nav
 @inject IJSRuntime JS
 
-#<!-- #region Mud Blazor -->
+<!-- #region Mud Blazor -->
 @* اضافه کردن کامپوننت  Mud Blazor *@
 
-@* این برای مدیریت تم در  Mud Blazor*@
-<MudThemeProvider Theme="theme" IsDarkMode="isDarkMode" />
+@* راست چین کردن کامپوننت های  Mud Blazor *@
 
-@*  این برای نمایش tooltip ها و popover ها در  Mud Blazor*@
-<MudPopoverProvider />
-
-<!-- #endregion -->
+<MudRTLProvider RightToLeft="true">
 
 
-#<!-- #region AuthorizeView -->
-@* این
+    @* این برای مدیریت تم در  Mud Blazor*@
+    <MudThemeProvider Theme="theme" IsDarkMode="isDarkMode" />
+
+    @*  این برای نمایش tooltip ها و popover ها در  Mud Blazor*@
+    <MudPopoverProvider />
+
+    <!-- #endregion -->
+    <!-- #region AuthorizeView -->
+    @* این
   AuthorizeView
   برای اعتبار سنجی و لاگین یا غیر لاگین کردن کاربر است و سه تا بخش دارد
   1- اگر کاربر لاگین شد چیو بهش نمایش بدم
@@ -25,48 +28,45 @@
   5- میتونی از policy ها و role ها نیز برای آن استفاده کنی
   *@
 
-<!-- #endregion -->
+    <!-- #endregion -->
+    <MudLayout>
+        <MudAppBar Elevation="3">
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e)=> ToggleMenu())" />
+            <MudText Typo="Typo.h5" Class="ml-3">پنل ادمین بلاگ</MudText>
+            <MudSpacer />
 
+            <MudIconButton Icon="@darkLightModeButtonIcon" Color="Color.Inherit" OnClick="ToggleDarkMode" />
 
+            <AuthorizeView>
+                <Authorized>
+                    <MudMenu Icon="@Icons.Material.Filled.Settings"
+                             Color="Color.Warning"
+                             AriaLabel="Open user menu">
+                        <MudMenuItem Label="Profile" />
+                        <MudMenuItem Label="My account" />
+                        <MudMenuItem Label="خروج از حساب کاربری" Href="/logout" Icon="@Icons.Material.Rounded.Logout"
+                                     IconColor="Color.Error" />
+                    </MudMenu>
+                </Authorized>
+                <NotAuthorized>
+                    <MudButton Href="/login" IconColor="Color.Error" ButtonType="ButtonType.Button" StartIcon="@Icons.Material.Filled.Login">
+                        ورود به حساب کاربری
+                    </MudButton>
+                </NotAuthorized>
+            </AuthorizeView>
 
+        </MudAppBar>
 
-
-<MudLayout>
-    <MudAppBar Elevation="3">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e)=> ToggleMenu())" />
-        <MudText Typo="Typo.h5" Class="ml-3">پنل ادمین بلاگ</MudText>
-        <MudSpacer />
-
-        <MudIconButton Icon="@darkLightModeButtonIcon" Color="Color.Inherit" OnClick="ToggleDarkMode" />
-
-        <AuthorizeView>
-            <Authorized>
-                <MudMenu Icon="@Icons.Material.Filled.Settings"
-                         Color="Color.Warning"
-                         AriaLabel="Open user menu">
-                    <MudMenuItem Label="Profile" />
-                    <MudMenuItem Label="My account" />
-                    <MudMenuItem Label="خروج از حساب کاربری" Href="/logout" Icon="@Icons.Material.Rounded.Logout"
-                                 IconColor="Color.Error" />
-                </MudMenu>
-            </Authorized>
-            <NotAuthorized>
-                <MudButton Href="/login" IconColor="Color.Error" ButtonType="ButtonType.Button" StartIcon="@Icons.Material.Filled.Login">
-                    ورود به حساب کاربری
-                </MudButton>
-            </NotAuthorized>
-        </AuthorizeView>
-
-    </MudAppBar>
-
-    <MudDrawer @bind-Open="drawerOpen" ClipMode="DrawerClipMode.Always" Anchor="Anchor.Right">
-        <NavMenu />
-    </MudDrawer>
-    <MudMainContent>
-        @Body
-
-    </MudMainContent>
-</MudLayout>
+        <MudDrawer @bind-Open="drawerOpen" ClipMode="DrawerClipMode.Always" Anchor="Anchor.Right">
+            <NavMenu />
+        </MudDrawer>
+        <MudMainContent>
+            <MudPaper Class="ma-4 pa-6 rounded-lg" Elevation="7">
+                @Body
+            </MudPaper>
+        </MudMainContent>
+    </MudLayout>
+</MudRTLProvider>
 
 @code {
 
@@ -112,30 +112,48 @@
                         FontFamily = new[] { "Dana", "Arial" }
                     }
                 },
+                
                 PaletteLight = new PaletteLight()
                 {
-                    Black = "#0D1B2A",
-                    AppbarBackground = "rgba(230, 247, 255, 0.85)",
-                    AppbarText = "#1B263B",
-                    DrawerBackground = "#F0F8FF",
-                    DrawerText = "#1B263B",
-                    GrayLight = "#DDEAF6",
-                    GrayLighter = "#EEF5FB",
-                    Background = "#F5FAFF",
+                    Black = "#101828",
+                    White = "#FFFFFF",
+                    AppbarBackground = "rgba(245, 250, 255, 0.9)",
+                    AppbarText = "#0F172A",
+                    DrawerBackground = "#F9FAFB",
+                    DrawerText = "#1F2937",
+                    Background = "#F3F4F6",
                     Surface = "#FFFFFF",
-                    Primary = "#1976D2",
+                    GrayLight = "#E5E7EB",
+                    GrayLighter = "#F3F4F6",
+                    Primary = "#2563EB",
+                    PrimaryDarken = "#1E40AF",
+                    PrimaryLighten = "#60A5FA",
                     PrimaryContrastText = "#FFFFFF",
-                    Secondary = "#64B5F6",
+                    Secondary = "#7C3AED", 
+                    SecondaryDarken = "#5B21B6",
+                    SecondaryLighten = "#C4B5FD",
                     SecondaryContrastText = "#FFFFFF",
-                    Error = "#E53935",
-                    ErrorContrastText = "#FFFFFF",
-                    Success = "#43A047",
-                    SuccessContrastText = "#FFFFFF",
-                    Warning = "#FFC107",
-                    WarningContrastText = "#1B263B",
-                    Info = "#0288D1",
+                    Info = "#0284C7",  
+                    InfoDarken = "#0369A1",
+                    InfoLighten = "#38BDF8",
                     InfoContrastText = "#FFFFFF",
+                    Success = "#22C55E",
+                    SuccessDarken = "#15803D",
+                    SuccessLighten = "#4ADE80",
+                    SuccessContrastText = "#FFFFFF",
+                    Warning = "#F59E0B",
+                    WarningDarken = "#B45309",
+                    WarningLighten = "#FCD34D",
+                    WarningContrastText = "#1F2937",
+                    Error = "#EF4444",
+                    ErrorDarken = "#B91C1C",
+                    ErrorLighten = "#F87171",
+                    ErrorContrastText = "#FFFFFF",
+                    Dark = "#374151",
+                    TextPrimary = "#111827",
+                    TextSecondary = "#4B5563"
                 },
+    
                 PaletteDark = new PaletteDark()
                 {
                     Primary = "#7e6fff",
