@@ -6,22 +6,25 @@
 @inject NavigationManager Navigation
 
 
-<EditForm Model="LoginModel" OnValidSubmit="HandleLogin">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+<MudPaper Class="ma-4 pa-6 rounded-lg" Elevation="8">
+    <EditForm Model="LoginModel" OnValidSubmit="HandleLogin">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-    <div>
-        <label for="email">Email</label>
-        <InputText id="email" @bind-Value="LoginModel.Email" />
-    </div>
+        @if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <MudAlert Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Right">
+                @ErrorMessage
+            </MudAlert>
+        }
 
-    <div>
-        <label for="password">Password</label>
-        <InputText id="password" @bind-Value="LoginModel.Password" type="password" />
-    </div>
+        <MudTextField Label="ایمیل" InputType="InputType.Text" @bind-Value="LoginModel.Email" Variant="Variant.Outlined" Required="true" />
+        <MudTextField Label="رمز عبور" InputType="InputType.Password" @bind-Value="LoginModel.Password" Variant="Variant.Outlined" Required="true" />
+     
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" FullWidth="true">ورود به حساب کاربری</MudButton>
+    </EditForm>
 
-    <button type="submit">Login</button>
-</EditForm>
+</MudPaper>
 
 
 @code {
