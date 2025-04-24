@@ -1,43 +1,42 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">Blog.PanelAdmin</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</div>
+﻿<MudPaper Width="250px" Class="d-inline-flex py-3" Elevation="0">
+    <MudNavMenu Class="mud-width-full">
+        <MudText Typo="Typo.h6" Class="px-4">Blog Application</MudText>
+        <MudText Typo="Typo.body2" Class="px-4 mud-text-secondary">مهدی امینی</MudText>
 
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
-    <nav class="nav flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>  <div class="nav-item px-3">
-            <NavLink class="nav-link" href="categories">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> categories
-            </NavLink>
-        </div>
-    </nav>
-</div>
 
-@code {
-    private bool collapseNavMenu = true;
+        <MudDivider Class="my-2" />
 
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
-}
+        <MudNavLink Href="/dashboard" Icon="@Icons.Material.Filled.Dashboard" IconColor="Color.Secondary">داشبورد</MudNavLink>
+
+
+
+
+        @*   مدیریت پست‌ها   *@
+        <MudNavGroup Title="مدیریت پست‌ها" Icon="@Icons.Material.Filled.Article" IconColor="Color.Tertiary" Expanded="true">
+            <MudNavLink Href="/posts/new" Icon="@Icons.Material.Filled.AddCircle">ایجاد پست جدید</MudNavLink>
+            <MudNavLink Href="/posts/manage" Icon="@Icons.Material.Filled.Edit">ویرایش پست‌ها</MudNavLink>
+            <MudNavLink Href="/posts/categories" Icon="@Icons.Material.Filled.Category">دسته‌بندی‌ها</MudNavLink>
+        </MudNavGroup>
+
+
+        @*   مدیریت کاربران   *@
+        <MudNavGroup Title="مدیریت کاربران" Icon="@Icons.Material.Filled.People" IconColor="Color.Success" Expanded="false">
+            <MudNavLink Href="/users" Icon="@Icons.Material.Filled.List">لیست کاربران</MudNavLink>
+            <MudNavLink Href="/users/roles" Icon="@Icons.Material.Filled.Security">نقش‌ها و دسترسی‌ها</MudNavLink>
+        </MudNavGroup>
+
+        @*   تنظیمات وبلاگ  *@
+        <MudNavGroup Title="تنظیمات" Icon="@Icons.Material.Filled.Settings" Expanded="false">
+            <MudNavLink Href="/settings/general" Icon="@Icons.Material.Filled.Tune">تنظیمات عمومی</MudNavLink>
+            <MudNavLink Href="/settings/appearance" Icon="@Icons.Material.Filled.Palette">ظاهر و قالب</MudNavLink>
+        </MudNavGroup>
+
+        @*   گزارش‌ها    *@ 
+       <MudNavLink Href="/reports" Icon="@Icons.Material.Filled.Assessment">گزارش‌ها</MudNavLink>
+
+        @* صورتحساب‌ها *@
+        <MudNavLink Href="/billing" Icon="@Icons.Material.Filled.Receipt">صورتحساب‌ها</MudNavLink>
+
+    </MudNavMenu>
+</MudPaper>

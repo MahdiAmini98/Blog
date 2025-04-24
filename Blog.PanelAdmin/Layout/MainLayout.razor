@@ -1,13 +1,51 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager nav
-
+@inject IJSRuntime JS
 @* اضافه کردن کامپوننت  Mud Blazor *@
 
 @* این برای مدیریت تم در  Mud Blazor*@
- <MudThemeProvider /> 
+<MudThemeProvider Theme="theme" IsDarkMode="isDarkMode" />
 
 @*  این برای نمایش tooltip ها و popover ها در  Mud Blazor*@
- <MudPopoverProvider />
+<MudPopoverProvider />
+
+
+
+<MudLayout>
+    <MudAppBar Elevation="3">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e)=> ToggleMenu())" />
+        <MudText Typo="Typo.h5" Class="ml-3">پنل ادمین بلاگ</MudText>
+        <MudSpacer />
+
+        <MudIconButton Icon="@darkLightModeButtonIcon" Color="Color.Inherit" OnClick="ToggleDarkMode" />
+        <MudMenu Icon="@Icons.Material.Filled.Settings"
+        Color="Color.Surface"
+        AriaLabel="Open user menu">
+            <MudMenuItem Label="Profile" />
+            <MudMenuItem Label="My account" />
+            <MudMenuItem Label="خروج از حساب کاربری" Href="/Logout" Icon="@Icons.Material.Rounded.Logout" IconColor="Color.Error" />
+        </MudMenu>
+
+    </MudAppBar>
+
+    <MudDrawer @bind-Open="drawerOpen" ClipMode="DrawerClipMode.Always" Anchor="Anchor.Right">
+        <NavMenu />
+    </MudDrawer>
+    <MudMainContent>
+        @Body
+
+    </MudMainContent>
+</MudLayout>
+
+
+
+
+
+
+
+
+
+@* 
 
 <div class="page">
     <div class="sidebar">
@@ -17,7 +55,7 @@
     <main>
         <div class="top-row px-4">
             <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-            
+
 
            @* این
                AuthorizeView
@@ -28,7 +66,7 @@
                4- برای اجرای این باید یک پکیج نصب کنی و در  فایل app.razor نیز تنظیماتی دارد
                5- میتونی از policy ها و role ها نیز برای آن استفاده کنی
            *@
-            <AuthorizeView>
+@*             <AuthorizeView>
                 <Authorized>
                     <div>
                         <span>
@@ -43,24 +81,118 @@
                 <Authorizing>
 
                 </Authorizing>
-            </AuthorizeView>
-        </div>
-
-        <article class="content px-4">
+            </AuthorizeView> *@
+@*         </div>
+ *@
+@*     <article class="content px-4">
             @Body
-        </article>
-    </main>
-</div>
+        </article> *@
+@*     </main>
+</div> 
 
-
+ *@
 @code {
 
-    private void ReturnToLogout()
+    private bool drawerOpen = true;
+
+    private void ToggleMenu()
     {
-        nav.NavigateTo("/logout");
+        drawerOpen = !drawerOpen;
     }
-    private void ReturnToLogin()
+
+
+    //theme
+
+    private MudTheme? theme = null;
+    private bool isDarkMode = true;
+    private string darkLightModeButtonIcon => isDarkMode switch
     {
-        nav.NavigateTo("/login");
+        true => Icons.Material.Filled.DarkMode,
+        false => Icons.Material.Filled.LightMode
+    };
+
+    private async void ToggleDarkMode()
+    {
+        isDarkMode = !isDarkMode;
+        await JS.InvokeVoidAsync("localStorage.setItem", "isDarkMode", isDarkMode.ToString().ToLower());
     }
-}
+
+    protected override async Task OnInitializedAsync()
+    {
+        var storedMode = await JS.InvokeAsync<string>("localStorage.getItem", "isDarkMode");
+        if (!string.IsNullOrEmpty(storedMode))
+        {
+            isDarkMode = storedMode == "true";
+        }
+
+        theme = new MudTheme()
+            {
+
+                Typography = new Typography()
+                {
+                    Default = new DefaultTypography()
+                    {
+                        FontFamily = new[] { "Dana", "Arial" }
+                    }
+                },
+                PaletteLight = new PaletteLight()
+                {
+                    Black = "#0D1B2A",
+                    AppbarBackground = "rgba(230, 247, 255, 0.85)",
+                    AppbarText = "#1B263B",
+                    DrawerBackground = "#F0F8FF",
+                    DrawerText = "#1B263B",
+                    GrayLight = "#DDEAF6",
+                    GrayLighter = "#EEF5FB",
+                    Background = "#F5FAFF",
+                    Surface = "#FFFFFF",
+                    Primary = "#1976D2",
+                    PrimaryContrastText = "#FFFFFF",
+                    Secondary = "#64B5F6",
+                    SecondaryContrastText = "#FFFFFF",
+                    Error = "#E53935",
+                    ErrorContrastText = "#FFFFFF",
+                    Success = "#43A047",
+                    SuccessContrastText = "#FFFFFF",
+                    Warning = "#FFC107",
+                    WarningContrastText = "#1B263B",
+                    Info = "#0288D1",
+                    InfoContrastText = "#FFFFFF",
+                },
+                PaletteDark = new PaletteDark()
+                {
+                    Primary = "#7e6fff",
+                    Surface = "#1e1e2d",
+                    Background = "#1a1a27",
+                    BackgroundGray = "#151521",
+                    AppbarText = "#92929f",
+                    AppbarBackground = "rgba(26,26,39,0.8)",
+                    DrawerBackground = "#1a1a27",
+                    ActionDefault = "#74718e",
+                    ActionDisabled = "#9999994d",
+                    ActionDisabledBackground = "#605f6d4d",
+                    TextPrimary = "#b2b0bf",
+                    TextSecondary = "#92929f",
+                    TextDisabled = "#ffffff33",
+                    DrawerIcon = "#92929f",
+                    DrawerText = "#92929f",
+                    GrayLight = "#2a2833",
+                    GrayLighter = "#1e1e2d",
+                    Info = "#4a86ff",
+                    Success = "#3dcb6c",
+                    Warning = "#ffb545",
+                    Error = "#ff3f5f",
+                    LinesDefault = "#33323e",
+                    TableLines = "#33323e",
+                    Divider = "#292838",
+                    OverlayLight = "#1e1e2d80",
+                }
+            };
+
+    }
+
+
+
+
+
+} 
