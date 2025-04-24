@@ -1,6 +1,14 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager nav
 
+@* اضافه کردن کامپوننت  Mud Blazor *@
+
+@* این برای مدیریت تم در  Mud Blazor*@
+ <MudThemeProvider /> 
+
+@*  این برای نمایش tooltip ها و popover ها در  Mud Blazor*@
+ <MudPopoverProvider />
+
 <div class="page">
     <div class="sidebar">
         <NavMenu />

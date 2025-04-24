@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Blog.PanelAdmin.Handlers;
+using MudBlazor.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -56,5 +57,9 @@ builder.Services.AddScoped<ICategoryService, CategoryService>(sp =>
     var httpClient = sp.GetRequiredService<IHttpClientFactory>().CreateClient("ApiWithAuth");
     return new CategoryService(httpClient);
 });
+
+//اضافه کردن سرویس های Mud Blazor
+builder.Services.AddMudServices();
+
 
 await builder.Build().RunAsync();
