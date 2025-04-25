@@ -1,0 +1,67 @@
+﻿@using Blog.PanelAdmin.Models.Categories
+@using Blog.PanelAdmin.Services.Categories
+@inject ICategoryService CategoryService
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <TitleContent>@(IsEditMode ? "ویرایش دسته‌بندی" : "افزودن دسته‌بندی جدید")</TitleContent>
+    <DialogContent>
+        <MudTextField @bind-Value="CategoryModel.Name" Label="نام دسته‌بندی" Required="true" Variant="Variant.Outlined" />
+        <MudTextField @bind-Value="CategoryModel.Description" Label="توضیحات" Variant="Variant.Outlined" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="SaveCategory">@(IsEditMode ? "ذخیره تغییرات" : "افزودن")</MudButton>
+        <MudButton Color="Color.Secondary" OnClick="Cancel">لغو</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] IMudDialogInstance Dialog { get; set; }
+    [Parameter] public bool IsEditMode { get; set; }
+    [Parameter] public CategoryDto? Category { get; set; }
+
+    private CreateCategoryRequest CategoryModel = new();
+
+    protected override void OnInitialized()
+    {
+        if (IsEditMode && Category != null)
+        {
+            CategoryModel.Name = Category.Name;
+            CategoryModel.Description = Category.Description;
+        }
+    }
+
+    private async Task SaveCategory()
+    {
+        try
+        {
+            if (IsEditMode && Category != null)
+            {
+                await CategoryService.UpdateCategoryAsync(Category.Id, new UpdateCategoryRequest
+                    {
+                        Name = CategoryModel.Name,
+                        Description = CategoryModel.Description
+                    });
+            }
+            else
+            {
+                await CategoryService.CreateCategoryAsync(new CreateCategoryRequest
+                    {
+                        Name = CategoryModel.Name,
+                        Description = CategoryModel.Description
+                    });
+            }
+            Dialog.Close(DialogResult.Ok(true));
+        }
+        catch (HttpRequestException ex)
+        {
+            Snackbar.Add($"خطا در ذخیره دسته‌بندی: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private void Cancel()
+    {
+        Dialog.Cancel();
+    }
+}

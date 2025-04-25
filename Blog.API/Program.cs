@@ -1,15 +1,19 @@
 ﻿using Blog.Application.Interfaces;
 using Blog.Application.Interfaces.Authentication;
+using Blog.Application.Interfaces.FileStorage;
 using Blog.Application.Services;
 using Blog.Application.Services.Authentication;
 using Blog.Domain.Entities;
 using Blog.Domain.Interfaces;
 using Blog.Infrastructure.Authentication.Configurations;
 using Blog.Infrastructure.Authentication.Services;
+using Blog.Infrastructure.FileStorage.Settings;
+using Blog.Infrastructure.FileStorage;
 using Blog.Persistence.Contexts;
 using Blog.Persistence.Repositories;
 using Blog.Persistence.Transactions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -170,6 +174,21 @@ builder.Services.AddCors(options =>
               .AllowCredentials();
     });
 });
+
+
+
+#region Upload File Configuration
+
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 500 * 1024 * 1024; //   500 مگابایت
+});
+
+
+builder.Services.Configure<FileStorageSettings>(builder.Configuration.GetSection("FileStorage"));
+
+builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
+#endregion
 
 var app = builder.Build();
 

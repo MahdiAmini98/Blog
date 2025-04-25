@@ -1,6 +1,7 @@
 ﻿using Blog.Application.Contracts.Medias;
 using Blog.Application.DTOs;
 using Blog.Application.Interfaces;
+using Blog.Application.Interfaces.FileStorage;
 using Blog.Domain.Entities;
 using Blog.Domain.Interfaces;
 using System;
@@ -14,62 +15,91 @@ namespace Blog.Application.Services
     public class MediaService : IMediaService
     {
         private readonly IRepository<Media> _mediaRepository;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IRepository<User> _userRepository;
+        private readonly IFileStorageService _fileStorageService;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public MediaService(
-            IRepository<Media> mediaRepository,
-            IUnitOfWork unitOfWork,
-            IRepository<User> userRepository)
+        public MediaService(IRepository<Media> mediaRepository,
+            IRepository<User> userRepository,
+            IFileStorageService fileStorageService, IUnitOfWork unitOfWork)
         {
             _mediaRepository = mediaRepository;
-            _unitOfWork = unitOfWork;
             _userRepository = userRepository;
+            _fileStorageService = fileStorageService;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<MediaDto> UploadMediaAsync(UploadMediaRequest request)
         {
-            // واکشی کاربر بر اساس UploadedById
+            if (string.IsNullOrWhiteSpace(request.Url))
+            {
+                throw new ArgumentException("File URL cannot be empty.", nameof(request.Url));
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Type))
+            {
+                throw new ArgumentException("File type cannot be empty.", nameof(request.Type));
+            }
+
+
+            string fileUrl = request.Url;
+            if (!(await _fileStorageService.FileExistsAsync(request.Url)))
+            {
+                throw new FileNotFoundException("File not found on storage.", request.Url);
+            }
+
+
             var user = await _userRepository.GetByIdAsync(request.UploadedBy);
             if (user == null)
-                throw new KeyNotFoundException($"User with ID {request.UploadedBy} not found.");
+            {
+                throw new KeyNotFoundException("User not found.");
+            }
 
-            // ایجاد یک موجودیت مدیا
-            var media = new Media(request.Url, request.Type, user);
 
+            var media = new Media(fileUrl, request.Type, user);
             _mediaRepository.Add(media);
             await _unitOfWork.CommitAsync();
 
             return new MediaDto
             {
                 Id = media.Id,
-                Url = media.Url,
+                Url = $"{_fileStorageService.GetStoragePath()}{media.Url}",
                 Type = media.Type,
                 UploadedById = media.UploadedById,
                 UploadDate = media.CreatedDate
             };
         }
 
-        public async Task<IEnumerable<MediaDto>> GetAllMediaAsync(int page, int pageSize)
+        public async Task<PaginatedList<MediaDto>> GetAllMediaAsync(int page, int pageSize)
         {
+            var mediaList = await _mediaRepository.GetAllAsync();
 
-            var mediaList = await _mediaRepository.GetPagedAsync(page, pageSize);
+            int totalCount = mediaList.Count();
 
-            return mediaList.Select(media => new MediaDto
-            {
-                Id = media.Id,
-                Url = media.Url,
-                Type = media.Type,
-                UploadedById = media.UploadedById,
-                UploadDate = media.CreatedDate
-            });
+            var paginatedItems = mediaList
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(m => new MediaDto
+                {
+                    Id = m.Id,
+                    Url = $"{_fileStorageService.GetStoragePath()}{m.Url}",
+                    Type = m.Type,
+                    UploadedById = m.UploadedById,
+                    UploadDate = m.CreatedDate
+                })
+                .ToList();
+
+            return new PaginatedList<MediaDto>(paginatedItems, totalCount, page, pageSize);
         }
+
 
         public async Task<MediaDto> GetMediaByIdAsync(Guid id)
         {
             var media = await _mediaRepository.GetByIdAsync(id);
             if (media == null)
+            {
                 throw new KeyNotFoundException($"Media with ID {id} not found.");
+            }
 
             return new MediaDto
             {
@@ -85,8 +115,11 @@ namespace Blog.Application.Services
         {
             var media = await _mediaRepository.GetByIdAsync(id);
             if (media == null)
+            {
                 throw new KeyNotFoundException($"Media with ID {id} not found.");
+            }
 
+            await _fileStorageService.DeleteFileAsync(media.Url);
             _mediaRepository.Remove(media);
             await _unitOfWork.CommitAsync();
         }

@@ -1,51 +1,127 @@
 ﻿@page "/categories"
 @using Blog.PanelAdmin.Models.Categories
 @using Blog.PanelAdmin.Services.Categories
-
+@using Microsoft.AspNetCore.Components.Authorization
 @inject ICategoryService CategoryService
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<MudPaper Class="p-4">
+    <MudText Typo="Typo.h5" Class="mb-3">مدیریت دسته‌بندی‌ها</MudText>
+
+    <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddCategory">
+        افزودن دسته‌بندی جدید
+    </MudButton>
+
+    @if (Categories == null)
+    {
+        <MudProgressLinear Color="Color.Secondary" Indeterminate="true" Class="my-7" />
+    }
+    else if (!Categories.Any())
+    {
+        <MudText Class="mt-4">هیچ دسته‌بندی‌ای پیدا نشد.</MudText>
+    }
+    else
+    {
+        <MudTable Items="Categories" Striped="true" Hover="true" Elevation="1" Class="mt-4">
+            <HeaderContent>
+                <MudTh>نام</MudTh>
+                <MudTh>توضیحات</MudTh>
+                <MudTh>عملیات</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd>@context.Name</MudTd>
+                <MudTd>@context.Description</MudTd>
+                <MudTd>
+                    <MudButton Color="Color.Secondary" Variant="Variant.Outlined" Size="Size.Small" OnClick="@(() => EditCategory(context))">
+                        ویرایش
+                    </MudButton>
+                    <MudButton Color="Color.Error" Variant="Variant.Outlined" Size="Size.Small" Class="ml-2" OnClick="@(() => DeleteCategory(context.Id))">
+                        حذف
+                    </MudButton>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    }
 
 
-<h3>Category List</h3>
-@if (Categories == null)
-{
-    <p>Loading...</p>
-}
-else if (!Categories.Any())
-{
-    <p>No categories found.</p>
-}
-else
-{
-    <ul>
-        @foreach (var category in Categories)
-        {
-            <li>
-                <strong>@category.Name</strong> - @category.Description
-            </li>
-        }
-    </ul>
-}
 
-<b class="text-danger">@ErrorMessage</b>
-
+    @if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <MudText Color="Color.Error">@ErrorMessage</MudText>
+    }
+</MudPaper>
 
 @code {
     private List<CategoryDto>? Categories;
     private string ErrorMessage = string.Empty;
 
-
     protected override async Task OnInitializedAsync()
+    {
+        await LoadCategories();
+    }
+
+    private async Task LoadCategories()
     {
         try
         {
             Categories = await CategoryService.GetCategoriesAsync();
-
         }
         catch (HttpRequestException ex)
         {
-            ErrorMessage = $"Error fetching categories: {ex.Message}";
+            ErrorMessage = $"خطا در دریافت دسته‌بندی‌ها: {ex.Message}";
         }
     }
 
+    private async Task AddCategory()
+    {
+        var parameters = new DialogParameters { ["IsEditMode"] = false };
+        var dialog = DialogService.Show<CategoryDialog>("افزودن دسته‌بندی", parameters);
+        var result = await dialog.Result;
 
+        if (!result.Canceled)
+        {
+            await LoadCategories();
+            Snackbar.Add("دسته‌بندی با موفقیت افزوده شد.", Severity.Success);
+        }
+    }
+
+    private async Task EditCategory(CategoryDto category)
+    {
+        var parameters = new DialogParameters
+            {
+                ["IsEditMode"] = true,
+                ["Category"] = category
+            };
+        var dialog = DialogService.Show<CategoryDialog>("ویرایش دسته‌بندی", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await LoadCategories();
+            Snackbar.Add("دسته‌بندی با موفقیت ویرایش شد.", Severity.Info);
+        }
+    }
+
+    private async Task DeleteCategory(Guid id)
+    {
+        bool? confirmed = await DialogService.ShowMessageBox(
+            "حذف دسته‌بندی",
+            "آیا از حذف این دسته‌بندی مطمئن هستید؟",
+            yesText: "بله", cancelText: "خیر");
+
+        if (confirmed == true)
+        {
+            try
+            {
+                await CategoryService.DeleteCategoryAsync(id);
+                await LoadCategories();
+                Snackbar.Add("دسته‌بندی با موفقیت حذف شد.", Severity.Success);
+            }
+            catch (HttpRequestException ex)
+            {
+                Snackbar.Add($"خطا در حذف دسته‌بندی: {ex.Message}", Severity.Error);
+            }
+        }
+    }
 }
