@@ -1,4 +1,4 @@
-﻿namespace Blog.PanelAdmin.Models.Category
+﻿namespace Blog.PanelAdmin.Models.Categories
 {
     public class CategoryDto
     {

@@ -1,7 +1,7 @@
-﻿using Blog.PanelAdmin.Models.Category;
+﻿using Blog.PanelAdmin.Models.Categories;
 using System.Net.Http.Json;
 
-namespace Blog.PanelAdmin.Services.Category
+namespace Blog.PanelAdmin.Services.Categories
 {
     public interface ICategoryService
     {

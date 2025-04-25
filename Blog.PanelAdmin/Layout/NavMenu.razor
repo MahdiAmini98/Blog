@@ -8,36 +8,13 @@
                 <MudText Typo="Typo.h6" Class="px-4"> Blog Application </MudText>
                 <MudText Typo="Typo.body2" Class="px-4 mud-text-secondary">  @context.User.Identity?.Name  </MudText>
 
+
                 <MudDivider Class="my-2" />
 
-                <MudNavLink Href="/dashboard" Icon="@Icons.Material.Filled.Dashboard" IconColor="Color.Secondary">داشبورد</MudNavLink>
+                <MudNavLink Href="/" Icon="@Icons.Material.Filled.Dashboard" IconColor="Color.Secondary">داشبورد</MudNavLink>
 
+                <MudNavLink Href="/tags" IconColor="Color.Warning" Icon="@Icons.Material.Filled.Label">‌برچسب‌ها</MudNavLink>
 
-                @*   مدیریت پست‌ها   *@
-                <MudNavGroup Title="مدیریت پست‌ها" Icon="@Icons.Material.Filled.Article" IconColor="Color.Tertiary" Expanded="true">
-                    <MudNavLink Href="/posts/new" Icon="@Icons.Material.Filled.AddCircle">ایجاد پست جدید</MudNavLink>
-                    <MudNavLink Href="/posts/manage" Icon="@Icons.Material.Filled.Edit">ویرایش پست‌ها</MudNavLink>
-                    <MudNavLink Href="/posts/categories" Icon="@Icons.Material.Filled.Category">دسته‌بندی‌ها</MudNavLink>
-                </MudNavGroup>
-
-
-                @*   مدیریت کاربران   *@
-                <MudNavGroup Title="مدیریت کاربران" Icon="@Icons.Material.Filled.People" IconColor="Color.Success" Expanded="false">
-                    <MudNavLink Href="/users" Icon="@Icons.Material.Filled.List">لیست کاربران</MudNavLink>
-                    <MudNavLink Href="/users/roles" Icon="@Icons.Material.Filled.Security">نقش‌ها و دسترسی‌ها</MudNavLink>
-                </MudNavGroup>
-
-                @*   تنظیمات وبلاگ  *@
-                <MudNavGroup Title="تنظیمات" Icon="@Icons.Material.Filled.Settings" Expanded="false">
-                    <MudNavLink Href="/settings/general" Icon="@Icons.Material.Filled.Tune">تنظیمات عمومی</MudNavLink>
-                    <MudNavLink Href="/settings/appearance" Icon="@Icons.Material.Filled.Palette">ظاهر و قالب</MudNavLink>
-                </MudNavGroup>
-
-                @*   گزارش‌ها    *@ 
-       <MudNavLink Href="/reports" Icon="@Icons.Material.Filled.Assessment">گزارش‌ها</MudNavLink>
-
-                @* صورتحساب‌ها *@
-                <MudNavLink Href="/billing" Icon="@Icons.Material.Filled.Receipt">صورتحساب‌ها</MudNavLink>
 
             </MudNavMenu>
         </Authorized>
