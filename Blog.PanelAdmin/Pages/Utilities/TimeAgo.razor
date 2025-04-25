@@ -1,0 +1,24 @@
+﻿<MudText>@GetTimeAgo()</MudText>
+
+@code {
+    [Parameter]
+    public DateTime Date { get; set; }
+
+    private string GetTimeAgo()
+    {
+        var timeSpan = DateTime.UtcNow - Date;
+
+        if (timeSpan.TotalSeconds < 60)
+            return $"{timeSpan.Seconds} ثانیه پیش";
+        if (timeSpan.TotalMinutes < 60)
+            return $"{timeSpan.Minutes} دقیقه پیش";
+        if (timeSpan.TotalHours < 24)
+            return $"{timeSpan.Hours} ساعت پیش";
+        if (timeSpan.TotalDays < 30)
+            return $"{timeSpan.Days} روز پیش";
+        if (timeSpan.TotalDays < 365)
+            return $"{timeSpan.Days / 30} ماه پیش";
+        return $"{timeSpan.Days / 365} سال پیش";
+    }
+
+}

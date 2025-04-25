@@ -222,6 +222,9 @@ app.Use(async (context, next) =>
     }
 });
 
+//upload file
+app.UseStaticFiles();
+
 app.UseHttpsRedirection();
 app.UseAuthorization();
 

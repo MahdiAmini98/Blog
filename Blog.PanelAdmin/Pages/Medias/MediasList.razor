@@ -1,11 +1,126 @@
 ﻿@page "/media"
+@using Blog.PanelAdmin.Models.Medias
+@using Blog.PanelAdmin.Models.Pagination
 @using Blog.PanelAdmin.Services.Medias
+@using Blog.PanelAdmin.Pages.Utilities
 @inject IMediaService MediaService
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
 
 <MudText Typo="Typo.h5">مدیریت فایل‌ها</MudText>
 
-<FileUploader />
+<FileUploader OnFilesUploaded="HandleFilesUploaded" />
+<MudDivider />
+
+@if (IsLoading)
+{
+    <MudProgressLinear Color="Color.Warning" Indeterminate="true" Class="my-7" />
+}
+<MudTable Items="@MediaFiles.Items">
+    <HeaderContent>
+        <MudTh>فایل</MudTh>
+        <MudTh>نوع</MudTh>
+        <MudTh>زمان آپلود</MudTh>
+        <MudTh>عملیات</MudTh>
+    </HeaderContent>
+    <RowTemplate Context="media">
+        <MudTd>
+            <MediaPreview Type="@media.Type"  Url="@media.Url"/>
+        </MudTd>
+        <MudTd>
+            @media.Type
+        </MudTd>
+        <MudTd>
+            <TimeAgo Date="@media.UploadDate"></TimeAgo>
+        </MudTd>
+        <MudTd>
+            <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error"
+            OnClick="()=>DeleteMedia(media.Id)">حذف</MudButton>
+            <ClipboardCopy TextToCopy="@media.Url" ButtonText="کپی لینک"></ClipboardCopy>
+
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+<div class="d-flex flex-column align-center">
+    <MudPagination Count="@TotalPages"
+        ShowFirstButton="true"
+        ShowLastButton="true"
+        ShowPageButtons=true
+        SelectedChanged="ChangePage" />
+</div>
+
 
 @code {
+    private PaginatedList<MediaDto> MediaFiles = new(new List<MediaDto>(), 0, 1, 10);
+    private int CurrentPage = 1;
+    private int PageSize = 10;
+    private bool IsLoading = false;
+    private int TotalCount = 0;
+
+    // محاسبه تعداد صفحات
+    private int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadMedia();
+    }
+
+    private async Task LoadMedia()
+    {
+        IsLoading = true;
+        MediaFiles = await MediaService.GetAllMediaAsync(CurrentPage, PageSize);
+        TotalCount = MediaFiles.TotalCount;
+        IsLoading = false;
+
+    }
+
+    private async Task HandleFilesUploaded()
+    {
+        await LoadMedia();
+    }
+
+
+    private async Task DeleteMedia(Guid id)
+    {
+        bool? confirmed = await DialogService.ShowMessageBox(
+            title: "⚠️ حذف فایل",
+            markupMessage: (MarkupString)"<span style='color: red; font-weight: bold;'>این عملیات غیرقابل بازگشت است! آیا مطمئن هستید؟</span>",
+            yesText: "🗑️ بله، حذف شود",
+            cancelText: "❌ خیر، لغو کن",
+            options: new DialogOptions
+                {
+                    CloseButton = true,
+                    MaxWidth = MaxWidth.Small,
+                    BackdropClick = true,
+                    CloseOnEscapeKey = true,
+                }
+        );
+
+
+        if(confirmed == true)
+        {
+            try
+            {
+                bool success = await MediaService.DeleteMediaAsync(id);
+                await LoadMedia();
+                Snackbar.Add("فایل با موفقیت حذف شد.", Severity.Success);
+            }
+            catch (HttpRequestException ex)
+            {
+                Snackbar.Add($"خطا در حذف فایل: {ex.Message}", Severity.Error);
+            }
+        }
+
+
+
+    }
+
+
+    private async Task ChangePage(int page)
+    {
+        CurrentPage = page;
+        await LoadMedia();
+    }
 
 }

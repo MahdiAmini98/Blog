@@ -1,0 +1,30 @@
+﻿@inject IJSRuntime JS
+@inject ISnackbar Snackbar
+
+<MudButton StartIcon="@Icons.Material.Filled.ContentCopy"
+           OnClick="CopyToClipboard">
+    @ButtonText
+</MudButton>
+
+@code {
+    [Parameter]
+    public string? TextToCopy { get; set; }
+    [Parameter]
+    public string ButtonText { get; set; } = string.Empty;
+
+    private async Task CopyToClipboard()
+    {
+        if (!string.IsNullOrEmpty(TextToCopy))
+        {
+            await JS.InvokeVoidAsync("navigator.clipboard.writeText", TextToCopy);
+            Snackbar.Add("متن در کلیپ‌بورد کپی شد!", Severity.Info, options =>
+            {
+                options.IconColor = Color.Dark;
+            });
+        }
+        else
+        {
+            Snackbar.Add("متنی برای کپی وجود ندارد!", Severity.Warning);
+        }
+    }
+}

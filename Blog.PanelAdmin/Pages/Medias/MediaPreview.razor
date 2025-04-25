@@ -1,0 +1,23 @@
+﻿@if (Type == "image")
+{
+    <MudImage Width="100" Height="100" src="@Url" Alt="Img File" Elevation="25" Class="rounded-lg" />
+}
+else if (Type == "video")
+{
+    <MudIcon Icon="@Icons.Material.Filled.VideoLibrary" Color="Color.Primary" Size="Size.Large" />
+}
+else if (Type == "document")
+{
+    <MudIcon Icon="@Icons.Material.Filled.Description" Color="Color.Secondary" Size="Size.Large" />
+}
+else
+{
+    <MudIcon Icon="@Icons.Material.Filled.HelpOutline" Color="Color.Warning" Size="Size.Large" />
+}
+@code {
+
+    [Parameter]
+    public string Url { get; set; } = "";
+    [Parameter]
+    public string Type { get; set; } = "unknown";
+}

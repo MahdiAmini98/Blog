@@ -44,7 +44,7 @@ namespace Blog.Domain.Entities
             }
 
             // اعتبارسنجی فرمت URL
-            if (!Uri.TryCreate(url, UriKind.Absolute, out _))
+            if (!Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out _))
             {
                 throw new ArgumentException("Invalid file URL format.", nameof(url));
             }
