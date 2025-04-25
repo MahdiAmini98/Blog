@@ -10,6 +10,7 @@ using Blog.PanelAdmin.Handlers;
 using MudBlazor.Services;
 using Blog.PanelAdmin.Services.Categories;
 using Blog.PanelAdmin.Extensions;
+using MudBlazor;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -38,7 +39,19 @@ builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStat
 builder.Services.AddApplicationServices();
 
 //اضافه کردن سرویس های Mud Blazor
-builder.Services.AddMudServices();
+builder.Services.AddMudServices(config =>
+{
+    //تنظیمات پیش فرض برای snack bar 
+    config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
+
+    config.SnackbarConfiguration.PreventDuplicates = false;
+    config.SnackbarConfiguration.NewestOnTop = false;
+    config.SnackbarConfiguration.ShowCloseIcon = true;
+    config.SnackbarConfiguration.VisibleStateDuration = 10000;
+    config.SnackbarConfiguration.HideTransitionDuration = 500;
+    config.SnackbarConfiguration.ShowTransitionDuration = 500;
+    config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
+});
 
 
 await builder.Build().RunAsync();
