@@ -1,0 +1,69 @@
+﻿@page "/tags"
+@using Blog.PanelAdmin.Models.Tags
+@using Blog.PanelAdmin.Services.Tag
+@inject ITagService tagService
+
+
+<MudPaper Class="p-4">
+    <MudText Typo="Typo.h5" Class="mb-3">مدیریت برچسب ها</MudText>
+
+    @if (tags == null)
+    {
+        <MudProgressLinear Color="Color.Secondary" Indeterminate="true" Class="my-7" />
+
+    }
+    else if (!tags.Any())
+    {
+        <MudText Class="mt-4">هیچ برچسبی پیدا نشد.</MudText>
+
+    }
+    else
+    {
+        <MudTable Items="tags" Striped="true" Hover="true" Class="mt-4" Elevation="3">
+
+            <HeaderContent>
+                <MudTd>نام</MudTd>
+                <MudTd></MudTd>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd>@context.Name</MudTd>
+                <MudTd>
+                    <MudButton Color="Color.Secondary" Variant="Variant.Outlined" Size="Size.Small">
+                        ویرایش
+                    </MudButton>
+                    <MudButton Color="Color.Error" Variant="Variant.Outlined" Size="Size.Small" Class="ml-2">
+                        حذف
+                    </MudButton>
+                </MudTd>
+            </RowTemplate>
+
+        </MudTable>
+    }
+
+    @if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <MudText Color="Color.Error">@ErrorMessage</MudText>
+    }
+</MudPaper>
+
+
+@code {
+    private List<TagDto> tags;
+    private string ErrorMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTags();
+    }
+    private async Task LoadTags()
+    {
+        try
+        {
+            tags = await tagService.GetTagsAsync();
+        }
+        catch (Exception e)
+        {
+            ErrorMessage = $"خطا در دریافت برچسب ها: {e.Message}";
+        }
+    }
+}
