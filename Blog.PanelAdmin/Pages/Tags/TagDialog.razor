@@ -1,0 +1,70 @@
+﻿@using Blog.PanelAdmin.Models.Tags
+@using Blog.PanelAdmin.Services.Tag
+@inject ITagService TagService
+@inject ISnackbar Snackbar
+
+
+<MudDialog>
+    <TitleContent>@(IsEditMode ? "ویرایش برچسب" : "افزودن برچسب جدید")</TitleContent>
+
+    <DialogContent>
+        <MudTextField @bind-Value=TagModel.Name Label="نام برچسب" Required="true" Variant="Variant.Outlined" />
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="SaveTag">@(IsEditMode ? "ذخیره تغییرات" : "افزودن")</MudButton>
+        <MudButton Color="Color.Secondary" OnClick="Cancel">لغو</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+
+    [CascadingParameter]
+    IMudDialogInstance DialogInstance { get; set; }
+
+    [Parameter]
+    public bool IsEditMode { get; set; }
+
+    [Parameter]
+    public TagDto? Tag { get; set; }
+
+    private CreateTagRequestDto TagModel = new();
+
+
+    protected override void OnInitialized()
+    {
+        if (IsEditMode && Tag != null)
+        {
+            TagModel.Name = Tag.Name;
+        }
+    }
+
+
+    private async Task SaveTag()
+    {
+        try
+        {
+            if (IsEditMode && Tag != null)
+            {
+                await TagService.UpdateTagAsync(Tag.Id, new UpdateTagRequestDto { Name = TagModel.Name });
+
+            }
+            else
+            {
+                await TagService.CreateTagAsync(new CreateTagRequestDto { Name = TagModel.Name });
+            }
+
+            DialogInstance.Close(DialogResult.Ok(true));
+
+        }
+        catch (HttpRequestException ex)
+        {
+            Snackbar.Add($"خطا در ذخیره برچسب: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private void Cancel()
+    {
+        DialogInstance.Cancel();
+    }
+}

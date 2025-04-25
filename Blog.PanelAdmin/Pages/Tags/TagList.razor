@@ -1,25 +1,36 @@
 ﻿@page "/tags"
 @using Blog.PanelAdmin.Models.Tags
 @using Blog.PanelAdmin.Services.Tag
-@inject ITagService tagService
+@inject ITagService TagService
+@* نمایش مودال که در mud blazor به آن Dialog  می گویند *@
+@inject IDialogService DialogService
+
+@* نمایش مودال که در mud blazor به آن Snackbar  می گویند *@
+@inject ISnackbar Snackbar
 
 
 <MudPaper Class="p-4">
-    <MudText Typo="Typo.h5" Class="mb-3">مدیریت برچسب ها</MudText>
 
-    @if (tags == null)
+
+    <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddTag">
+        افزودن برچسب جدید
+    </MudButton>
+
+
+    <MudText Typo="Typo.h5" Class="mb-3">مدیریت برچسب‌ها</MudText>
+
+
+    @if (Tags == null)
     {
         <MudProgressLinear Color="Color.Secondary" Indeterminate="true" Class="my-7" />
-
     }
-    else if (!tags.Any())
+    else if (!Tags.Any())
     {
         <MudText Class="mt-4">هیچ برچسبی پیدا نشد.</MudText>
-
     }
     else
     {
-        <MudTable Items="tags" Striped="true" Hover="true" Class="mt-4" Elevation="3">
+        <MudTable Items="Tags" Striped="true" Hover="true" Class="mt-4" Elevation="3">
 
             <HeaderContent>
                 <MudTd>نام</MudTd>
@@ -28,42 +39,115 @@
             <RowTemplate>
                 <MudTd>@context.Name</MudTd>
                 <MudTd>
-                    <MudButton Color="Color.Secondary" Variant="Variant.Outlined" Size="Size.Small">
+                    <MudButton Color="Color.Secondary" Variant="Variant.Outlined" Size="Size.Small"
+                               OnClick="@(()=> EditTag(context))">
                         ویرایش
                     </MudButton>
-                    <MudButton Color="Color.Error" Variant="Variant.Outlined" Size="Size.Small" Class="ml-2">
+                    <MudButton StartIcon="@Icons.Material.Filled.Delete"
+                               Color="Color.Error" Variant="Variant.Outlined" Size="Size.Small" Class="ml-2"
+                               OnClick="@( () => DeleteTag(context.Id))">
                         حذف
                     </MudButton>
                 </MudTd>
             </RowTemplate>
-
         </MudTable>
+
     }
 
     @if (!string.IsNullOrEmpty(ErrorMessage))
     {
         <MudText Color="Color.Error">@ErrorMessage</MudText>
     }
+
 </MudPaper>
 
 
 @code {
-    private List<TagDto> tags;
+    private List<TagDto>? Tags;
+
     private string ErrorMessage = string.Empty;
+
 
     protected override async Task OnInitializedAsync()
     {
         await LoadTags();
     }
+
     private async Task LoadTags()
     {
         try
         {
-            tags = await tagService.GetTagsAsync();
+            Tags = await TagService.GetTagsAsync();
         }
-        catch (Exception e)
+        catch (HttpRequestException ex)
         {
-            ErrorMessage = $"خطا در دریافت برچسب ها: {e.Message}";
+            ErrorMessage = $"خطا در دریافت برچسب‌ها: {ex.Message}";
+        }
+
+    }
+
+
+    private async Task DeleteTag(Guid id)
+    {
+
+        bool? confirmed = await DialogService.ShowMessageBox("حذف برچسب",
+        "آیا از حذف این برچسب مطمئن هستید؟", yesText: "بله", cancelText: "خیر"
+
+        , options: new DialogOptions
+            {
+                CloseButton = true,
+            });
+        if (confirmed == true)
+        {
+            try
+            {
+                await TagService.DeleteTagAsync(id);
+                await LoadTags();
+                Snackbar.Add("برچسب با موفقیت حذف شد.", Severity.Success);
+            }
+            catch (HttpRequestException ex)
+            {
+                Snackbar.Add($"خطا در حذف برچسب: {ex.Message}", Severity.Error);
+
+            }
+
+        }
+
+    }
+
+
+    private async Task AddTag()
+    {
+
+        var parameters = new DialogParameters
+            {
+                ["IsEditMode"] = false,
+            };
+
+        var dialog = DialogService.Show<TagDialog>("", parameters: parameters);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await LoadTags();
+            Snackbar.Add("برچسب با موفقیت افزوده شد.", Severity.Success);
+        }
+    }
+
+    private async Task EditTag(TagDto tag)
+    {
+        var parameters = new DialogParameters
+            {
+                ["IsEditMode"] = true,
+                ["Tag"] = tag
+            };
+        var dialog = DialogService.Show<TagDialog>("", parameters: parameters);
+        var result = await dialog.Result;
+        if (!result.Canceled)
+        {
+            await LoadTags();
+            Snackbar.Add("برچسب با موفقیت ویرایش شد.", Severity.Info);
         }
     }
 }
