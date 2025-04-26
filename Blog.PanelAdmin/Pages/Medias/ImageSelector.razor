@@ -1,0 +1,129 @@
+﻿@using Blog.PanelAdmin.Models.Medias
+@using Blog.PanelAdmin.Services.Medias
+@using Models.Pagination;
+@inject IMediaService MediaService
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <TitleContent>انتخاب تصویر</TitleContent>
+    <DialogContent>
+        <div style="height:350px; overflow-y:auto;">
+
+            <MudGrid>
+                @if (IsLoading)
+                {
+                    <MudItem xs="12">
+                        <MudProgressCircular Indeterminate="true" />
+                    </MudItem>
+                }
+                else if (MediaFiles.Items.Count == 0)
+                {
+                    <MudItem xs="12">
+                        <MudText>تصویری موجود نیست</MudText>
+                    </MudItem>
+                }
+                else
+                {
+                    foreach (var img in MediaFiles.Items.Where(x=> x.Type == "image"))
+                    {
+                        <MudItem xs="6" sm="4" md="3" lg="2">
+                            <div class="image-tile  @(selectedImg != null && selectedImg?.Id == img.Id?"selected":"")" style="cursor:pointer; margin:5px"
+                            @onclick="(()=> OnImageClick(img))"
+                            @ondblclick="(()=> OnImageDoubleClick(img))">
+                                <img src="@img.Url" style="width:100px; height:auto;" alt="تصویر" />
+                            </div>
+                        </MudItem>
+                    }
+                }
+            </MudGrid>
+        </div>
+
+        <FileUploader OnFilesUploaded="HandleFilesUploaded" Height="80"></FileUploader>
+
+
+        <MudPagination Count="TotalPages" ShowFirstButton="true" ShowLastButton="true" SelectedChanged="OnPagedChanged"/>
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="Cancel" Color="@Color.Secondary">لغو</MudButton>
+        <MudButton Disabled="@(selectedImg == null)" OnClick="ConfirmSelection" Color="@Color.Primary">انتخاب</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+
+@code {
+    [CascadingParameter]
+    public IMudDialogInstance MudDialog { get; set; }
+    private MediaDto selectedImg;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadImages(CurrentPage);
+    }
+
+
+    public async Task LoadImages(int page)
+    {
+        try
+        {
+            IsLoading = true;
+            MediaFiles = await MediaService.GetAllMediaAsync(page, PageSize, "image");
+            TotalCount = MediaFiles.TotalCount;
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"خطا در بارگزاری تصویر: {ex.Message}");
+            MediaFiles = new(new List<MediaDto>(), 0, page, PageSize);
+            TotalCount = 0;
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    public void OnImageClick(MediaDto img)
+    {
+        selectedImg = img;
+    }
+
+    public void OnImageDoubleClick(MediaDto img)
+    {
+        selectedImg = img;
+        ConfirmSelection();
+    }
+    public void ConfirmSelection()
+    {
+        if (selectedImg != null)
+        {
+            MudDialog.Close(DialogResult.Ok(selectedImg.Url));
+        }
+    }
+
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+
+
+    private async Task HandleFilesUploaded()
+    {
+        await LoadImages(1);
+    }
+
+    //Pagination
+    private const int PageSize = 20;
+    private PaginatedList<MediaDto> MediaFiles = new(new List<MediaDto>(), 0, 10, PageSize);
+    private bool IsLoading = false;
+    private int CurrentPage = 1;
+    private int TotalCount = 0;
+    private int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
+    private async Task OnPagedChanged(int page)
+    {
+        CurrentPage = page;
+        await LoadImages(page);
+    }
+}

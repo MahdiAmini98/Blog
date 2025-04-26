@@ -7,7 +7,7 @@ namespace Blog.PanelAdmin.Services.Medias
 {
     public interface IMediaService
     {
-        Task<PaginatedList<MediaDto>> GetAllMediaAsync(int page, int pageSize);
+        Task<PaginatedList<MediaDto>> GetAllMediaAsync(int page, int pageSize, string? fileType);
         Task<MediaDto?> GetMediaByIdAsync(Guid id);
         Task<bool> UploadMediaAsync(Stream fileStream, string fileName, string type);
         Task<bool> DeleteMediaAsync(Guid id);
@@ -21,9 +21,9 @@ namespace Blog.PanelAdmin.Services.Medias
             _httpClient = httpClient;
         }
 
-        public async Task<PaginatedList<MediaDto>> GetAllMediaAsync(int page, int pageSize)
+        public async Task<PaginatedList<MediaDto>> GetAllMediaAsync(int page, int pageSize, string? fileType)
         {
-            return await _httpClient.GetFromJsonAsync<PaginatedList<MediaDto>>($"api/media?page={page}&pageSize={pageSize}")
+            return await _httpClient.GetFromJsonAsync<PaginatedList<MediaDto>>($"api/media?page={page}&pageSize={pageSize}&fileType={fileType}")
                    ?? new PaginatedList<MediaDto>(new List<MediaDto>(), 0, page, pageSize);
         }
 

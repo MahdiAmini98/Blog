@@ -1,0 +1,14 @@
+﻿.image-tile {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: box-shadow 0.2s ease-in-out;
+    padding: 2px;
+}
+
+    .image-tile.selected {
+        border: 2px solid blue;
+    }
+
+    .image-tile:hover {
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+    }

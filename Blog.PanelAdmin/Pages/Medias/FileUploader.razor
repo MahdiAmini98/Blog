@@ -7,19 +7,19 @@
         <MudItem>
 
             <MudFileUpload T="IReadOnlyList<IBrowserFile>"
-                           @ref=_fileUpload
-                           @bind-Files=_model.Files
-                           @ondragenter="SetDragClass"
-                           @ondrop="ClearDragClass"
-                           @ondragleave="ClearDragClass"
-                           @ondragend="ClearDragClass"
-                           Hidden="@false"
-                           InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
-                           InputStyle="opacity:0"
-                           AppendMultipleFiles="true">
+            @ref=_fileUpload
+            @bind-Files=_model.Files
+            @ondragenter="SetDragClass"
+            @ondrop="ClearDragClass"
+            @ondragleave="ClearDragClass"
+            @ondragend="ClearDragClass"
+            Hidden="@false"
+            InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
+            InputStyle="opacity:0"
+            AppendMultipleFiles="true">
 
                 <ActivatorContent>
-                    <MudPaper Height="200px" Outlined="true" Class="@_dragClass">
+                    <MudPaper Height="@($"{Height}px")" Outlined="true" Class="@_dragClass">
 
                         <MudText Typo="Typo.h6">
                             فایل‌های خود را اینجا بکشید و رها کنید یا کلیک کنید
@@ -47,13 +47,13 @@
                         انتخاب فایل
                     </MudButton>
                     <MudButton Color="Color.Primary"
-                               Variant="Variant.Filled" OnClick="UploadFiles"
-                               Disabled="@( !isValid || _model.Files is null || !_model.Files.Any())">
+                    Variant="Variant.Filled" OnClick="UploadFiles"
+                    Disabled="@( !isValid || _model.Files is null || !_model.Files.Any())">
                         شروع آپلود
                     </MudButton>
                     <MudButton Color="Color.Error"
-                               Variant="Variant.Filled" OnClick="ClearAsync"
-                               Disabled="@(_model.Files is null || !_model.Files.Any())">
+                    Variant="Variant.Filled" OnClick="ClearAsync"
+                    Disabled="@(_model.Files is null || !_model.Files.Any())">
                         حذف فایل های انتخاب شده
                     </MudButton>
                 }
@@ -66,7 +66,10 @@
 
 
 @code {
-
+    
+    [Parameter]
+    public int Height { get; set; } = 200;
+    
     [Parameter]
     public EventCallback OnFilesUploaded { get; set; }
 

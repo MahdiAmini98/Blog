@@ -41,21 +41,21 @@ namespace Blog.Application.Services
                 throw new ArgumentException("File type cannot be empty.", nameof(request.Type));
             }
 
-
+            // ذخیره فایل و دریافت URL جدید (در صورت نیاز)
             string fileUrl = request.Url;
             if (!(await _fileStorageService.FileExistsAsync(request.Url)))
             {
                 throw new FileNotFoundException("File not found on storage.", request.Url);
             }
 
-
+            // جستجوی کاربر آپلودکننده در دیتابیس
             var user = await _userRepository.GetByIdAsync(request.UploadedBy);
             if (user == null)
             {
                 throw new KeyNotFoundException("User not found.");
             }
 
-
+            // ذخیره در دیتابیس
             var media = new Media(fileUrl, request.Type, user);
             _mediaRepository.Add(media);
             await _unitOfWork.CommitAsync();
@@ -70,10 +70,13 @@ namespace Blog.Application.Services
             };
         }
 
-        public async Task<PaginatedList<MediaDto>> GetAllMediaAsync(int page, int pageSize)
+        public async Task<PaginatedList<MediaDto>> GetAllMediaAsync(int page, int pageSize, string? fileType)
         {
             var mediaList = await _mediaRepository.GetAllAsync();
-
+            if (!string.IsNullOrWhiteSpace(fileType))
+            {
+                mediaList = mediaList.Where(p => p.Type == fileType);
+            }
             int totalCount = mediaList.Count();
 
             var paginatedItems = mediaList

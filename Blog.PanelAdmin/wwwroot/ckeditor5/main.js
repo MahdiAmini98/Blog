@@ -414,3 +414,15 @@ export function setEditorContent(content) {
 	}
 }
 
+
+export function insertImageUrl(url) {
+
+	if (!editorInstance) return;
+
+	editorInstance.model.change(writer => {
+		const imageElement = writer.createElement('imageBlock', {
+			src: url
+		});
+		editorInstance.model.insertContent(imageElement, editorInstance.model.document.selection);
+	});
+}

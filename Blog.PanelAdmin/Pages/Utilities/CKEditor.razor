@@ -1,7 +1,11 @@
-﻿@inject IJSRuntime JSRuntime
-
+﻿@using Blog.PanelAdmin.Pages.Medias
+@inject IJSRuntime JSRuntime
+@inject IDialogService DialogService
 
 <div class="main-container">
+
+    <MudButton Color="@Color.Primary" Variant="Variant.Filled" OnClick="OpenImageDialogFromJs">انتخاب تصویر</MudButton>
+
     <div id="editor-menu-bar" class="mt-2"></div>
     <div class="editor-container" id="editor-container">
         <div id="editor"></div>
@@ -34,7 +38,7 @@
     [JSInvokable("OnEditorBlur")]
     public async Task OnEditorBlur(string newContent)
     {
-
+        await OnContentChanged.InvokeAsync(newContent);
     }
 
     public async Task SetEditorContent()
@@ -42,6 +46,32 @@
         if (module == null)
             return;
 
-     await module.InvokeVoidAsync("setEditorContent", InitialContent);
+        await module.InvokeVoidAsync("setEditorContent", InitialContent);
     }
+
+    public async Task OpenImageDialogFromJs()
+    {
+        var parameters = new DialogParameters();
+        var options = new DialogOptions()
+        {
+            MaxWidth = MaxWidth.Medium,
+            FullWidth = true
+        };
+
+        var dialog = DialogService.Show<ImageSelector>("", options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            var url = result.Data?.ToString();
+            await InsertImageInEditor(url);
+        }
+    }
+
+    private async Task InsertImageInEditor(string imageUrl)
+    {
+        await module.InvokeVoidAsync("insertImageUrl", imageUrl);
+    }
+
+
 }

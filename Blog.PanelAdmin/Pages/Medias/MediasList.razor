@@ -68,7 +68,7 @@
     private async Task LoadMedia()
     {
         IsLoading = true;
-        MediaFiles = await MediaService.GetAllMediaAsync(CurrentPage, PageSize);
+        MediaFiles = await MediaService.GetAllMediaAsync(CurrentPage, PageSize, null);
         TotalCount = MediaFiles.TotalCount;
         IsLoading = false;
 
