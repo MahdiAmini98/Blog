@@ -1,0 +1,47 @@
+﻿@inject IJSRuntime JSRuntime
+
+
+<div class="main-container">
+    <div id="editor-menu-bar" class="mt-2"></div>
+    <div class="editor-container" id="editor-container">
+        <div id="editor"></div>
+    </div>
+    <div id="editor-word-count" class="mt-2"></div>
+</div>
+
+
+@code {
+    private DotNetObjectReference<CKEditor> dotNetRef;
+
+    [Parameter]
+    public string InitialContent{ get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnContentChanged { get; set; }
+    private IJSObjectReference? module; 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./ckeditor5/main.js");
+
+            dotNetRef = DotNetObjectReference.Create(this);
+            await module.InvokeVoidAsync("initializeEditor", dotNetRef);
+            await SetEditorContent();
+        }
+    }
+
+    [JSInvokable("OnEditorBlur")]
+    public async Task OnEditorBlur(string newContent)
+    {
+
+    }
+
+    public async Task SetEditorContent()
+    {
+        if (module == null)
+            return;
+
+     await module.InvokeVoidAsync("setEditorContent", InitialContent);
+    }
+}

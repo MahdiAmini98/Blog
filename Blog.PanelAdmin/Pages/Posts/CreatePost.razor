@@ -1,0 +1,8 @@
+﻿@page "/posts/create"
+
+<CKEditor InitialContent="<b>sallam</b>" OnContentChanged="(CkContent) => Content = CkContent"></CKEditor>
+<textarea>@Content</textarea>
+@code {
+
+    public string Content{ get; set; }
+}
