@@ -1,8 +1,17 @@
 ﻿@page "/posts/create"
+@using Blog.PanelAdmin.Models.Posts
 
-<CKEditor InitialContent="<b>sallam</b>" OnContentChanged="(ckContent)=> Content= ckContent"></CKEditor>
-<textarea>@Content</textarea>
+<PostBaseInfo PostModel="Model" OnValidSubmit="HandleCreatePost">
+    <CKEditor OnContentChanged="(ckContent)=> Model.Content= ckContent"></CKEditor>
+</PostBaseInfo>
+
+
 @code {
-
+    private CreatePostRequestData Model { get; set; } = new();
     public string Content{ get; set; }
+
+    private async Task HandleCreatePost()
+    {
+        
+    }
 }

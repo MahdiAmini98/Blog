@@ -1,0 +1,55 @@
+﻿@using Blog.PanelAdmin.Models.Posts
+<h3>PostBaseInfo</h3>
+
+<EditForm OnValidSubmit="OnValidSubmit" Model="PostModel">
+<DataAnnotationsValidator/>
+<ValidationSummary/>
+
+
+<MudItem xs="12">
+    <MudTextField T="string" Label="عنوان پست" @bind-Value="PostModel.Title" Immediate="true" HelperText="آموزش سی شارپ"
+    />
+    <ValidationMessage For="(() => PostModel.Title)"/>
+</MudItem>
+
+    <MudItem xs="12" md="6">
+        <MudSelect T="PostStatus"
+                   Label="وضعیت پست"
+                   @bind-Value="PostModel.Status">
+            <MudSelectItem T="PostStatus" Value="PostStatus.Draft">ذخیره به عنوان پیش‌نویس (عدم نمایش عمومی)</MudSelectItem>
+            <MudSelectItem T="PostStatus" Value="PostStatus.Published">انتشار پست (قابل مشاهده برای همه)</MudSelectItem>
+            <MudSelectItem T="PostStatus" Value="PostStatus.Archived">بایگانی (غیرقابل نمایش اما قابل بازیابی)</MudSelectItem>
+        </MudSelect>
+        <ValidationMessage For="() => PostModel.Status" />
+
+    </MudItem>
+
+
+    <MudItem xs="12">
+        <MudTextField T="string"
+                      Label="خلاصه"
+                      @bind-Value="PostModel.Summary"
+                      Immediate="true"
+                      Lines="2"
+                      HelperText="خلاصه کوتاهی از محتوای پست" />
+        <ValidationMessage For="() => PostModel.Summary" />
+    </MudItem>
+@* 
+    <MudItem xs="12" md="12">
+        <ThumbnailSelector @bind-ThumbnailUrl="PostModel.ThumbnailUrl" />
+        <ValidationMessage For="() => PostModel.ThumbnailUrl" />
+     </MudItem> *@
+
+@ChildContent
+</EditForm>
+
+@code {
+    [Parameter]
+    public BasePostRequestDto PostModel { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; } 
+
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; }
+}

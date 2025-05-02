@@ -18,7 +18,7 @@
     private DotNetObjectReference<CKEditor> dotNetRef;
 
     [Parameter]
-    public string InitialContent{ get; set; }
+    public string InitialContent { get; set; } = string.Empty;
 
     [Parameter]
     public EventCallback<string> OnContentChanged { get; set; }
