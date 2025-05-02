@@ -1,0 +1,43 @@
+﻿@using Blog.PanelAdmin.Models.Posts
+
+<MudExpansionPanels Class="mb-4" MultiExpansion="false">
+    <MudExpansionPanel Text="SEO" Expanded="true">
+        <MudGrid Spacing="3">
+            <MudItem xs="12" md="6">
+                <MudTextField T="string"
+                              Label="Slug"
+                              @bind-Value="PostModel.Slug"
+                              Immediate="true"
+                              MaxLength="100"
+                              HelperText="لطفا یک مقدار یکتا وارد کنید که شامل حروف انگلیسی، اعداد و خط تیره باشد"/>
+                <ValidationMessage For="() => PostModel.Slug"/>
+            </MudItem>
+
+            <MudItem xs="12" md="6">
+                <MudTextField T="string"
+                              Label="متا تگ عنوان "
+                              @bind-Value="PostModel.MetaTitle"
+                              Immediate="true"
+                              MaxLength="100"
+                              HelperText="متنی که در تایتل مرورگر و نتایج جستجو وارد می شود" />
+                <ValidationMessage For="() => PostModel.MetaTitle" />
+            </MudItem>
+
+            <MudItem xs="12" md="6">
+                <MudTextField T="string"
+                              Label="متا تگ توضیحات"
+                              @bind-Value="PostModel.MetaDescription"
+                              Immediate="true"
+                              Lines="3"
+                              MaxLength="300"
+                              HelperText="توضیحات خلاصه برای موتورهای جستجو"/>
+                <ValidationMessage For="() => PostModel.MetaDescription" />
+            </MudItem>
+        </MudGrid>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+@code {
+
+    [Parameter]
+    public BasePostRequestDto PostModel { get; set; }
+}
