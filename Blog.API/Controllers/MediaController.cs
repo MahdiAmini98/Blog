@@ -74,9 +74,9 @@ namespace Blog.API.Controllers
         /// دریافت لیست فایل‌ها   
         /// </summary>
         [HttpGet]
-        public async Task<IActionResult> GetAllMedia([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetAllMedia([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string? fileType = null)
         {
-            var mediaList = await _mediaService.GetAllMediaAsync(page, pageSize);
+            var mediaList = await _mediaService.GetAllMediaAsync(page, pageSize, fileType);
             return Ok(mediaList);
         }
 
