@@ -1,0 +1,62 @@
+﻿@using Blog.PanelAdmin.Pages.Medias
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+<MudGrid xs="12" md="12">
+
+    <MudTextField T="string"
+    Label="تصویر پست"
+    @bind-Value="ThumbnailUrl"
+    Immediate="true"
+    AdornmentIcon="@Icons.Material.Outlined.ImageSearch"
+    Placeholder=":/images/posts/2.jpg"></MudTextField>
+</MudGrid>
+<MudItem>
+    @if (!string.IsNullOrEmpty(ThumbnailUrl))
+    {
+        <div style="display:flex; flex-direction:column;align-items:flex-start">
+            <img style="max-width:400px; max-height:300px; border:1px solid #cccc; padding:5px"
+            src="@ThumbnailUrl" alt="تصویر پست" />
+        </div>
+    }
+    else
+    {
+        <MudText Color="@Color.Secondary">تصویری انتخاب نشده است</MudText>
+    }
+</MudItem>
+
+<MudItem xs="12" md="6" Class="d-flex align-items-center">
+    <MudButton OnClick="OpenImageSelector" Color="Color.Primary" Variant="Variant.Filled">
+        <MudIcon Icon="@Icons.Material.Outlined.ImageSearch" Class="mr-2" />
+        انتخاب تصویر
+    </MudButton>
+</MudItem>
+
+
+@code {
+
+
+    [Parameter]
+    public string ThumbnailUrl { get; set; } = string.Empty;
+
+    [Parameter]
+    public EventCallback<string> ThumbnailUrlChanged { get; set; }
+    private async Task OpenImageSelector( )
+    {
+        var parameters = new DialogParameters();
+        var options = new DialogOptions()
+            {
+                MaxWidth = MaxWidth.Medium,
+                FullWidth = true
+            };
+
+        var dialog = DialogService.Show<ImageSelector>("", parameters,options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            var url = result.Data?.ToString();
+            ThumbnailUrl = url;
+            await ThumbnailUrlChanged.InvokeAsync(url);
+        }
+    }
+}
