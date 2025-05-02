@@ -75,7 +75,7 @@ import {
 
 import fa from './translations/fa.js';  // فایل ترجمه فارسی
 
- 
+import CustomImageInsert from './customimageinsert.js';
 
 
 const LICENSE_KEY = 'GPL'; 
@@ -116,6 +116,7 @@ const editorConfig = {
 			'|',
 			'link',
 			'insertImage',
+			'insertImageFromLibrary', // درج تصویر از سرور خودمان
 			'insertTable',
 			'highlight',
 			'blockQuote',
@@ -125,7 +126,7 @@ const editorConfig = {
 			'|',
 			'bulletedList',
 			'numberedList',
-			'todoList',
+			'todoList', 
 			'outdent',
 		 	'indent',
 			 
@@ -133,6 +134,7 @@ const editorConfig = {
 		shouldNotGroupWhenFull: false
 	},
 	plugins: [
+		CustomImageInsert,
 		Alignment,
 		Autoformat,
 		AutoImage,
@@ -385,7 +387,9 @@ const editorConfig = {
 let editorInstance = null;
 
 export async function initializeEditor(dotNetRef) {
-	
+
+	window.dotNetRefGlobal = dotNetRef;
+
 	editorInstance = await ClassicEditor.create(document.querySelector('#editor'), editorConfig);
 
 	const wordCount = editorInstance.plugins.get('WordCount');
