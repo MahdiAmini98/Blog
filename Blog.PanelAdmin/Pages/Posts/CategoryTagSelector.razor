@@ -1,0 +1,66 @@
+﻿@using Blog.PanelAdmin.Models.Categories
+@using Blog.PanelAdmin.Models.Tags
+
+<MudGrid Spacing="3">
+    <MudItem xs="12" md="6">
+        <MudSelect T="CategoryDto" MultiSelection="true" Label="دسته بندی ها" SelectedValues="SelectedCategories"
+                   SelectedValuesChanged="OnCategoriesSelectionChange"
+                   ToStringFunc="(categoryDto) => categoryDto?.Name??string.Empty">
+            @foreach (var category in Categories)
+            {
+                <MudSelectItem T="CategoryDto" Value="category">@category.Name</MudSelectItem>
+            }
+        </MudSelect>
+        <ValidationMessage For="()=>SelectedCategories" />
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudSelect T="TagDto" MultiSelection="true" Label="برچسب ها" SelectedValues="SelectedTags"
+                   SelectedValuesChanged="OnTagsSelectionChange"
+                   ToStringFunc="(tagDto) => tagDto?.Name??string.Empty">
+            @foreach (var tag in Tags)
+            {
+                <MudSelectItem T="TagDto" Value="tag">@tag.Name</MudSelectItem>
+            }
+        </MudSelect>
+        <ValidationMessage For="()=>SelectedTags" />
+    </MudItem>
+</MudGrid>
+
+
+
+@code {
+    //Tag
+    [Parameter]
+    public List<TagDto> Tags { get; set; }
+
+    [Parameter]
+    public IEnumerable<TagDto> SelectedTags { get; set; }
+
+    [Parameter]
+    public EventCallback<IEnumerable<TagDto>> SelectedTagsChanged { get; set; }
+
+
+    private async Task OnTagsSelectionChange(IEnumerable<TagDto> tags)
+    {
+        SelectedTags = tags;
+        await SelectedTagsChanged.InvokeAsync(tags);
+    }
+
+    //Category
+    //Tag
+    [Parameter]
+    public List<CategoryDto> Categories { get; set; }
+
+    [Parameter]
+    public IEnumerable<CategoryDto> SelectedCategories { get; set; }
+
+    [Parameter]
+    public EventCallback<IEnumerable<CategoryDto>> SelectedCategoriesChanged { get; set; }
+
+
+    private async Task OnCategoriesSelectionChange(IEnumerable<CategoryDto> Categories)
+    {
+        SelectedCategories = Categories;
+        await SelectedCategoriesChanged.InvokeAsync(Categories);
+    }
+}

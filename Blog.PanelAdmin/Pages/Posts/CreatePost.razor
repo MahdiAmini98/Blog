@@ -1,18 +1,45 @@
 ﻿@page "/posts/create"
+@using Blog.PanelAdmin.Models.Categories
 @using Blog.PanelAdmin.Models.Posts
+@using Blog.PanelAdmin.Models.Tags
+@using Blog.PanelAdmin.Services.Categories
+@using Blog.PanelAdmin.Services.Tag
+@inject ITagService TagService
+@inject ICategoryService CategoryService
+
 
 <PostBaseInfo PostModel="Model" OnValidSubmit="HandleCreatePost">
     <CKEditor OnContentChanged="(ckContent)=> Model.Content= ckContent"></CKEditor>
-    <SeoSettings PostModel="Model"/>
+    <SeoSettings PostModel="Model" />
+    <CategoryTagSelector Tags="Tags" SelectedTags="SelectedTags" SelectedTagsChanged="(tags) => SelectedTags = tags"
+                         Categories="Categories" SelectedCategories="SelectedCategories" SelectedCategoriesChanged="(categories) => SelectedCategories = categories"></CategoryTagSelector>
 </PostBaseInfo>
 
 
 @code {
     private CreatePostRequestData Model { get; set; } = new();
-    public string Content{ get; set; }
-
+    private List<TagDto> Tags = new();
+    private IEnumerable<TagDto> SelectedTags { get; set; } = new List<TagDto>();
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTags(); 
+        await LoadCategories();
+    }
+    public async Task LoadTags()
+    {
+        Tags = await TagService.GetTagsAsync();
+    }
     private async Task HandleCreatePost()
     {
-        
+
+    }
+
+    //category
+    private List<CategoryDto> Categories = new();
+    private IEnumerable<CategoryDto> SelectedCategories { get; set; } = new List<CategoryDto>();
+
+    private async Task LoadCategories()
+    {
+        Categories = await CategoryService.GetCategoriesAsync();
     }
 }
