@@ -39,15 +39,14 @@ namespace Blog.PanelAdmin.Models.Posts
         [Required(ErrorMessage = "حداقل یک برچسب باید انتخاب شود.")]
         [MinLength(1, ErrorMessage = "حداقل باید یک برچسب انتخاب شود.")]
         public List<Guid> TagIds { get; set; } = new();
-
     }
 
-    public class CreatePostRequestData : BasePostRequestDto
+
+    public class CreatePostRequestDto : BasePostRequestDto
     {
-
     }
 
-    public class EditPostRequestData : BasePostRequestDto
+    public class UpdatePostRequestDto : BasePostRequestDto
     {
         [Required]
         public Guid Id { get; set; }

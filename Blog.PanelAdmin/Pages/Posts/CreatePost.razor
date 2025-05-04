@@ -8,38 +8,50 @@
 @inject ICategoryService CategoryService
 
 
-<PostBaseInfo PostModel="Model" OnValidSubmit="HandleCreatePost">
-    <CKEditor OnContentChanged="(ckContent)=> Model.Content= ckContent"></CKEditor>
-    <SeoSettings PostModel="Model" />
-    <CategoryTagSelector Tags="Tags" SelectedTags="SelectedTags" SelectedTagsChanged="(tags) => SelectedTags = tags"
-                         Categories="Categories" SelectedCategories="SelectedCategories" SelectedCategoriesChanged="(categories) => SelectedCategories = categories"></CategoryTagSelector>
+<h3>ارسال مطلب جدید</h3>
+
+
+<PostBaseInfo PostModel="PostModel" OnValidSubmit="HandleCreatePost">
+
+    <CKEditor  OnContentChanged="(ckContent)=> PostModel.Content = ckContent" />
+
+    <SeoSettings PostModel="PostModel" />
+
+    <CategoryTagSelector 
+    Tags="Tags"
+    SelectedTags="SelectedTags"
+    SelectedTagsChanged="@(Tags=> SelectedTags=Tags)" 
+    
+    Categories="Categories"
+    SelectedCategories="SelectedCategories"
+    SelectedCategoriesChanged="@(cats=> SelectedCategories=cats)"/>
+
 </PostBaseInfo>
 
 
+
+
+
 @code {
-    private CreatePostRequestData Model { get; set; } = new();
+
+    private CreatePostRequestDto PostModel { get; set; } = new();
+
     private List<TagDto> Tags = new();
     private IEnumerable<TagDto> SelectedTags { get; set; } = new List<TagDto>();
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadTags(); 
-        await LoadCategories();
-    }
-    public async Task LoadTags()
-    {
-        Tags = await TagService.GetTagsAsync();
-    }
-    private async Task HandleCreatePost()
-    {
 
-    }
-
-    //category
     private List<CategoryDto> Categories = new();
     private IEnumerable<CategoryDto> SelectedCategories { get; set; } = new List<CategoryDto>();
 
-    private async Task LoadCategories()
+
+
+    protected override async Task OnInitializedAsync()
     {
+        Tags = await TagService.GetTagsAsync();
         Categories = await CategoryService.GetCategoriesAsync();
+    }
+
+    private async Task HandleCreatePost()
+    {
+
     }
 }

@@ -3,6 +3,7 @@ using Blog.PanelAdmin.Services.Authentication;
 using Blog.PanelAdmin.Services.Categories;
 using Blog.PanelAdmin.Services.LocalStorage;
 using Blog.PanelAdmin.Services.Medias;
+using Blog.PanelAdmin.Services.Posts;
 using Blog.PanelAdmin.Services.Tag;
 using Blog.PanelAdmin.Services.TokenService;
 
@@ -50,12 +51,18 @@ namespace Blog.PanelAdmin.Extensions
                 return new TagService(httpClient);
             });
 
-
-
+            
             services.AddScoped<IMediaService, MediaService>(sp =>
             {
                 var httpClient = sp.GetRequiredService<IHttpClientFactory>().CreateClient("ApiWithAuth");
                 return new MediaService(httpClient);
+            });
+            
+
+            services.AddScoped<IPostService, PostService>(sp =>
+            {
+                var httpClient = sp.GetRequiredService<IHttpClientFactory>().CreateClient("ApiWithAuth");
+                return new PostService(httpClient);
             });
             return services;
         }
