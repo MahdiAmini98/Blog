@@ -1,4 +1,5 @@
 ﻿using Blog.API.Contracts;
+using Blog.API.Utilites;
 using Blog.Application.Contracts.Posts;
 using Blog.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -79,9 +80,9 @@ namespace Blog.API.Controllers
                     Message = "The provided data is invalid."
                 });
             }
-
             try
             {
+                request.AuthorId = User.GetUserId();
                 var post = await _postService.CreatePostAsync(request);
                 return CreatedAtAction(nameof(GetPostById), new { id = post.Id }, post);
             }

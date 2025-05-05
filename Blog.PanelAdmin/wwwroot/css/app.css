@@ -35,3 +35,9 @@ html, body {
     .loading-progress-text:after {
         content: var(--blazor-load-percentage-text, "Loading");
     }
+
+    .validation-errors,
+    .validation-summary-valid,
+    .validation-message{
+        color:#dc3545;
+    }

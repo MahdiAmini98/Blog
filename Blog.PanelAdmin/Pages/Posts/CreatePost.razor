@@ -3,9 +3,13 @@
 @using Blog.PanelAdmin.Models.Posts
 @using Blog.PanelAdmin.Models.Tags
 @using Blog.PanelAdmin.Services.Categories
+@using Blog.PanelAdmin.Services.Posts
 @using Blog.PanelAdmin.Services.Tag
 @inject ITagService TagService
 @inject ICategoryService CategoryService
+@inject IPostService PostService
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
 
 
 <h3>ارسال مطلب جدید</h3>
@@ -13,19 +17,21 @@
 
 <PostBaseInfo PostModel="PostModel" OnValidSubmit="HandleCreatePost">
 
-    <CKEditor  OnContentChanged="(ckContent)=> PostModel.Content = ckContent" />
+    <CKEditor OnContentChanged="(ckContent)=> PostModel.Content = ckContent" />
 
     <SeoSettings PostModel="PostModel" />
 
-    <CategoryTagSelector 
-    Tags="Tags"
-    SelectedTags="SelectedTags"
-    SelectedTagsChanged="@(Tags=> SelectedTags=Tags)" 
-    
-    Categories="Categories"
-    SelectedCategories="SelectedCategories"
-    SelectedCategoriesChanged="@(cats=> SelectedCategories=cats)"/>
+    <CategoryTagSelector Tags="Tags"
+                         SelectedTags="SelectedTags"
+                         SelectedTagsChanged="OnSelectedTagsChanged"
+                         Categories="Categories"
+                         SelectedCategories="SelectedCategories"
+                         SelectedCategoriesChanged="OnSelectedCategoriesChanged" />
 
+    <MudDivider DividerType="DividerType.FullWidth" Class="my-6"></MudDivider>
+
+    <MudButton ButtonType="ButtonType.Submit" Color="@Color.Success" Size="Size.Medium"
+               StartIcon="@Icons.Material.Filled.Publish" Class="mx-2" DropShadow="true" FullWidth="true" Variant="Variant.Filled">ذخیره و ارسال</MudButton>
 </PostBaseInfo>
 
 
@@ -52,6 +58,27 @@
 
     private async Task HandleCreatePost()
     {
+        var success = await PostService.CreatePostAsync(PostModel);
 
+        if (success)
+        {
+            Snackbar.Add("پست جدید با موفقیت ایجاد شد.", Severity.Success);
+            NavigationManager.NavigateTo("/posts");
+        }
+        else
+        {
+            Snackbar.Add("خطا در ایجاد پست.", Severity.Error);
+        }
+    }
+
+    private async Task OnSelectedCategoriesChanged(IEnumerable<CategoryDto> categories)
+    {
+        SelectedCategories = categories;
+        PostModel.CategoryIds = SelectedCategories.Select(t => t.Id).ToList();
+    }
+    private async Task OnSelectedTagsChanged(IEnumerable<TagDto> tags)
+    {
+        SelectedTags = tags;
+        PostModel.TagIds = SelectedTags.Select(t => t.Id).ToList();
     }
 }

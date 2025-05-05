@@ -4,23 +4,26 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Blog.Domain.Entities
 {
     public class Post : EntityBase
     {
-        public string Title { get; private set; } // عنوان پست
-        public string Slug { get; private set; } // URL یکتا
-        public string Content { get; private set; } // متن پست
-        public string? Summary { get; private set; } // خلاصه محتوا (اختیاری)
-        public string? ThumbnailUrl { get; private set; } // تصویر شاخص (اختیاری)
-        public DateTime PublishedDate { get; private set; } // تاریخ انتشار
-        public int ViewCount { get; private set; } // تعداد بازدیدها
-        public Guid AuthorId { get; private set; } // شناسه نویسنده
-        public PostStatus Status { get; private set; } // وضعیت پست
+        public string Title { get; private set; }
+        public string Slug { get; private set; }
+        public string Content { get; private set; }
+        public string? Summary { get; private set; }
+        public string? ThumbnailUrl { get; private set; }
+        public DateTime PublishedDate { get; private set; }
+        public int ViewCount { get; private set; }
+        public Guid AuthorId { get; private set; }
+        public PostStatus Status { get; private set; }
+        public string? MetaTitle { get; private set; }
+        public string? MetaDescription { get; private set; }
 
-        // ناوبری‌ها
+
         private readonly List<Category> _categories = new();
         public IReadOnlyCollection<Category> Categories => _categories.AsReadOnly();
 
@@ -36,18 +39,19 @@ namespace Blog.Domain.Entities
         public User Author { get; private set; }
 
 
-        private Post(string title, string slug, string content, Guid authorId)
+        private Post(string title, string slug, string content, string metaTitle, string metaDescription, Guid authorId)
         {
             SetTitle(title);
-            GenerateSlug(slug);
             SetContent(content);
+            SetMetaTitle(metaTitle);
+            SetMetaDescription(metaDescription);
+            Slug = slug;
             AuthorId = authorId;
             Status = PostStatus.Draft;
             PublishedDate = DateTime.UtcNow;
         }
 
-        // متد برای ایجاد پست جدید
-        public static Post Create(string title, string content, Guid authorId)
+        public static Post Create(string title, string content, string metaTitle, string metaDescription, Guid authorId)
         {
             if (string.IsNullOrWhiteSpace(title))
             {
@@ -59,11 +63,62 @@ namespace Blog.Domain.Entities
                 throw new ArgumentException("Content cannot be empty.", nameof(content));
             }
 
+            if (string.IsNullOrWhiteSpace(metaTitle))
+            {
+                throw new ArgumentException("Meta title cannot be empty.", nameof(metaTitle));
+            }
+
+            if (metaTitle.Length > 100)
+            {
+                throw new ArgumentException("Meta title cannot exceed 100 characters.", nameof(metaTitle));
+            }
+
+            if (string.IsNullOrWhiteSpace(metaDescription))
+            {
+                throw new ArgumentException("Meta description cannot be empty.", nameof(metaDescription));
+            }
+
+            if (metaDescription.Length > 300)
+            {
+                throw new ArgumentException("Meta description cannot exceed 300 characters.", nameof(metaDescription));
+            }
+
             var slug = GenerateSlug(title);
-            return new Post(title, slug, content, authorId);
+            var post = new Post(title, slug, content, metaTitle, metaDescription, authorId);
+
+            return post;
         }
 
-        // متد برای تنظیم عنوان
+        public void SetMetaTitle(string metaTitle)
+        {
+            if (string.IsNullOrWhiteSpace(metaTitle))
+            {
+                throw new ArgumentException("Meta title cannot be empty.", nameof(metaTitle));
+            }
+
+            if (metaTitle.Length > 100)
+            {
+                throw new ArgumentException("Meta title cannot exceed 100 characters.", nameof(metaTitle));
+            }
+
+            MetaTitle = metaTitle;
+        }
+
+        public void SetMetaDescription(string metaDescription)
+        {
+            if (string.IsNullOrWhiteSpace(metaDescription))
+            {
+                throw new ArgumentException("Meta description cannot be empty.", nameof(metaDescription));
+            }
+
+            if (metaDescription.Length > 300)
+            {
+                throw new ArgumentException("Meta description cannot exceed 300 characters.", nameof(metaDescription));
+            }
+
+            MetaDescription = metaDescription;
+        }
+
         public void SetTitle(string title)
         {
             if (string.IsNullOrWhiteSpace(title))
@@ -72,16 +127,24 @@ namespace Blog.Domain.Entities
             }
 
             Title = title;
-            Slug = GenerateSlug(title); // به‌روزرسانی Slug هنگام تغییر عنوان
         }
 
-        // متد برای تنظیم Slug
+        public void SetSlug(string slug)
+        {
+            Slug = GenerateSlug(slug);
+        }
+
+
         private static string GenerateSlug(string input)
         {
-            return input.ToLower().Replace(" ", "-").Replace("--", "-");
+            input = input.ToLower().Trim();
+            input = Regex.Replace(input, @"[^a-z0-9\s-]", "");
+            input = Regex.Replace(input, @"\s+", "-");
+            return input;
         }
 
-        // متد برای تنظیم محتوا
+
+
         public void SetContent(string content)
         {
             if (string.IsNullOrWhiteSpace(content))
@@ -92,7 +155,7 @@ namespace Blog.Domain.Entities
             Content = content;
         }
 
-        // متد برای تنظیم خلاصه محتوا
+
         public void SetSummary(string summary)
         {
             Summary = summary?.Length > 500
@@ -100,7 +163,7 @@ namespace Blog.Domain.Entities
                 : summary;
         }
 
-        // متد برای تنظیم تصویر شاخص
+
         public void SetThumbnailUrl(string thumbnailUrl)
         {
             if (!string.IsNullOrWhiteSpace(thumbnailUrl) && !Uri.IsWellFormedUriString(thumbnailUrl, UriKind.Absolute))
@@ -111,24 +174,19 @@ namespace Blog.Domain.Entities
             ThumbnailUrl = thumbnailUrl;
         }
 
-        // متد برای تغییر وضعیت پست
+
         public void ChangeStatus(PostStatus newStatus)
         {
-            if (Status == PostStatus.Archived)
-            {
-                throw new InvalidOperationException("Cannot change status of an archived post.");
-            }
-
             Status = newStatus;
         }
 
-        // متد برای افزایش تعداد بازدیدها
+
         public void IncrementViewCount()
         {
             ViewCount++;
         }
 
-        // متد برای مدیریت دسته‌بندی‌ها
+
         public void AddCategory(Category category)
         {
             if (category == null)
@@ -154,7 +212,6 @@ namespace Blog.Domain.Entities
             _categories.Remove(category);
         }
 
-        // متد برای مدیریت برچسب‌ها
         public void AddTag(Tag tag)
         {
             if (tag == null)
@@ -176,11 +233,10 @@ namespace Blog.Domain.Entities
             {
                 throw new InvalidOperationException("Tag is not assigned to this post.");
             }
-
             _tags.Remove(tag);
         }
 
-        // متد برای افزودن نظر
+
         public void AddComment(Comment comment)
         {
             if (comment == null)
@@ -190,7 +246,29 @@ namespace Blog.Domain.Entities
 
             _comments.Add(comment);
         }
+
+
+
+        public void UpdateCategories(IEnumerable<Category> newCategories)
+        {
+            _categories.Clear();
+            foreach (var category in newCategories)
+            {
+                AddCategory(category);
+            }
+        }
+        public void UpdateTags(IEnumerable<Tag> newTags)
+        {
+            _tags.Clear();
+            foreach (var tag in newTags)
+            {
+                AddTag(tag);
+            }
+        }
+
+
     }
+
 
 
 }

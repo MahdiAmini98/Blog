@@ -48,7 +48,6 @@ namespace Blog.Persistence.Repositories
 
         public async Task<IEnumerable<T>> GetAllAsync() => await _dbSet.ToListAsync();
 
-
         public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate, bool asNoTracking = false)
         {
             if (asNoTracking == false)
@@ -57,6 +56,7 @@ namespace Blog.Persistence.Repositories
             }
             return await _dbSet.Where(predicate).AsNoTracking().ToListAsync(); // Untracked
         }
+
 
         public async Task<int> CountAsync(Expression<Func<T, bool>> predicate) => await _dbSet.CountAsync(predicate);
 
@@ -74,9 +74,22 @@ namespace Blog.Persistence.Repositories
 
         public async Task<IEnumerable<T>> FindWithSpecificationAsync(Specification<T> specification)
         {
-            return await specification.Apply(_dbSet.AsQueryable()).ToListAsync();
+            return await ApplySpecification(specification).ToListAsync();
+
+            //return await specification.Apply(_dbSet.AsQueryable()).ToListAsync();
+        }
+        public async Task<int> CountWithSpecificationAsync(Specification<T> specification)
+        {
+            return await ApplySpecification(specification).CountAsync();
         }
 
+        public async Task<IEnumerable<T>> FindWithSpecificationPagedAsync(Specification<T> specification, int page, int pageSize)
+        {
+            return await ApplySpecification(specification)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+        }
 
         public async Task<IEnumerable<T>> GetPagedAsync(int page, int pageSize)
         {
@@ -85,5 +98,21 @@ namespace Blog.Persistence.Repositories
                 .Take(pageSize)
                 .ToListAsync();
         }
+
+
+        private IQueryable<T> ApplySpecification(Specification<T> specification)
+        {
+            // ابتدا Where(...) را از خود Specification بگیریم:
+            var query = specification.Apply(_dbSet.AsQueryable());
+
+            // سپس Includes را اعمال کنیم:
+            foreach (var includeExpression in specification.Includes)
+            {
+                query = query.Include(includeExpression);
+            }
+
+            return query;
+        }
+
     }
 }
