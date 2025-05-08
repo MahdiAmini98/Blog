@@ -2849,3 +2849,11 @@ window.initializeBlogGrid = function () {
         });
     });
 };
+
+
+window.ScrollToTop = () => {
+    window.scrollTo({
+        top: 100,
+        behavior: "smooth",
+    });
+} 

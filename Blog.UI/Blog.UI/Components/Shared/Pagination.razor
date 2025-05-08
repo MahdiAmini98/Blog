@@ -1,0 +1,49 @@
+﻿<div class="col-12 mt-4 d-flex justify-content-center">
+    <ul class="pagination pagination-style-01 fs-13 fw-500 mb-0">
+        <li class="page-item @(CurrentPage <= 1?"disabled":"")">
+            <NavLink class="page-link" @onclick="() => OnPagedChanged(CurrentPage -1)">
+                <i class="feather icon-feather-arrow-right fs-18 d-xs-none"></i>
+            </NavLink>
+        </li>
+
+        @for (int p = 1; p <= TotalPages; p++)
+        {
+            int number = p;
+            <li class="page-item @(number == CurrentPage?"active":"")">
+                <NavLink class="page-link" @onclick="() => OnPagedChanged(number)">@number</NavLink>
+            </li>
+        }
+
+        <li class="page-item @(CurrentPage >= TotalPages?"active":"")">
+            <NavLink class="page-link" @onclick="() => OnPagedChanged(CurrentPage +1)">
+                <i class="feather icon-feather-arrow-left fs-18 d-xs-none"></i>
+            </NavLink>
+        </li>
+    </ul>
+</div>
+
+@code {
+    [Parameter]
+    public int CurrentPage { get; set; }
+
+    [Parameter]
+    public int TotalPages { get; set; }
+
+    [Parameter]
+    public EventCallback<int> PageChanged { get; set; }
+
+    [Inject]
+    private IJSRuntime JSRuntime { get; set; }
+
+    private async Task OnPagedChanged(int newPage)
+    {
+        if (newPage < 1 || newPage>TotalPages)
+        {
+            return;
+        }
+
+        CurrentPage = newPage;
+        await PageChanged.InvokeAsync(newPage);
+        await JSRuntime.InvokeVoidAsync("ScrollToTop");
+    }
+}
