@@ -1,12 +1,59 @@
 ﻿@page "/posts"
 @using Blog.PanelAdmin.Models.Posts
 @using Blog.PanelAdmin.Services.Posts
+@using Blog.PanelAdmin.Services.Tag
 @inject IPostService PostService
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
+@inject ITagService TagService
 @inject NavigationManager Navigation
+
 <MudPaper Class="p-4">
     <MudText Typo="Typo.h5" Class="mb-3">مدیریت پست‌ها</MudText>
+    <!-- فیلترهای جستجو -->
+    <MudGrid Class="mb-4">
+        <MudItem xs="12" sm="3">
+            <MudTextField @bind-Value="SearchText"
+                          Label="جستجو"
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search"
+                          Immediate="true"
+                          @oninput="OnSearchChanged" />
+        </MudItem>
+
+        <MudItem xs="12" sm="3">
+
+            <MudSelect @bind-Value="Tag"
+                       Variant=Variant.Text
+                       Label="تگ"
+                       Placeholder="تگ را انتخاب کنید"
+                       Clearable="true"
+                       @oninput="OnSearchChanged"
+                       Adornment="Adornment.Start">
+                @foreach (var tag in _tagsListText)
+                {
+                    <MudSelectItem Value=tag>@tag</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+
+        <MudItem xs="12" sm="2">
+            <MudJalaliDatePicker @bind-Date="FromDate" Label="از تاریخ" />
+        </MudItem>
+
+        <MudItem xs="12" sm="2">
+            <MudJalaliDatePicker @bind-Date="ToDate" Label="تا تاریخ" />
+        </MudItem>
+
+
+        <MudItem xs="12" sm="2" Class="d-flex justify-end">
+            <MudButton Color="Color.Primary" Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.FilterList"
+                       OnClick="@ApplyFilters">
+                اعمال فیلتر
+            </MudButton>
+        </MudItem>
+    </MudGrid>
 
     @if (Posts == null)
     {
@@ -62,12 +109,22 @@
 @code {
 
     private List<PostListResponseDto>? Posts;
+    private string SearchText = string.Empty;
+    private string Tag = string.Empty;
+    private DateTime? FromDate;
+    private DateTime? ToDate;
     private bool IsLoading = false;
+    private int CurrentPage = 1;
+    private int PageSize = 10;
+    private int TotalItems = 0;
     private string ErrorMessage = string.Empty;
+    private string[] _tagsListText = Array.Empty<string>();
     protected override async Task OnInitializedAsync()
-
     {
         await LoadPosts();
+        var tags = await TagService.GetTagsAsync();
+        _tagsListText = tags?.Select(t => t.Name).ToArray() ?? Array.Empty<string>();
+
     }
 
     private async Task LoadPosts()
@@ -77,12 +134,17 @@
             IsLoading = true;
             var queryParameters = new PostQueryParameters
                 {
-                    Page = 1,
-                    PageSize = 20
+                    SearchText = SearchText,
+                    Tag = Tag,
+                    FromDate = FromDate,
+                    ToDate = ToDate,
+                    Page = CurrentPage,
+                    PageSize = PageSize
                 };
 
             var result = await PostService.GetPostsForListAsync(queryParameters);
             Posts = result.Items;
+            TotalItems = result.TotalCount;
         }
         catch (Exception ex)
         {
@@ -94,7 +156,16 @@
         }
     }
 
-
+    private async Task OnSearchChanged(ChangeEventArgs e)
+    {
+        CurrentPage = 1;
+        await LoadPosts();
+    }
+    private async Task ApplyFilters()
+    {
+        CurrentPage = 1;
+        await LoadPosts();
+    }
     private void EditPost(Guid id)
     {
         Navigation.NavigateTo($"/posts/edit/{id}");
