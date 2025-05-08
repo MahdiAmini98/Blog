@@ -1,21 +1,31 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html class="no-js" dir="rtl" lang="en">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="/" />
-    <link rel="stylesheet" href="@Assets["lib/bootstrap/dist/css/bootstrap.min.css"]" />
-    <link rel="stylesheet" href="@Assets["app.css"]" />
-    <link rel="stylesheet" href="@Assets["Blog.UI.styles.css"]" />
+
+    <link rel="stylesheet" href="@Assets["Theme/assets/css/vendors.min.css"]" />
+    <link rel="stylesheet" href="@Assets["Theme/assets/css/icon.min.css"]" />
+    <link rel="stylesheet" href="@Assets["Theme/assets/css/style.min.css"]" />
+    <link rel="stylesheet" href="@Assets["Theme/assets/css/responsive.min.css"]" />
+    <link rel="stylesheet" href="@Assets["Theme/assets/css/style-fa.css"]" />
+
     <ImportMap />
     <link rel="icon" type="image/png" href="favicon.png" />
     <HeadOutlet />
 </head>
 
-<body>
+<body class="bg-very-light-gray" data-mobile-nav-style="classic">
     <Routes />
     <script src="_framework/blazor.web.js"></script>
+
+    <!-- javascript libraries -->
+    <script src="@Assets["Theme/assets/js/jquery.js"]"></script>
+    <script src="@Assets["Theme/assets/js/vendors.min.js"]"></script>
+    <script src="@Assets["Theme/assets/js/main.js"]"></script>
+
 </body>
 
 </html>

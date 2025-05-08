@@ -1,55 +1,122 @@
 ﻿@using System.Security.Claims
 @inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
 
-    <main>
-        <div class="top-row px-4">
-            <AuthorizeView>
-                <Authorized>
-                    <div class="d-flex align-items-center">
-                        <img src="/images/avatar_placeholder.webp" alt="Avatar" width="32" height="32"
-                             class="rounded-circle me-2" />
-
-                        <span class="me-3">
-                            خوش آمدید، @context.User.FindFirst(ClaimTypes.GivenName)?.Value
-                        </span>
-
-                        <NavLink href="/account/profile" class="btn btn-outline-primary me-2">
-                            پروفایل
+<header class="">
+    <!-- start navigation -->
+    <nav class="navbar navbar-expand-lg header-light bg-transparent header-reverse header-demo" data-header-hover="light">
+        <div class="container-fluid">
+            <div class="col-auto col-lg-2 me-lg-0 me-auto">
+                <NavLink class="navbar-brand" href="/">
+                    <img alt="" class="default-logo" data-at2x="/Theme/assets/images/logo.png" src="/Theme/assets/images/logo.png">
+                    <img alt="" class="alt-logo" data-at2x="/Theme/assets/images/logo.png" src="/Theme/assets/images/logo.png">
+                    <img alt="" class="mobile-logo" data-at2x="/Theme/assets/images/logo.png" src="/Theme/assets/images/logo.png">
+                </NavLink>
+            </div>
+            <div class="col-auto col-lg-8 menu-order position-static">
+                <button aria-controls="navbarNav" aria-label="Toggle navigation" class="navbar-toggler float-start" data-bs-target="#navbarNav" data-bs-toggle="collapse" type="button">
+                    <span class="navbar-toggler-line"></span>
+                    <span class="navbar-toggler-line"></span>
+                    <span class="navbar-toggler-line"></span>
+                    <span class="navbar-toggler-line"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                    <NavMenu />
+                </div>
+            </div>
+            <div class="col-auto col-lg-2 text-end xs-pe-0">
+                <div class="header-icon">
+                    <div class="header-button">
+                        <NavLink class="btn btn-dark-gray btn-small btn-switch-text btn-rounded text-transform-none btn-box-shadow purchase-envato" href="https://bugeto.net/courses/blazor-masterclass" target="_blank">
+                            <span>
+                                <span class="btn-double-text" data-text="مسترکلاس Blazor">مسترکلاس Blazor</span>
+                            </span>
                         </NavLink>
-
-                        <form action="/Account/logout" method="post" data-enhance="true">
-                            <AntiforgeryToken />
-                            <input type="hidden" name="returnUrl" value="/" />
-                            <button type="submit" class="btn btn-outline-danger">
-                                خروج
-                            </button>
-                        </form>
                     </div>
-                </Authorized>
-                <NotAuthorized>
-                    <NavLink href="/account/login" class="btn btn-primary">
-                        ورود
-                    </NavLink>
-                    <NavLink href="/account/register" class="btn btn-outline-primary ms-2">
-                        ثبت‌نام
-                    </NavLink>
-                </NotAuthorized>
-            </AuthorizeView>
+                </div>
+            </div>
         </div>
+    </nav>
+    <!-- end navigation -->
+</header>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
 
-<div id="blazor-error-ui" data-nosnippet>
-    An unhandled error has occurred.
-    <a href="." class="reload">Reload</a>
-    <span class="dismiss">🗙</span>
-</div>
+<section class="bg-very-light-gray">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="main-content py-4">
+                    @Body
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="footer-demo bg-dark-slate-blue pb-4 sm-pb-50px" style="background-image: url(/Theme/assets/images/demo-footer-pattern.svg)">
+    <div class="container">
+        <div class="row mb-6 md-mb-30px">
+            <div class="col-xl-5 col-lg-6 md-mb-30px text-center text-lg-start">
+                <h3 class="text-white fw-600 alt-font mb-40px ls-minus-1px md-mb-30px md-w-60 sm-w-70 xs-w-100 md-mx-auto">
+                    با مسترکلاس Blazor، مسیر حرفه‌ای Blazor خود را آغاز کنید.
+                </h3>
+                <div class="row">
+                    <div class="col-lg-5 col-sm-6 xs-mb-20px">
+                        <span class="alt-font fs-14 fw-600 text-uppercase d-block text-white ls-1px lh-18">
+                            پشتیبانی دوره
+                        </span>
+                        <a href="mailto:bugeto.net@gmail.com"><span class="__email__">bugeto.net@gmail.com</span></a>
+                    </div>
+                    <div class="col-lg-5 col-sm-6">
+                        <span class="alt-font fs-14 fw-600 text-uppercase d-block text-white ls-1px lh-18">
+                            ثبت‌نام دوره
+                        </span>
+                        <a href="https://bugeto.net/courses/blazor-masterclass" target="_blank">مشاهده و ثبت‌نام</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-6 offset-xl-1 text-center text-lg-start">
+                <span class="alt-font fs-14 fw-600 text-uppercase text-white ls-1px d-block mb-5px">
+                    لینک‌های مفید
+                </span>
+                <ul>
+                    <li><a href="https://bugeto.net" target="_blank">صفحه اصلی</a></li>
+                    <li><a href="https://bugeto.net/courses/blazor-masterclass" target="_blank">دوره Blazor</a></li>
+                    <li><a href="https://bugeto.net/blog" target="_blank">بلاگ</a></li>
+                    <li><a href="https://bugeto.net/course" target="_blank">دوره ها</a></li>
+                    <li><a href="https://bugeto.net/contact-us" target="_blank">تماس با ما</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-2 col-6 text-center text-lg-start">
+                <span class="alt-font fs-14 fw-600 text-uppercase text-white ls-1px d-block mb-5px">
+                    ما را دنبال کنید
+                </span>
+                <ul>
+                    <li><a href="https://www.facebook.com/bugetonet" target="_blank">فیس بوک</a></li>
+                    <li><a href="https://twitter.com/bugetonet" target="_blank">توییتر</a></li>
+                    <li><a href="https://www.instagram.com/bugeto_net" target="_blank">اینستاگرام</a></li>
+                    <li><a href="https://www.linkedin.com/in/bugetonet" target="_blank">لینکدین</a></li>
+                    <li><a href="https://www.youtube.com/channel/UCOBZbN1oNidC7o915IPlxEw?view_as=subscriber" target="_blank">یوتیوب</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-2 order-first order-lg-4 text-center text-lg-start md-mb-20px">
+                <a class="footer-logo" href="https://bugeto.net">
+                    <img alt="Bugeto Logo" src="/Theme/assets/images/logo.png" />
+                </a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-7 last-paragraph-no-margin text-center text-lg-start">
+                <p class="fs-13 lh-22 w-90 md-w-100">
+                    دوره مسترکلاس Blazor- پروژه محور | آموزش جامع Blazor توسط احسان بابائی، توسعه‌دهنده ارشد دات‌نت با بیش از ۱۵ سال تجربه.
+                </p>
+            </div>
+            <div class="col-lg-5 text-center text-lg-end md-mt-15px last-paragraph-no-margin">
+                <p class="fs-13 lh-22">© @DateTime.Now.Year توسط Bugeto.net | طراحی و اجرا: احسان بابائی - باگتو</p>
+            </div>
+        </div>
+    </div>
+</footer>

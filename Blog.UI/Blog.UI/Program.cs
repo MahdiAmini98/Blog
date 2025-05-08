@@ -1,5 +1,10 @@
-﻿using Blog.Domain.Entities;
+﻿using Blog.Application.Interfaces;
+using Blog.Application.Services;
+using Blog.Domain.Entities;
+using Blog.Domain.Interfaces;
 using Blog.Persistence.Contexts;
+using Blog.Persistence.Repositories;
+using Blog.Persistence.Transactions;
 using Blog.UI.Client.Pages;
 using Blog.UI.Components;
 using Blog.UI.CustomClaimsFactory;
@@ -55,9 +60,16 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 #endregion
 
+#region Services
+
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<User>, CustomClaimsPrincipalFactory>();
 builder.Services.AddScoped<AuthenticationStateProvider, AuthStateRevalidator>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
+
+#endregion
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

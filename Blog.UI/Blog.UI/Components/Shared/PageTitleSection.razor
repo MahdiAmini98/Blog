@@ -1,0 +1,20 @@
+﻿<section class="pb-0 ipad-top-space-margin md-pt-0" style="margin-top: inherit;">
+    <div class="container">
+        <div class="row align-items-center justify-content-center">
+            <div class="col-12 col-xl-6 col-lg-8 text-center position-relative page-title-double-large">
+                <div class="d-flex flex-column justify-content-center extra-very-small-screen">
+                    <h1 class="text-dark-gray alt-font ls-minus-1px fw-700"> @Title</h1>
+                    <h2 class="text-dark-gray d-inline-block fw-400 ls-0px w-80 xs-w-100 mx-auto"> @SubTitle </h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+
+    [Parameter]
+    public string Title { get; set; }
+    [Parameter]
+    public string SubTitle { get; set; }
+}

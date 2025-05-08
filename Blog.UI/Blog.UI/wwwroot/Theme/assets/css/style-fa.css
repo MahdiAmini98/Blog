@@ -1,0 +1,208 @@
+@font-face {
+    font-family: 'Pinar';
+    src: url('../fonts/Pinar-DS1-FD.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'Estedad';
+    src: url('../fonts/Estedad-VF-FD.woff2') format('woff2-variations');
+}
+
+.vertical-counter {
+    direction: ltr;
+}
+
+html[dir="rtl"] * {
+    letter-spacing: 0 !important;
+}
+
+body, p, a, ul, li, input, button, th, div, label, b, div, button, .primary-font, .alt-font, .primary-font.fw-500, .magic-drag-cursor #ball-cursor:before {
+    font-family: Estedad !important;
+    line-height: 140%;
+}
+
+h1, h2, h3, h4, h5, h6, span, footer, div h6 {
+    font-family: Pinar !important;
+    line-height: 140%;
+}
+
+p {
+    font-variation-settings: "wght" 200;
+}
+
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-os-font-smoothing: grayscale;
+    box-sizing: border-box
+}
+
+.nav-link-menu {
+    font-family: 'Inter', sans-serif;
+}
+
+.learn-more-btn {
+    font-family: 'Inter', sans-serif;
+}
+
+.learn-extra-btn {
+    font-size: 16px;
+    font-family: Estedad !important;
+    font-weight: 600;
+}
+
+.header-subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 28px;
+    font-weight: 400;
+}
+
+.header-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 50px;
+}
+
+.header-title-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+}
+
+.vertical-slider-subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+}
+
+.vertical-slider-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 40px;
+}
+
+.vertical-slider-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+}
+
+.about-subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+}
+
+.about-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 40px;
+}
+
+.about-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+}
+
+.pricing-subtitle {
+    font-family: 'Inter', sans-serif;
+}
+
+.pricing-title h2 {
+    font-family: 'Inter', sans-serif;
+}
+
+.pricing-title p {
+    font-family: 'Inter', sans-serif;
+}
+
+.pricing-rate {
+    font-weight: 800;
+    font-family: 'Inter', sans-serif;
+}
+
+
+.pricing-period {
+    font-family: 'Inter', sans-serif;
+}
+
+.pricing-text {
+    font-family: 'Inter', sans-serif;
+}
+
+.pricing-all-plan-features-section li {
+    font-family: 'Inter', sans-serif;
+}
+
+.testimonials-slider-subtitle {
+    font-family: 'Inter', sans-serif;
+}
+
+.testimonials-slider-text {
+    font-family: 'Inter', sans-serif;
+}
+
+.footer-logo p {
+    font-family: 'Inter', sans-serif;
+}
+
+.footer-subsection-title {
+    font-family: 'Inter', sans-serif;
+}
+
+.footer-subsection-text {
+    font-family: 'Inter', sans-serif;
+}
+
+.footer-subsection-list li {
+    font-family: 'Inter', sans-serif;
+}
+
+.footer-credits p {
+    font-family: 'Inter', sans-serif;
+}
+
+a.text-dark-gray.text-dark-gray-hover.text-decoration-line-bottom.fw-600 {
+    margin-right: 10px;
+}
+
+.dir-ltr {
+    direction: ltr !important;
+}
+
+.word {
+    line-height: 1.7;
+}
+
+.feature-box.feature-box-left-icon-middle, .feature-box.feature-box-left-icon {
+    -webkit-flex-flow: row wrap;
+    -ms-flex-flow: row wrap;
+    -webkit-box-align: center !important;
+    -ms-flex-align: center !important;
+    align-items: center !important;
+    -ms-flex-pack: center;
+    justify-content: flex-start;
+    text-align: right;
+}
+
+.dir-rtl, .rev_slider_wrapper#jewellery-store-slider_wrapper {
+    direction: rtl !important;
+}
+
+input[type="tel"] {
+    text-align: right;
+}
+
+.rev_slider_wrapper, .rev_slider {
+    direction: ltr !important;
+}
+
+.tparrows.tp-leftarrow:before {
+    content: "قبلی" !important;
+    letter-spacing: 0 !important;
+}
+
+.tparrows.tp-rightarrow:before {
+    letter-spacing: 0 !important;
+    content: "بعدی" !important;
+}
