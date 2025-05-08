@@ -1,0 +1,158 @@
+﻿@page "/posts/edit/{PostId:guid}"
+@using Blog.PanelAdmin.Models.Categories
+@using Blog.PanelAdmin.Models.Posts
+@using Blog.PanelAdmin.Models.Tags
+@using Blog.PanelAdmin.Services.Categories
+@using Blog.PanelAdmin.Services.Posts
+@using Blog.PanelAdmin.Services.Tag
+@inject ISnackbar Snackbar
+@inject NavigationManager Navigation
+@inject IPostService PostService
+@inject ICategoryService CategoryService
+@inject ITagService TagService
+
+
+<MudText Typo="Typo.h5" Class="mb-3">ویرایش پست</MudText>
+
+@if (IsLoading)
+{
+    <MudProgressCircular Indeterminate="true" />
+}
+else if (PostModel == null)
+{
+    <MudAlert Severity="Severity.Error">پست مورد نظر یافت نشد.</MudAlert>
+}
+else
+{
+        <PostBaseInfo PostModel="PostModel" OnValidSubmit="HandleUpdatePost">
+        <CKEditor InitialContent="@PostModel.Content" OnContentChanged="(ckContent)=> PostModel.Content = ckContent" />
+        <ValidationMessage For="() => PostModel.Content" />
+        <SeoSettings PostModel="PostModel" />
+
+        <CategoryTagSelector Tags="Tags"
+                             SelectedTags="SelectedTags"
+                             SelectedTagsChanged="@OnSelectedTagsChanged"
+                             Categories="Categories"
+                             SelectedCategories="SelectedCategories"
+                             SelectedCategoriesChanged="OnSelectedCategoryChanged" />
+
+
+
+        <MudDivider DividerType="DividerType.FullWidth" Class="my-6" />
+        <MudButton ButtonType="ButtonType.Submit"
+                   Color="Color.Warning"
+                   Variant="Variant.Filled"
+                   Size="Size.Large"
+                   StartIcon="@Icons.Material.Filled.Edit"
+                   FullWidth="true"
+                   Class="mx-2">
+            ذخیره ویرایشات
+
+        </MudButton>
+
+        <MudDivider DividerType="DividerType.FullWidth" Class="my-6" />
+
+    </PostBaseInfo>
+}
+
+
+
+
+@code {
+
+    [Parameter]
+    public Guid PostId { get; set; } = Guid.Empty;
+
+    public UpdatePostRequestDto PostModel { get; set; }
+    private bool IsLoading = true;
+
+    private List<CategoryDto> Categories = new();
+    private List<TagDto> Tags = new();
+
+    private IEnumerable<CategoryDto> SelectedCategories = new List<CategoryDto>();
+    private IEnumerable<TagDto> SelectedTags = new List<TagDto>();
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (PostId == Guid.Empty)
+        {
+            Snackbar.Add("شناسه پست معتبر نیست.", Severity.Error);
+            Navigation.NavigateTo("/posts");
+            return;
+        }
+
+        IsLoading = true;
+        try
+        {
+            var postData = await PostService.GetPostByIdAsync(PostId);
+            if (postData == null)
+            {
+                Snackbar.Add("پست مورد نظر یافت نشد.", Severity.Error);
+                Navigation.NavigateTo("/posts");
+                return;
+            }
+
+            PostModel = new UpdatePostRequestDto
+                {
+
+                    Id = postData.Id,
+                    Title = postData.Title,
+                    Content = postData.Content,
+                    Summary = postData.Summary,
+                    ThumbnailUrl = postData.ThumbnailUrl,
+                    Status = postData.Status,
+                    MetaTitle = postData.MetaTitle,
+                    MetaDescription = postData.MetaDescription,
+                    Slug = postData.Slug,
+                    CategoryIds = postData.Categories.Select(c => c.Id).ToList(),
+                    TagIds = postData.Tags.Select(t => t.Id).ToList(),
+                };
+
+            Tags = await TagService.GetTagsAsync();
+            Categories = await CategoryService.GetCategoriesAsync();
+
+            SelectedTags = Tags?.Where(tag => PostModel.TagIds.Contains(tag.Id)).ToList() ?? new();
+            SelectedCategories = Categories?.Where(cat => PostModel.CategoryIds.Contains(cat.Id)).ToList() ?? new();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"خطا در دریافت اطلاعات: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
+    private async Task HandleUpdatePost()
+    {
+
+        var success = await PostService.UpdatePostAsync(PostModel);
+        if (success)
+        {
+            Snackbar.Add("پست با موفقیت ویرایش شد.", Severity.Success);
+            Navigation.NavigateTo("/posts");
+        }
+        else
+        {
+            Snackbar.Add("خطا در ویرایش پست. لطفاً دوباره تلاش کنید.", Severity.Error);
+
+        }
+    }
+
+    private async Task OnSelectedTagsChanged(IEnumerable<TagDto> tags)
+    {
+        SelectedTags = tags;
+        PostModel.TagIds = SelectedTags.Select(t => t.Id).ToList();
+    }
+
+
+    private async Task OnSelectedCategoryChanged(IEnumerable<CategoryDto> cats)
+    {
+        SelectedCategories = cats;
+        PostModel.CategoryIds = SelectedCategories.Select(c => c.Id).ToList();
+    }
+}

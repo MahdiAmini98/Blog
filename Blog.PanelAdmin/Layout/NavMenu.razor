@@ -10,13 +10,17 @@
 
 
                 <MudDivider Class="my-2" />
-
                 <MudNavLink Href="/" Icon="@Icons.Material.Filled.Dashboard" IconColor="Color.Secondary">داشبورد</MudNavLink>
 
-                <MudNavLink Href="/tags" IconColor="Color.Warning" Icon="@Icons.Material.Filled.Label">‌برچسب‌ها</MudNavLink>
+                <MudNavGroup Title="مدیریت پست‌ها" Icon="@Icons.Material.Filled.Article" IconColor="Color.Tertiary" Expanded="true">
+                    <MudNavLink Href="/posts " Icon="@Icons.Material.Filled.List">لیست مطالب</MudNavLink>
+                    <MudNavLink Href="/posts/create" Icon="@Icons.Material.Filled.AddCircle">ایجاد مطلب جدید</MudNavLink>
+
+                </MudNavGroup>
+
+                <MudNavLink Href="/tags" IconColor="Color.Primary" Icon="@Icons.Material.Filled.Label">‌برچسب‌ها</MudNavLink>
                 <MudNavLink Href="/categories" IconColor="Color.Primary" Icon="@Icons.Material.Filled.Category">‌دسته بندی</MudNavLink>
                 <MudNavLink Href="/media" IconColor="Color.Primary" Icon="@Icons.Material.Filled.FileUpload"> مدیریت فایل ها</MudNavLink>
-                <MudNavLink Href="/posts/create" IconColor="Color.Primary" Icon="@Icons.Material.Filled.AddCircle">‌ایجاد پست جدید</MudNavLink>
 
             </MudNavMenu>
         </Authorized>

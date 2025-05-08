@@ -1,0 +1,140 @@
+﻿@page "/posts"
+@using Blog.PanelAdmin.Models.Posts
+@using Blog.PanelAdmin.Services.Posts
+@inject IPostService PostService
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@inject NavigationManager Navigation
+<MudPaper Class="p-4">
+    <MudText Typo="Typo.h5" Class="mb-3">مدیریت پست‌ها</MudText>
+
+    @if (Posts == null)
+    {
+        <MudProgressCircular Indeterminate="true" Color="Color.Primary" Class="mt-4" />
+    }
+    else if (!Posts.Any())
+    {
+        <MudText Class="mt-4">هیچ پستی یافت نشد.</MudText>
+    }
+    else
+    {
+        <MudTable Items="Posts" Striped="true" Hover="true" Elevation="1" Class="mt-4">
+            <HeaderContent>
+                <MudTh>عنوان</MudTh>
+                <MudTh>نویسنده</MudTh>
+                <MudTh>بازدید</MudTh>
+                <MudTh>وضعیت</MudTh>
+                <MudTh>زمان انتشار</MudTh>
+                <MudTh>عملیات</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd>@context.Title</MudTd>
+                <MudTd>@context.AuthorName</MudTd>
+                <MudTd>@context.ViewCount</MudTd>
+                <MudTd>
+                    <MudChip T="string" Color="@GetStatusColor(context.Status)" Text="@context.Status" />
+
+                </MudTd>
+                <MudTd>
+                    <TimeAgo Date="@context.PublishedDate" />
+                </MudTd>
+                <MudTd>
+                    <MudButton Color="Color.Secondary" Variant="Variant.Outlined" Size="Size.Small"
+                               OnClick="@(()=>EditPost(context.Id))">
+                        ویرایش
+                    </MudButton>
+                    <MudButton Color="Color.Error" Variant="Variant.Outlined" Size="Size.Small" Class="ml-2"
+                               OnClick="@(() => DeletePost(context.Id))">
+                        حذف
+                    </MudButton>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    }
+
+
+    @if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <MudText Color="Color.Error">@ErrorMessage</MudText>
+    }
+</MudPaper>
+
+@code {
+
+    private List<PostListResponseDto>? Posts;
+    private bool IsLoading = false;
+    private string ErrorMessage = string.Empty;
+    protected override async Task OnInitializedAsync()
+
+    {
+        await LoadPosts();
+    }
+
+    private async Task LoadPosts()
+    {
+        try
+        {
+            IsLoading = true;
+            var queryParameters = new PostQueryParameters
+                {
+                    Page = 1,
+                    PageSize = 20
+                };
+
+            var result = await PostService.GetPostsForListAsync(queryParameters);
+            Posts = result.Items;
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"خطا در دریافت پست‌ها: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
+    private void EditPost(Guid id)
+    {
+        Navigation.NavigateTo($"/posts/edit/{id}");
+    }
+
+
+    private async Task DeletePost(Guid id)
+    {
+        bool? confirmed = await DialogService.ShowMessageBox(
+            "حذف پست",
+            "آیا از حذف این پست مطمئن هستید؟",
+            yesText: "بله", cancelText: "خیر", options: new DialogOptions
+                {
+                    CloseButton = true,
+                    FullScreen = false,
+                });
+
+        if (confirmed == true)
+        {
+            try
+            {
+                await PostService.DeletePostAsync(id);
+                await LoadPosts();
+                Snackbar.Add("پست با موفقیت حذف شد.", Severity.Success);
+            }
+            catch (HttpRequestException ex)
+            {
+                Snackbar.Add($"خطا در حذف پست: {ex.Message}", Severity.Error);
+            }
+        }
+    }
+
+    private Color GetStatusColor(string status)
+    {
+        return status switch
+        {
+            "Published" => Color.Success,
+            "Draft" => Color.Warning,
+            "Archived" => Color.Secondary,
+            _ => Color.Default
+        };
+    }
+}
