@@ -1,0 +1,41 @@
+﻿@page "/blog/{Slug}"
+@using Blog.Application.DTOs.Posts.BlogUIPosts
+@using Blog.Application.Interfaces.BlogUIService
+@inject IBlogUIPostService PostService
+
+
+<div class="container">
+    <div class="row justify-content-center">
+
+        <div class="col-12 col-lg-8 blog-standard md-mb-50px sm-mb-40px">
+            @if(PostDetail == null)
+            {
+                <p>داده در حال بارگزاری است...</p>
+            }
+            else
+            {
+                <BlogDetails/>
+                <AuthorBox />
+                <RelatedPost />
+                <CommentList />
+                <SendComment />
+            }
+        </div>
+
+        <aside class="col-12 col-xl-4 col-lg-4 col-md-7 ps-55px xl-ps-50px lg-ps-15px sidebar">
+            <BlogSidebar/>
+        </aside>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public string Slug { get; set; }
+
+    public PostDetailDto PostDetail { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        PostDetail = await PostService.GetPostDetailBySlugAsync(Slug);
+    }
+}

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Blog.Application.DTOs.Posts.WebUIPosts
+﻿namespace Blog.Application.DTOs.Posts.BlogUIPosts
 {
     public class PostDetailDto
     {

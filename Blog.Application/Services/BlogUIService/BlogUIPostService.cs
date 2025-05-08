@@ -1,6 +1,5 @@
 ﻿using Blog.Application.DTOs;
 using Blog.Application.DTOs.Posts.BlogUIPosts;
-using Blog.Application.DTOs.Posts.WebUIPosts;
 using Blog.Application.Interfaces.BlogUIService;
 using Blog.Domain.Entities;
 using Blog.Domain.Interfaces;
