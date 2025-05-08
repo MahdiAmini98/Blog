@@ -1,6 +1,7 @@
 ﻿using Blog.Domain.Interfaces;
 using Blog.Persistence.Contexts;
 using Blog.Persistence.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
@@ -15,9 +16,9 @@ namespace Blog.Persistence.Transactions
         private readonly AppDbContext _context;
         private IDbContextTransaction _currentTransaction;
 
-        public UnitOfWork(AppDbContext context)
+        public UnitOfWork(IDbContextFactory<AppDbContext> dbContextFactory)
         {
-            _context = context;
+            _context = dbContextFactory.CreateDbContext();
         }
 
         public IRepository<T> Repository<T>() where T : class

@@ -1,5 +1,7 @@
 ﻿using Blog.Application.Interfaces;
+using Blog.Application.Interfaces.WebUIService;
 using Blog.Application.Services;
+using Blog.Application.Services.WebUIService;
 using Blog.Domain.Entities;
 using Blog.Domain.Interfaces;
 using Blog.Persistence.Contexts;
@@ -23,7 +25,7 @@ var builder = WebApplication.CreateBuilder(args);
 //سرور سریالایز می کند و برای 
 //client همین پروژه می فرستد
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents(options => 
+    .AddInteractiveServerComponents(options =>
     {
         options.DetailedErrors = true;
     })
@@ -31,12 +33,13 @@ builder.Services.AddRazorComponents()
     .AddAuthenticationStateSerialization();
 
 
-
 //اطلاعات کاربر لاگین شده را به صورت پارامتر به همه کامپوننت ها ارسال می کنه
 builder.Services.AddCascadingAuthenticationState();
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContextFactory<AppDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
 
 
 #region Identity
@@ -67,6 +70,8 @@ builder.Services.AddScoped<AuthenticationStateProvider, AuthStateRevalidator>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IWebUIPostService, WebUIPostService>();
+
 
 
 #endregion

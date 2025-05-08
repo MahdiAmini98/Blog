@@ -1,14 +1,16 @@
 ﻿@page "/"
 @using System.Security.Claims
+@using Blog.Application.Interfaces.WebUIService
+
+@inject IWebUIPostService PostService
 
 @rendermode InteractiveServer
 
 <PageTitle>Home</PageTitle>
 
 
-<PageTitleSection 
-    Title="وبلاگ مسترکلاس بلیزور"
-    SubTitle="لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است " />
+<PageTitleSection Title="وبلاگ مسترکلاس بلیزور"
+                  SubTitle="لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است " />
 
 
 <ContetntSection>
@@ -32,4 +34,10 @@
 </ContetntSection>
 
 
- 
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        var data = await PostService.GetPostsAsync(1, 10, null);
+        ;
+    }
+}

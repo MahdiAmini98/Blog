@@ -13,106 +13,211 @@ namespace Blog.Persistence.Repositories
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        private readonly AppDbContext _context;
-        private readonly DbSet<T> _dbSet;
+        private readonly AppDbContext _externalContext;
+        private readonly IDbContextFactory<AppDbContext> _contextFactory;
+        private bool UseExternalContext => _externalContext != null;
 
-        public Repository(AppDbContext context)
+        // این سازنده فقط در داخل پروژه (برای UnitOfWork) قابل دسترسی است
+        internal Repository(AppDbContext context)
         {
-            _context = context;
-            _dbSet = context.Set<T>();
+            _externalContext = context;
         }
 
-        // Add a new entity
-        public void Add(T entity) => _dbSet.Add(entity);
 
-        // Remove an entity
-        public void Remove(T entity) => _dbSet.Remove(entity);
+        public Repository(IDbContextFactory<AppDbContext> contextFactory)
+        {
+            _contextFactory = contextFactory;
+        }
 
-        // Update an existing entity
-        public void Update(T entity) => _dbSet.Update(entity);
 
-        // Find an entity by its ID
-        public T GetById(Guid id) => _dbSet.Find(id);
+        private async Task<TResult> ExecuteAsync<TResult>(Func<AppDbContext, Task<TResult>> operation)
+        {
+            if (UseExternalContext)
+            {
+                return await operation(_externalContext);
+            }
+            else
+            {
+                using var context = _contextFactory.CreateDbContext();
+                return await operation(context);
+            }
+        }
 
-        // Get all entities
-        public IEnumerable<T> GetAll() => _dbSet.ToList();
+        private TResult Execute<TResult>(Func<AppDbContext, TResult> operation)
+        {
+            if (UseExternalContext)
+            {
+                return operation(_externalContext);
+            }
+            else
+            {
+                using var context = _contextFactory.CreateDbContext();
+                return operation(context);
+            }
+        }
 
-        // Find entities matching a predicate
-        public IEnumerable<T> Find(Expression<Func<T, bool>> predicate) => _dbSet.Where(predicate);
 
-        // Count entities matching a predicate
-        public int Count(Expression<Func<T, bool>> predicate) => _dbSet.Count(predicate);
+        public void Add(T entity)
+        {
+            if (UseExternalContext)
+            {
+                _externalContext.Set<T>().Add(entity);
+            }
+            else
+            {
+                using var context = _contextFactory.CreateDbContext();
+                context.Set<T>().Add(entity);
+                context.SaveChanges();
+            }
+        }
 
-        // Async Methods
-        public async Task<T> GetByIdAsync(Guid id) => await _dbSet.FindAsync(id);
+        public void Remove(T entity)
+        {
+            if (UseExternalContext)
+            {
+                _externalContext.Set<T>().Remove(entity);
+            }
+            else
+            {
+                using var context = _contextFactory.CreateDbContext();
+                context.Set<T>().Remove(entity);
+                context.SaveChanges();
+            }
+        }
 
-        public async Task<IEnumerable<T>> GetAllAsync() => await _dbSet.ToListAsync();
+        public void Update(T entity)
+        {
+            if (UseExternalContext)
+            {
+                _externalContext.Set<T>().Update(entity);
+            }
+            else
+            {
+                using var context = _contextFactory.CreateDbContext();
+                context.Set<T>().Update(entity);
+                context.SaveChanges();
+            }
+        }
+
+        public T GetById(Guid id)
+        {
+            return Execute(ctx => ctx.Set<T>().Find(id));
+        }
+
+        public IEnumerable<T> GetAll()
+        {
+            return Execute(ctx => ctx.Set<T>().ToList());
+        }
+
+        public IEnumerable<T> Find(Expression<Func<T, bool>> predicate)
+        {
+            return Execute(ctx => ctx.Set<T>().Where(predicate).ToList());
+        }
+
+        public int Count(Expression<Func<T, bool>> predicate)
+        {
+            return Execute(ctx => ctx.Set<T>().Count(predicate));
+        }
+
+
+        public async Task<T> GetByIdAsync(Guid id)
+        {
+            return await ExecuteAsync(async ctx => await ctx.Set<T>().FindAsync(id));
+        }
+
+        public async Task<IEnumerable<T>> GetAllAsync()
+        {
+            return await ExecuteAsync(async ctx => await ctx.Set<T>().ToListAsync());
+        }
 
         public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate, bool asNoTracking = false)
         {
-            if (asNoTracking == false)
+            return await ExecuteAsync(async ctx =>
             {
-                return await _dbSet.Where(predicate).ToListAsync(); // Tracked
-            }
-            return await _dbSet.Where(predicate).AsNoTracking().ToListAsync(); // Untracked
+                if (asNoTracking)
+                    return await ctx.Set<T>().Where(predicate).AsNoTracking().ToListAsync();
+                else
+                    return await ctx.Set<T>().Where(predicate).ToListAsync();
+            });
+        }
+
+        public async Task<int> CountAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await ExecuteAsync(async ctx => await ctx.Set<T>().CountAsync(predicate));
         }
 
 
-        public async Task<int> CountAsync(Expression<Func<T, bool>> predicate) => await _dbSet.CountAsync(predicate);
+        public IQueryable<T> Query()
+        {
+            if (UseExternalContext)
+            {
+                return _externalContext.Set<T>().AsQueryable();
+            }
+            else
+            {
+                throw new InvalidOperationException(" Query نیاز به یک کانتکست خارجی دارد.");
+            }
+        }
 
-        // Queryable interface for advanced queries
-        public IQueryable<T> Query() => _dbSet.AsQueryable();
-
-        // Additional Utilities
-        public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate) => await _dbSet.AnyAsync(predicate);
+        public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await ExecuteAsync(async ctx => await ctx.Set<T>().AnyAsync(predicate));
+        }
 
 
         public IEnumerable<T> FindWithSpecification(Specification<T> specification)
         {
-            return specification.Apply(_dbSet.AsQueryable()).ToList();
+            return Execute(ctx =>
+            {
+                var query = ApplySpecification(ctx.Set<T>().AsQueryable(), specification);
+                return query.ToList();
+            });
         }
 
         public async Task<IEnumerable<T>> FindWithSpecificationAsync(Specification<T> specification)
         {
-            return await ApplySpecification(specification).ToListAsync();
-
-            //return await specification.Apply(_dbSet.AsQueryable()).ToListAsync();
+            return await ExecuteAsync(async ctx =>
+            {
+                var query = ApplySpecification(ctx.Set<T>().AsQueryable(), specification);
+                return await query.ToListAsync();
+            });
         }
+
         public async Task<int> CountWithSpecificationAsync(Specification<T> specification)
         {
-            return await ApplySpecification(specification).CountAsync();
+            return await ExecuteAsync(async ctx =>
+            {
+                var query = ApplySpecification(ctx.Set<T>().AsQueryable(), specification);
+                return await query.CountAsync();
+            });
         }
 
         public async Task<IEnumerable<T>> FindWithSpecificationPagedAsync(Specification<T> specification, int page, int pageSize)
         {
-            return await ApplySpecification(specification)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+            return await ExecuteAsync(async ctx =>
+            {
+                var query = ApplySpecification(ctx.Set<T>().AsQueryable(), specification);
+                return await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            });
         }
 
         public async Task<IEnumerable<T>> GetPagedAsync(int page, int pageSize)
         {
-            return await _dbSet
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+            return await ExecuteAsync(async ctx =>
+            {
+                return await ctx.Set<T>().Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            });
         }
 
 
-        private IQueryable<T> ApplySpecification(Specification<T> specification)
+        private IQueryable<T> ApplySpecification(IQueryable<T> query, Specification<T> specification)
         {
-            // ابتدا Where(...) را از خود Specification بگیریم:
-            var query = specification.Apply(_dbSet.AsQueryable());
-
-            // سپس Includes را اعمال کنیم:
+            query = specification.Apply(query);
             foreach (var includeExpression in specification.Includes)
             {
                 query = query.Include(includeExpression);
             }
-
             return query;
         }
-
     }
 }

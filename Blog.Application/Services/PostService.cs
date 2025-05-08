@@ -1,5 +1,6 @@
 ﻿using Blog.Application.Contracts.Posts;
 using Blog.Application.DTOs;
+using Blog.Application.DTOs.Posts;
 using Blog.Application.Interfaces;
 using Blog.Domain.Entities;
 using Blog.Domain.Interfaces;

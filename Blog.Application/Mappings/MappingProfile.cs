@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Blog.Application.Contracts.Posts;
-using Blog.Application.DTOs;
+using Blog.Application.DTOs.Posts;
 using Blog.Domain.Entities;
 using System;
 using System.Collections.Generic;

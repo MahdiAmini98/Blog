@@ -26,12 +26,56 @@
             </div>
             <div class="col-auto col-lg-2 text-end xs-pe-0">
                 <div class="header-icon">
-                    <div class="header-button">
-                        <NavLink class="btn btn-dark-gray btn-small btn-switch-text btn-rounded text-transform-none btn-box-shadow purchase-envato" href="https://bugeto.net/courses/blazor-masterclass" target="_blank">
-                            <span>
-                                <span class="btn-double-text" data-text="مسترکلاس Blazor">مسترکلاس Blazor</span>
-                            </span>
-                        </NavLink>
+                    <div class="header-button text-nowrap">
+                        <AuthorizeView>
+                            <Authorized>
+                                <!-- منوی کشویی برای کاربر لاگین‌شده -->
+                                <div class="dropdown">
+                                    <a class="d-inline-flex align-items-center text-dark text-decoration-none dropdown-toggle"
+                                       href="#" role="button"
+                                       data-bs-toggle="dropdown"
+                                       aria-expanded="false">
+
+                                        <img src="/images/avatar_placeholder.webp"
+                                             alt="Avatar"
+                                             width="32"
+                                             height="32"
+                                             class="rounded-circle me-1" />
+
+                                        @context.User.FindFirst(System.Security.Claims.ClaimTypes.GivenName)?.Value
+                                    </a>
+
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                            <NavLink class="dropdown-item" href="/account/profile">
+                                                پروفایل
+                                            </NavLink>
+                                        </li>
+                                        <li>
+                                            <form action="/Account/logout" method="post" class="m-0 p-0">
+                                                <AntiforgeryToken />
+                                                <input type="hidden" name="returnUrl" value="/" />
+                                                <button type="submit" class="dropdown-item">
+                                                    خروج
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </Authorized>
+
+                            <NotAuthorized>
+
+                                <div class="d-flex">
+                                    <NavLink href="/account/login" class="btn btn-primary">
+                                        ورود
+                                    </NavLink>
+                                    <NavLink href="/account/register" class="btn btn-outline-primary ms-2">
+                                        ثبت‌نام
+                                    </NavLink>
+                                </div>
+                            </NotAuthorized>
+                        </AuthorizeView>
                     </div>
                 </div>
             </div>
