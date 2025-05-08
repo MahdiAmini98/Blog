@@ -74,7 +74,9 @@ namespace Blog.Application.Services.BlogUIService
                 PublishedDate = post.PublishedDate,
                 AuthorName = post.Author?.Name ?? "ناشناس",
                 AuthorProfilePicture = post.Author?.ProfilePictureUrl ?? "images/avatar_placeholder.webp",
-                AuthorBio = post.Author?.Bio ?? string.Empty,
+                AuthorBio = string.IsNullOrWhiteSpace(post.Author?.Bio)
+                             ? "مهدی امینی، توسعه دهنده ارشد دات نت با بیش از ۵ سال تجربه؛ متخصص در بلیزور و تکنولوژی‌های مدرن وب هستم."
+                             : post.Author.Bio,
 
                 Categories = post.Categories
                     .Select(c => new CategoryDto

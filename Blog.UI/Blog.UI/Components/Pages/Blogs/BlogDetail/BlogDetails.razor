@@ -1,5 +1,53 @@
-﻿<h3>BlogDetails</h3>
+﻿@using Blog.Application.DTOs.Posts.BlogUIPosts
+<div class="col-12 blog-details mb-12">
+    <div class="entry-meta mb-20px fs-15">
+        <span>
+            <i class="text-dark-gray feather icon-feather-calendar">
+            </i>
+            <a href="blog-grid.html">@PostDetail.PublishedDate.ToString("yyyy MM dd")</a>
+        </span>
+        <span><i class="text-dark-gray feather icon-feather-user"></i><a href="blog-grid.html">@PostDetail.AuthorName </a></span>
+        <span>
+            <i class="text-dark-gray feather icon-feather-folder"></i>
+            @if (PostDetail.Categories != null && PostDetail.Categories.Any())
+            {
+                foreach (var category in PostDetail.Categories)
+                {
+                    <a href="@($"/category/{category.Id}")">@category.Name</a>
+                    if (category != PostDetail.Categories.Last())
+                    {
+                        <span>, </span>
+                    }
+                }
+            }
+        </span>
+    </div>
+    <h5 class="text-dark-gray fw-600 w-80 sm-w-100 mb-6">@PostDetail.Title</h5>
+    <img alt="@PostDetail.Title" class="w-100 border-radius-6px mb-7" src="@PostDetail.Image" data-no-retina="">
+ 
+    <article>
+        @((MarkupString)PostDetail.Content)
+    </article>
+
+
+    <div class="row mb-50px sm-mb-30px">
+        <div class="tag-cloud col-12 col-md-9 text-center text-md-start sm-mb-15px">
+            @if (PostDetail.Tags is not null && PostDetail.Tags.Any())
+            {
+                foreach (var tag in PostDetail.Tags)
+                {
+                    <NavLink href="blog-grid.html">@tag.Name</NavLink>
+                }
+            }
+        </div>
+        <div class="tag-cloud col-12 col-md-3 text-uppercase text-center text-md-end">
+            <a class="likes-count fw-500 mx-0"><i class="fa-regular fa-heart text-red me-10px"></i><span class="text-dark-gray text-dark-gray-hover">05 لایک</span></a>
+        </div>
+    </div>
+</div>
 
 @code {
+    [Parameter]
+    public PostDetailDto PostDetail { get; set; }
 
 }

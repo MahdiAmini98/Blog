@@ -1,5 +1,35 @@
-﻿<h3>AuthorBox</h3>
+﻿@using Blog.Application.DTOs.Posts.BlogUIPosts
+<div class="col-12">
 
+    <div class="row">
+        <div class="col-12 mb-7">
+            <div class="d-block d-md-flex w-100 box-shadow-extra-large align-items-center border-radius-4px p-8">
+                <div class="w-140px text-center me-60px sm-mx-auto">
+                    <img alt="@PostDetail.AuthorName" class="rounded-circle w-110px" src="@PostDetail.AuthorProfilePicture" data-no-retina="">
+                    <a class="text-dark-gray fw-500 mt-25px d-inline-block lh-20" href="blog-grid.html">@PostDetail.AuthorName </a>
+                    <span class="fs-15 lh-20 d-block sm-mb-15px">هم بنیانگذار</span>
+                </div>
+                <div class="w-75 sm-w-100 text-center text-md-start">
+                    <p class="mb-5px"> @PostDetail.AuthorBio</p>
+                    <NavLink class="btn btn-link btn-large text-dark-gray mt-20px fw-600" href="blog-grid.html">همه پست های نویسنده</NavLink>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-12 text-center elements-social social-icon-style-04">
+            <ul class="medium-icon dark">
+                <li><a class="facebook" href="https://www.facebook.com/" target="_blank"><i class="fa-brands fa-facebook-f"></i><span></span></a></li>
+                <li><a class="twitter" href="https://www.twitter.com" target="_blank"><i class="fa-brands fa-twitter"></i><span></span></a></li>
+                <li><a class="instagram" href="https://www.instagram.com" target="_blank"><i class="fa-brands fa-instagram"><span></span></i></a></li>
+                <li><a class="linkedin" href="http://www.linkedin.com" target="_blank"><i class="fa-brands fa-linkedin-in"><span></span></i></a></li>
+                <li><a class="behance" href="http://www.behance.com/" target="_blank"><i class="fa-brands fa-behance"></i><span></span></a></li>
+            </ul>
+        </div>
+    </div>
+</div>
 @code {
+    [Parameter]
+    public PostDetailDto PostDetail { get; set; }
 
 }
