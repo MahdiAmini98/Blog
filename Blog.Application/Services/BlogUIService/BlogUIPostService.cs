@@ -1,29 +1,25 @@
 ﻿using Blog.Application.DTOs;
+using Blog.Application.DTOs.Posts.BlogUIPosts;
 using Blog.Application.DTOs.Posts.WebUIPosts;
-using Blog.Application.Interfaces.WebUIService;
+using Blog.Application.Interfaces.BlogUIService;
 using Blog.Domain.Entities;
 using Blog.Domain.Interfaces;
 using Blog.Domain.Specifications;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Blog.Application.Services.WebUIService
+namespace Blog.Application.Services.BlogUIService
 {
-    public class WebUIPostService : IWebUIPostService
+    public class BlogUIPostService : IBlogUIPostService
     {
         private readonly IRepository<Post> _postRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public WebUIPostService(IRepository<Post> postRepository, IUnitOfWork unitOfWork)
+        public BlogUIPostService(IRepository<Post> postRepository, IUnitOfWork unitOfWork)
         {
             _postRepository = postRepository;
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<PaginatedList<WebUIPostListDto>> GetPostsAsync(int pageIndex, int pageSize, string? searchKey = null)
+        public async Task<PaginatedList<BlogUIPostListDto>> GetPostsAsync(int pageIndex, int pageSize, string? searchKey = null)
         {
             var query = await _postRepository.GetAllAsync();
 
@@ -39,20 +35,22 @@ namespace Blog.Application.Services.WebUIService
                                    .Take(pageSize)
                                    .ToList();
 
-            var dtos = posts.Select(p => new WebUIPostListDto
+            var dtos = posts.Select(p => new BlogUIPostListDto
             {
                 Id = p.Id,
                 Title = p.Title,
                 Description = !string.IsNullOrWhiteSpace(p.Summary)
-                              ? p.Summary
-                              : (p.Content.Length > 150 ? p.Content.Substring(0, 150) + "..." : p.Content),
+                              ? p.Summary.Length > 50 ? p.Summary.Substring(0, 50) + "..." : p.Summary
+                              : (p.Content.Length > 50 ? p.Content.Substring(0, 50) + "..." : p.Content),
                 Author = p.Author != null ? p.Author.Name : "Unknown",
                 ImageUrl = p.ThumbnailUrl ?? string.Empty,
                 Slug = p.Slug ?? string.Empty,
-                Reactions = p.Reactions.Select(r => r.Type).ToList()
+                Reactions = p.Reactions.Select(r => r.Type).ToList(),
+                PublishedDate = p.PublishedDate,
+
             }).ToList();
 
-            return new PaginatedList<WebUIPostListDto>(dtos, totalCount, pageIndex, pageSize);
+            return new PaginatedList<BlogUIPostListDto>(dtos, totalCount, pageIndex, pageSize);
         }
 
         public async Task<PostDetailDto> GetPostDetailBySlugAsync(string slug)

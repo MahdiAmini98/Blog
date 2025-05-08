@@ -251,7 +251,7 @@
     });
     if ($.fn.stick_in_parent !== undefined && $.fn.stick_in_parent !== null) {
         if ($('.left-sidebar-wrapper').length) {
-            $('.left-sidebar-wrapper .left-sidebar-nav').stick_in_parent({recalc: 1});
+            $('.left-sidebar-wrapper .left-sidebar-nav').stick_in_parent({ recalc: 1 });
         }
     }
     if (typeof $.fn.smoothScroll === 'function') {
@@ -432,14 +432,14 @@
                         itemSelector: '.grid-item',
                         percentPosition: true,
                         stagger: 0,
-                        masonry: {columnWidth: '.grid-sizer',}
+                        masonry: { columnWidth: '.grid-sizer', }
                     });
                 }
                 isotopeObjs.push(_this);
                 if (typeof $.fn.isotope === 'function') {
                     var currentPortfolioActive = $('.portfolio-filter > li.active > a').attr('data-filter');
                     if (currentPortfolioActive != '' && currentPortfolioActive != undefined) {
-                        _this.isotope({filter: currentPortfolioActive});
+                        _this.isotope({ filter: currentPortfolioActive });
                     }
                 }
             });
@@ -447,7 +447,7 @@
                 reInitSkrollr();
             });
             $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
-                _this.isotope({transitionDuration: 0});
+                _this.isotope({ transitionDuration: 0 });
             });
         });
     }
@@ -458,7 +458,7 @@
         var selector = _this.attr('data-filter'), portfolioFilter = parentSectionObj.find('.portfolio-wrapper');
         portfolioFilter.find('.grid-item[data-anime]').addClass('appear');
         if (typeof portfolioFilter.isotope === 'function') {
-            portfolioFilter.isotope({filter: selector});
+            portfolioFilter.isotope({ filter: selector });
         }
         if (parentSectionObj.length && $(parentSectionObj).hasClass('overlap-height')) {
             setOverLayerPosition();
@@ -494,8 +494,8 @@
                     duration: 1000,
                     easing: "easeOutQuad"
                 })
-                anime({targets: _self.querySelector(".hover-reveal__inner"), scale: [0.5, 1], easing: "easeOutQuad"})
-                anime({targets: _self.querySelector(".hover-reveal__img"), scale: [2, 1], easing: "easeOutQuad"})
+                anime({ targets: _self.querySelector(".hover-reveal__inner"), scale: [0.5, 1], easing: "easeOutQuad" })
+                anime({ targets: _self.querySelector(".hover-reveal__img"), scale: [2, 1], easing: "easeOutQuad" })
             })
             _self.addEventListener("mouseleave", function () {
                 anime({
@@ -504,8 +504,8 @@
                     duration: 1000,
                     easing: "easeOutQuad"
                 })
-                anime({targets: _self.querySelector(".hover-reveal__inner"), scale: [1, 0.5], easing: "easeOutQuad"})
-                anime({targets: _self.querySelector(".hover-reveal__img"), scale: [1, 2], easing: "easeOutQuad"})
+                anime({ targets: _self.querySelector(".hover-reveal__inner"), scale: [1, 0.5], easing: "easeOutQuad" })
+                anime({ targets: _self.querySelector(".hover-reveal__img"), scale: [1, 2], easing: "easeOutQuad" })
             })
             if (typeof TweenLite !== "undefined") {
                 document.addEventListener("mousemove", function (e) {
@@ -522,18 +522,18 @@
     const sticky_container = document.querySelector(".sticky-image-distortion-wrapper");
     if (typeof (sticky_container) != 'undefined' && sticky_container != null) {
         let winsize;
-        const calcWinsize = () => winsize = {width: window.innerWidth, height: window.innerHeight};
+        const calcWinsize = () => winsize = { width: window.innerWidth, height: window.innerHeight };
         calcWinsize();
         window.addEventListener('resize', calcWinsize);
 
         class Menu {
             constructor() {
-                this.DOM = {menu: document.querySelector('.sticky-image-distortion-wrapper nav.menu')};
+                this.DOM = { menu: document.querySelector('.sticky-image-distortion-wrapper nav.menu') };
                 this.DOM.menuLinks = [...this.DOM.menu.querySelectorAll('.menu__link')];
-                this.mousePos = {x: winsize.width / 2, y: winsize.height / 2};
+                this.mousePos = { x: winsize.width / 2, y: winsize.height / 2 };
                 this.lastMousePos = {
-                    translation: {x: winsize.width / 2, y: winsize.height / 2},
-                    displacement: {x: 0, y: 0}
+                    translation: { x: winsize.width / 2, y: winsize.height / 2 },
+                    displacement: { x: 0, y: 0 }
                 };
                 this.dmScale = 0;
                 this.current = -1;
@@ -564,7 +564,7 @@
                         item.classList.add("active");
                         if (typeof TweenMax !== 'undefined' && typeof TweenMax !== null) {
                             if (item !== active_item) {
-                                TweenMax.fromTo(displaceMentEl, 1.2, {attr: {scale: 50}}, {attr: {scale: 0.3}});
+                                TweenMax.fromTo(displaceMentEl, 1.2, { attr: { scale: 50 } }, { attr: { scale: 0.3 } });
                             }
                         }
                         document.body.style.setProperty('--body-bgcolor', bgColor)
@@ -594,13 +594,13 @@
                         itemSelector: '.grid-item',
                         percentPosition: true,
                         stagger: 0,
-                        masonry: {columnWidth: '.grid-sizer',}
+                        masonry: { columnWidth: '.grid-sizer', }
                     });
                 }
                 isotopeObjs.push(_this);
                 var currentBlogActive = $('.blog-filter > li.active > a').attr('data-filter');
                 if (currentBlogActive != '' && currentBlogActive != undefined) {
-                    _this.isotope({filter: currentBlogActive});
+                    _this.isotope({ filter: currentBlogActive });
                 }
             });
         });
@@ -611,7 +611,7 @@
         _this.parent().addClass('active');
         var selector = _this.attr('data-filter'), blogFilter = parentSectionObj.find('.blog-wrapper');
         blogFilter.find('.grid-item[data-anime]').addClass('appear');
-        blogFilter.isotope({filter: selector});
+        blogFilter.isotope({ filter: selector });
         return false;
     });
     $('.box-hover').on('mouseenter', function (e) {
@@ -630,7 +630,7 @@
                         itemSelector: '.grid-item',
                         percentPosition: true,
                         stagger: 0,
-                        masonry: {columnWidth: '.grid-sizer',}
+                        masonry: { columnWidth: '.grid-sizer', }
                     });
                 }
                 isotopeObjs.push(_this);
@@ -651,7 +651,7 @@
                 type: 'image',
                 closeOnContentClick: true,
                 closeBtnInside: false,
-                gallery: {enabled: true}
+                gallery: { enabled: true }
             });
         });
     }
@@ -697,7 +697,7 @@
             if (!$(this).hasClass('appear')) {
                 $(this).addClass('appear');
                 var total = $(this).attr('aria-valuenow'), delay = 300;
-                $(this).animate({'width': total + '%'}, {
+                $(this).animate({ 'width': total + '%' }, {
                     duration: delay,
                     easing: "swing",
                     progress: function (animation, progress, msRemaining) {
@@ -733,7 +733,7 @@
                         gradient.addColorStop(0, color2);
                         return gradient;
                     },
-                    animate: {duration: 2000, enabled: true},
+                    animate: { duration: 2000, enabled: true },
                     onStep: function (from, to, percent) {
                         $(this.el).find('.percent').text(Math.round(percent) + '%');
                     }
@@ -745,7 +745,7 @@
         $(document).on('mousemove', '.mousetip-wrapper', function (e) {
             var mouseX = e.pageX - $(this).offset().left + 20;
             var mouseY = e.pageY - $(this).offset().top + 20;
-            $(this).find('.caption').show().css({top: mouseY, left: mouseX});
+            $(this).find('.caption').show().css({ top: mouseY, left: mouseX });
         });
     }
     $('.vertical-counter').each(function () {
@@ -794,7 +794,7 @@
                 var _this = $(this), value = _this.attr('data-to'), divHeight = _this.find('li').height();
                 _this.height(divHeight);
                 if (value <= 9) {
-                    _this.find('ul').css({'transform': 'translateY(-' + value * 10 + '%)'});
+                    _this.find('ul').css({ 'transform': 'translateY(-' + value * 10 + '%)' });
                 }
             });
         });
@@ -851,7 +851,7 @@
         $('.team-style-01').each(function () {
             let _this = $(this), figure = _this.find('figure'), figcaption = _this.find('figcaption');
             setTimeout(function () {
-                figure.css({'padding-bottom': figcaption.outerHeight()});
+                figure.css({ 'padding-bottom': figcaption.outerHeight() });
             }, 200);
         });
     }
@@ -860,7 +860,7 @@
         $('.interactive-banner-style-02').each(function () {
             let _this = $(this), figure = _this.find('figure'), figcaption = _this.find('figcaption');
             setTimeout(function () {
-                figure.css({'padding-bottom': figcaption.outerHeight()});
+                figure.css({ 'padding-bottom': figcaption.outerHeight() });
             }, 500);
         });
     }
@@ -913,7 +913,7 @@
         }
         if (options.el === "lines") {
             function lineSplitting() {
-                const lines = Splitting({target: target, by: 'lines'});
+                const lines = Splitting({ target: target, by: 'lines' });
                 const line = lines[0].lines.map(item => item.map(i => i.innerHTML).join(" "));
                 target.innerHTML = line.map(item => `<span class="d-inline-flex">${item}</span>`).join(' ');
             }
@@ -924,7 +924,7 @@
         }
         if (options.el === "words") {
             function lineSplitting() {
-                const words = Splitting({target: target, by: 'words'});
+                const words = Splitting({ target: target, by: 'words' });
                 const word = words[0].words.join(" ");
             }
 
@@ -939,7 +939,7 @@
             target.style.willChange = options.willchange;
         }
         anime_animation.add({
-            targets: child, ...options, delay: anime.stagger(staggerValue, {start: delay}), complete: function () {
+            targets: child, ...options, delay: anime.stagger(staggerValue, { start: delay }), complete: function () {
                 if (options.el) {
                     target.classList.add('anime-child');
                     target.classList.add('anime-complete');
@@ -1056,7 +1056,7 @@
         }).add({
             targets: target.querySelector('*'),
             easing: 'easeOutQuint',
-            delay: direction === 'lr' ? anime.stagger(duration, {start: 1000}) : anime.stagger(-duration, {start: 1000}),
+            delay: direction === 'lr' ? anime.stagger(duration, { start: 1000 }) : anime.stagger(-duration, { start: 1000 }),
             opacity: [0, 1]
         }, "-=900");
     }
@@ -1149,7 +1149,7 @@
         }).add({
             targets: target.querySelectorAll('.anime-text > .word > .char'),
             easing: 'easeOutQuint',
-            delay: options.direction === 'left' ? anime.stagger(speed, {start: 1000}) : anime.stagger(-speed, {start: 1000}),
+            delay: options.direction === 'left' ? anime.stagger(speed, { start: 1000 }) : anime.stagger(-speed, { start: 1000 }),
             opacity: [0, 1],
             translateX: options.direction === 'left' ? [100, 0] : [-100, 0]
         }, "-=600");
@@ -1166,7 +1166,7 @@
             targets: target.querySelectorAll('.anime-text .word .char'),
             opacity: content.length > 1 ? [1, 0] : [1, 1],
             translateY: content.length > 1 ? (direction === 'down' ? [0, 20] : [0, -20]) : [0, 0],
-            delay: anime.stagger(speed ? speed : 50, {start: duration - 1500})
+            delay: anime.stagger(speed ? speed : 50, { start: duration - 1500 })
         });
     }
     const smoothWaveTextAnimation = (target, options) => {
@@ -1178,14 +1178,14 @@
             translateY: direction === 'down' ? [-50, 0] : [50, 0],
             duration: 500,
             easing: 'easeOutQuad',
-            delay: anime.stagger(speed ? speed : 40, {direction: 'reverse'}),
+            delay: anime.stagger(speed ? speed : 40, { direction: 'reverse' }),
         }).add({
             targets: target.querySelectorAll('.anime-text .word .char'),
             opacity: content.length > 1 ? [1, 0] : [1, 1],
             translateY: content.length > 1 ? (direction === 'down' ? 50 : -50) : 0,
             duration: 500,
             easing: 'easeOutQuad',
-            delay: anime.stagger(speed ? speed : 40, {start: duration - 1000, direction: 'reverse'})
+            delay: anime.stagger(speed ? speed : 40, { start: duration - 1000, direction: 'reverse' })
         });
     }
     const rotateTextAnimation = (target, options) => {
@@ -1203,7 +1203,7 @@
             opacity: content.length > 1 ? 0 : 1,
             rotateX: content.length > 1 ? [0, 70] : [0, 0],
             duration: 150,
-            delay: anime.stagger(speed ? speed : 50, {start: duration - 1500}),
+            delay: anime.stagger(speed ? speed : 50, { start: duration - 1500 }),
             easing: "linear"
         });
     }
@@ -1216,7 +1216,7 @@
             duration: 1500,
             elasticity: 600,
             transformOrigin: '50% 100%',
-            delay: anime.stagger(speed ? speed : 45, {start: delay})
+            delay: anime.stagger(speed ? speed : 45, { start: delay })
         }).add({
             targets: target.querySelectorAll('.anime-text > .word > .char'),
             opacity: content.length > 1 ? 0 : 1,
@@ -1255,7 +1255,7 @@
             opacity: [0, 1],
             easing: "easeOutExpo",
             duration: 1200,
-            delay: anime.stagger(speed ? speed : 75, {direction: direction === "right" ? 'reverse' : 'normal'})
+            delay: anime.stagger(speed ? speed : 75, { direction: direction === "right" ? 'reverse' : 'normal' })
         }).add({
             targets: target.querySelectorAll('.anime-text > .word > .char'),
             translateX: content.length > 1 ? (direction === "left" ? -40 : 40) : 0,
@@ -1283,7 +1283,7 @@
             translateY: content.length > 1 ? [0, -100] : [0, 0],
             opacity: content.length > 1 ? [1, 0] : [1, 1],
             easing: "easeInExpo",
-            delay: anime.stagger(speed ? speed : 40, {start: duration - 3000})
+            delay: anime.stagger(speed ? speed : 40, { start: duration - 3000 })
         });
     }
 
@@ -1328,7 +1328,7 @@
                 if (text_effect === undefined) {
                     anime({
                         targets: item.querySelectorAll('.anime-text > .word > .char'), ...ftOptions,
-                        delay: anime.stagger(speed ? speed : 0, {start: delay ? delay : 0})
+                        delay: anime.stagger(speed ? speed : 0, { start: delay ? delay : 0 })
                     })
                 }
             }
@@ -1378,7 +1378,7 @@
                     if (text_effect === undefined) {
                         anime({
                             targets: item.querySelectorAll('.anime-text > .word > .char'), ...ftOptions,
-                            delay: anime.stagger(speed ? speed : 0, {start: delay ? delay : 0})
+                            delay: anime.stagger(speed ? speed : 0, { start: delay ? delay : 0 })
                         });
                     }
                 }, duration);
@@ -1457,7 +1457,7 @@
                                 itemSelector: '.grid-item',
                                 percentPosition: true,
                                 stagger: 0,
-                                masonry: {columnWidth: '.grid-sizer',}
+                                masonry: { columnWidth: '.grid-sizer', }
                             });
                         }
                         isotopeObjs.push(_this);
@@ -1477,7 +1477,7 @@
                 setTimeout(function () {
                     $.magnificPopup.open({
                         showCloseBtn: false,
-                        items: {src: '#subscribe-popup'},
+                        items: { src: '#subscribe-popup' },
                         type: 'inline',
                         mainClass: 'my-mfp-zoom-in',
                         callbacks: {
@@ -1493,7 +1493,7 @@
         }
     }
     if (typeof $.fn.magnificPopup === 'function') {
-        $('.modal-popup').magnificPopup({type: 'inline', preloader: false, blackbg: true});
+        $('.modal-popup').magnificPopup({ type: 'inline', preloader: false, blackbg: true });
         $(document).on('click', '.popup-modal-dismiss', function (e) {
             e.preventDefault();
             $.magnificPopup.close();
@@ -1611,7 +1611,7 @@
                 }
             } else if (grecaptchav3 != '' && grecaptchav3 != undefined) {
                 grecaptcha.ready(function () {
-                    grecaptcha.execute(grecaptchav3, {action: 'submit'}).then(function (token) {
+                    grecaptcha.execute(grecaptchav3, { action: 'submit' }).then(function (token) {
                     });
                 });
             }
@@ -1780,18 +1780,18 @@
             if (scrollPos >= headerHeight) {
                 $('header').addClass('sticky');
                 if (!$('.header-top-bar').is(':hidden')) {
-                    $('.header-top-bar').css({'top': '-' + (miniHeaderHeight) + 'px'});
-                    $('.header-top-bar + .navbar').css({'top': '0px'});
+                    $('.header-top-bar').css({ 'top': '-' + (miniHeaderHeight) + 'px' });
+                    $('.header-top-bar + .navbar').css({ 'top': '0px' });
                 } else {
-                    $('.header-top-bar, .header-top-bar + .navbar').css({'top': ''});
+                    $('.header-top-bar, .header-top-bar + .navbar').css({ 'top': '' });
                 }
             } else if (scrollPos <= headerHeight) {
                 $('header').removeClass('sticky');
                 if (!$('.header-top-bar').is(':hidden')) {
-                    $('.header-top-bar').css({'top': '0px'});
-                    $('.header-top-bar + .navbar').css({'top': (miniHeaderHeight) + 'px'});
+                    $('.header-top-bar').css({ 'top': '0px' });
+                    $('.header-top-bar + .navbar').css({ 'top': (miniHeaderHeight) + 'px' });
                 } else {
-                    $('.header-top-bar, .header-top-bar + .navbar').css({'top': ''});
+                    $('.header-top-bar, .header-top-bar + .navbar').css({ 'top': '' });
                 }
             }
         }
@@ -2068,7 +2068,7 @@
                                         type: 'image',
                                         closeOnContentClick: true,
                                         closeBtnInside: false,
-                                        gallery: {enabled: true}
+                                        gallery: { enabled: true }
                                     });
                                 }
                             }
@@ -2231,7 +2231,7 @@
         if ($('.magic-cursor').hasClass('round-cursor')) {
             $('.magic-cursor-wrapper').addClass('magic-round-cursor');
         }
-        var mouse = {x: 0, y: 0}, pos = {x: 0, y: 0}, ratio = .65, active = !1,
+        var mouse = { x: 0, y: 0 }, pos = { x: 0, y: 0 }, ratio = .65, active = !1,
             ball = document.getElementById('ball-cursor'), ballloader = document.getElementById('ball-cursor-loader');
 
         function mouseMove(e) {
@@ -2247,7 +2247,7 @@
         }
 
         if (typeof TweenLite !== "undefined") {
-            TweenLite.set(ball, {xPercent: -50, yPercent: -50, scale: 0, borderWidth: "0", opacity: 1});
+            TweenLite.set(ball, { xPercent: -50, yPercent: -50, scale: 0, borderWidth: "0", opacity: 1 });
         }
         document.addEventListener("mousemove", mouseMove);
         if (typeof gsap !== "undefined") {
@@ -2255,8 +2255,8 @@
         }
         if (typeof TweenMax !== 'undefined' && typeof TweenMax !== null) {
             $('.magic-cursor').mouseenter(function (e) {
-                TweenMax.to('#ball-cursor', 0.3, {borderWidth: '2px', scale: 1,});
-                TweenMax.to('#ball-cursor-loader', 0.2, {borderWidth: '2px', top: 2, left: 2});
+                TweenMax.to('#ball-cursor', 0.3, { borderWidth: '2px', scale: 1, });
+                TweenMax.to('#ball-cursor-loader', 0.2, { borderWidth: '2px', top: 2, left: 2 });
                 $('.magic-cursor-wrapper').addClass('sliderhover');
                 if ($(this).hasClass('magic-cursor-vertical')) {
                     $('.magic-cursor-wrapper').addClass('vertical');
@@ -2271,15 +2271,15 @@
                     borderColor: 'transparent',
                     opacity: 1
                 });
-                TweenMax.to('#ball-cursor-loader', 0.2, {borderWidth: '2px', top: 0, left: 0});
+                TweenMax.to('#ball-cursor-loader', 0.2, { borderWidth: '2px', top: 0, left: 0 });
                 $('.magic-cursor-wrapper').removeClass('sliderhover');
             });
         }
     }
     $(document).on('mouseenter', '.swiper-button-next, .swiper-button-prev, .swiper-pagination, a:not(.force-magic-cursor)', function () {
-        $('.magic-cursor-wrapper').css({'opacity': 0});
+        $('.magic-cursor-wrapper').css({ 'opacity': 0 });
     }).on('mouseleave', '.swiper-button-next, .swiper-button-prev, .swiper-pagination, a:not(.force-magic-cursor)', function () {
-        $('.magic-cursor-wrapper').css({'opacity': 1});
+        $('.magic-cursor-wrapper').css({ 'opacity': 1 });
     });
     $(window).scroll(function (event) {
         $('[data-shadow-animation="true"]').each(function () {
@@ -2345,14 +2345,14 @@
     }
     var particleDefaultOptions = {
         particles: {
-            number: {value: 80, density: {enable: !1, value_area: 800}},
-            color: {value: ["#fdc14c", "#fd5c4c", "#48bb0f"]},
-            shape: {type: "circle"},
-            size: {value: 10, random: !0, anim: {enable: !0, speed: 1}},
-            opacity: {value: 0.5, random: false},
-            move: {direction: "right", attract: {enable: !0}},
-            line_linked: {enable: !1}
-        }, interactivity: {events: {onhover: {enable: !1}, onclick: {enable: !1}}}, "retina_detect": true
+            number: { value: 80, density: { enable: !1, value_area: 800 } },
+            color: { value: ["#fdc14c", "#fd5c4c", "#48bb0f"] },
+            shape: { type: "circle" },
+            size: { value: 10, random: !0, anim: { enable: !0, speed: 1 } },
+            opacity: { value: 0.5, random: false },
+            move: { direction: "right", attract: { enable: !0 } },
+            line_linked: { enable: !1 }
+        }, interactivity: { events: { onhover: { enable: !1 }, onclick: { enable: !1 } } }, "retina_detect": true
     };
     var particleItems = $('[data-particle="true"]');
     if (typeof particlesJS === 'function' && particleItems.length) {
@@ -2371,7 +2371,7 @@
         var animePath = $(this);
         var paths = animePath.attr('pathdata:id').split(';');
         paths.splice(paths.length, 0, animePath.attr('d'));
-        anime({targets: animePath[0], duration: 10000, easing: 'cubicBezier(0.5, 0, 0.5, 1)', d: paths, loop: true});
+        anime({ targets: animePath[0], duration: 10000, easing: 'cubicBezier(0.5, 0, 0.5, 1)', d: paths, loop: true });
     });
     var customCursorInit = false;
     handleCustomCursor();
@@ -2490,16 +2490,16 @@
                             if (yMove > _this.outerHeight()) {
                                 yMove = _this.outerHeight();
                             }
-                            $(stackItems[i]).css({'height': 'calc(100vh - ' + yMove + 'px)'});
+                            $(stackItems[i]).css({ 'height': 'calc(100vh - ' + yMove + 'px)' });
                             $(stackItems[i]).addClass('active');
                         } else {
-                            $(stackItems[i]).css({'height': 'calc(100vh - 0px)'});
+                            $(stackItems[i]).css({ 'height': 'calc(100vh - 0px)' });
                             $(stackItems[i]).removeClass('active');
                         }
                     }
                 }
             } else {
-                $('.stack-box .stack-item').css({'height': 'inherit'});
+                $('.stack-box .stack-item').css({ 'height': 'inherit' });
             }
         });
         stackLastScroll = windowScrollTop;
@@ -2513,7 +2513,7 @@
     function initAtropos() {
         if (atroposItems.length && $(window).width() > 1199) {
             atroposItems.forEach(function (atroposItem) {
-                var myAtropos = Atropos({el: atroposItem});
+                var myAtropos = Atropos({ el: atroposItem });
             });
         }
     }
@@ -2622,7 +2622,7 @@
             const section = window.sections.map(section => {
                 const el = section;
                 const rect = el.getBoundingClientRect();
-                return {el, rect};
+                return { el, rect };
             }).find(section => section.rect.bottom >= (window.innerHeight * 0.5));
             if (section && section.el !== activeSection) {
                 activeSection = section.el;
@@ -2630,7 +2630,7 @@
                 activeSection.closest(".page-content").querySelectorAll("[data-background]").forEach(item => item.classList.remove("active"))
                 activeSection.classList.add("active")
                 if (typeof gsap !== "undefined") {
-                    gsap.to(activeSection.closest(".page-content"), {backgroundColor: sectionBg})
+                    gsap.to(activeSection.closest(".page-content"), { backgroundColor: sectionBg })
                 }
             }
         }
@@ -2649,13 +2649,13 @@
                     e.preventDefault();
                     var expiresDays = 1;
                     cookieModel.remove();
-                    $.cookie('cookieConsent', 'closed', {expires: expiresDays, path: '/'});
+                    $.cookie('cookieConsent', 'closed', { expires: expiresDays, path: '/' });
                 });
             }, 1000);
         }
     }
     $(document).on('click', '.scroll-top', function () {
-        $('html, body').animate({scrollTop: 0}, 800);
+        $('html, body').animate({ scrollTop: 0 }, 800);
         return false;
     });
 
@@ -2732,7 +2732,7 @@ function initMap() {
             mapTypeId: google.maps.MapTypeId.READMAP,
             styles: map_style
         });
-        const infowindow = new google.maps.InfoWindow({content: popup && popup.html, maxWidth: 300,});
+        const infowindow = new google.maps.InfoWindow({ content: popup && popup.html, maxWidth: 300, });
         infowindow.setPosition(new google.maps.LatLng(lat, lng));
         if (marker !== null && marker !== undefined) {
             if (marker.type.toLowerCase() === 'html') {
@@ -2753,12 +2753,12 @@ function initMap() {
                     let flag = false;
                     if (popup.defaultOpen === true) {
                         flag = true;
-                        infowindow.setOptions({pixelOffset: new google.maps.Size(10, -30)});
+                        infowindow.setOptions({ pixelOffset: new google.maps.Size(10, -30) });
                         infowindow.open(gmap);
                     }
                     google.maps.event.addDomListener(div, "click", function (event) {
                         if (popup) {
-                            infowindow.setOptions({pixelOffset: new google.maps.Size(10, -30)});
+                            infowindow.setOptions({ pixelOffset: new google.maps.Size(10, -30) });
                             if (flag === false) {
                                 infowindow.open(gmap);
                                 flag = true;
@@ -2780,14 +2780,14 @@ function initMap() {
                 htmlMarker.setMap(gmap);
             } else {
                 const image_marker = new google.maps.Marker({
-                    icon: {url: marker.src},
-                    position: {lat: lat, lng: lng},
+                    icon: { url: marker.src },
+                    position: { lat: lat, lng: lng },
                     map: gmap,
                     animation: google.maps.Animation.DROP,
                 });
                 let flag = false;
                 if (popup.defaultOpen === true) {
-                    infowindow.open({anchor: image_marker, map: gmap});
+                    infowindow.open({ anchor: image_marker, map: gmap });
                     flag = true;
                 }
                 image_marker.addListener("click", toggleBounce);
@@ -2800,7 +2800,7 @@ function initMap() {
                     }
                     if (popup) {
                         if (flag === false) {
-                            infowindow.open({anchor: image_marker, map: gmap});
+                            infowindow.open({ anchor: image_marker, map: gmap });
                             flag = true;
                         } else {
                             infowindow.close();
@@ -2810,16 +2810,16 @@ function initMap() {
                 }
             }
         } else {
-            const marker = new google.maps.Marker({position: {lat: lat, lng: lng}, map: gmap});
+            const marker = new google.maps.Marker({ position: { lat: lat, lng: lng }, map: gmap });
             let flag = false;
             if (popup.defaultOpen === true) {
-                infowindow.open({anchor: marker, map: gmap});
+                infowindow.open({ anchor: marker, map: gmap });
                 flag = true;
             }
             marker.addListener("click", function () {
                 if (popup) {
                     if (flag === false) {
-                        infowindow.open({anchor: marker, map: gmap});
+                        infowindow.open({ anchor: marker, map: gmap });
                         flag = true;
                     } else {
                         infowindow.close();
@@ -2830,3 +2830,22 @@ function initMap() {
         }
     });
 }
+
+// راه‌اندازی مجدد Isotope برای عنصر گرید
+window.initializeBlogGrid = function () {
+    $('.blog-wrapper').each(function () {
+        var _this = $(this);
+        _this.imagesLoaded(function () {
+            _this.removeClass('grid-loading');
+            if (typeof $.fn.isotope === 'function') {
+                _this.isotope({
+                    layoutMode: 'masonry',
+                    itemSelector: '.grid-item',
+                    percentPosition: true,
+                    stagger: 0,
+                    masonry: { columnWidth: '.grid-sizer' }
+                });
+            }
+        });
+    });
+};

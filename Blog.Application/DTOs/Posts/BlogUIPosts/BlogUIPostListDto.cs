@@ -1,13 +1,9 @@
 ﻿using Blog.Domain.Enumerations;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Blog.Application.DTOs.Posts.WebUIPosts
+
+namespace Blog.Application.DTOs.Posts.BlogUIPosts
 {
-    public class WebUIPostListDto
+    public class BlogUIPostListDto
     {
         public Guid Id { get; set; }
         public string Title { get; set; } = string.Empty;

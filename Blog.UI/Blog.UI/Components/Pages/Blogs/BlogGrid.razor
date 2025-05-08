@@ -1,0 +1,88 @@
+﻿@using Blog.Application.DTOs
+@using Blog.Application.DTOs.Posts.BlogUIPosts
+@using Blog.Application.Interfaces.BlogUIService
+@inject IBlogUIPostService PostService
+@inject IJSRuntime JSRuntime
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            @if (Data == null || !Data.Items.Any())
+            {
+                <p>هیچ پستی موجود نیست.</p>
+            }
+            else
+            {
+                <ul class="blog-grid blog-wrapper grid grid-4col xl-grid-4col lg-grid-3col md-grid-2col sm-grid-2col xs-grid-1col gutter-extra-large" style="position: relative;">
+                    <li class="grid-sizer"></li>
+                    @foreach (var post in Data.Items)
+                    {
+                        <li class="grid-item">
+                            <div class="card border-0 border-radius-4px box-shadow-extra-large box-shadow-extra-large-hover">
+                                <!-- بخش تصویر پست -->
+                                <div class="blog-image position-relative overflow-hidden border-radius-4px">
+                                    <a class="d-block" href="@($"/blog/{post.Slug}")">
+                                        <img alt="@post.Title" src="@post.ImageUrl" data-no-retina="" />
+                                    </a>
+                                    <div class="blog-categories">
+
+                                        <a class="categories-btn bg-white text-dark-gray text-dark-gray-hover text-uppercase alt-font fw-700" href="#">
+                                            دسته بندی
+                                        </a>
+                                    </div>
+                                </div>
+                                <!-- بخش محتوا -->
+                                <div class="card-body p-12">
+                                    <a class="card-title mb-15px fw-600 fs-17 lh-26 text-dark-gray text-dark-gray-hover d-inline-block" href="@($"/blog/{post.Slug}")">
+                                        @post.Title
+                                    </a>
+                                    <p>@post.Description</p>
+                                    <div class="author d-flex justify-content-center align-items-center position-relative overflow-hidden fs-14 text-uppercase">
+                                        <div class="me-auto">
+                                            <span class="blog-date fw-500 d-inline-block">
+                                                @(post.PublishedDate.ToString("dd MMM yyyy"))
+                                            </span>
+                                            <div class="d-inline-block author-name">
+                                                توسط <a class="text-dark-gray text-dark-gray-hover text-decoration-line-bottom fw-600" href="#">
+                                                    @post.Author
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="like-count">
+                                            <a href="@($"/blog/{post.Slug}")">
+                                                <i class="fa-regular fa-heart text-red d-inline-block"></i>
+                                                <span class="text-dark-gray align-middle fw-600">@post.Reactions?.Count()</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            }
+
+        </div>
+    </div>
+
+</div>
+
+@code {
+
+    public PaginatedList<BlogUIPostListDto> Data { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Data = await PostService.GetPostsAsync(1, 20, null);
+
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+
+        await JSRuntime.InvokeVoidAsync("initializeBlogGrid");
+
+    }
+
+}
+

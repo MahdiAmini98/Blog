@@ -1,43 +1,21 @@
 ﻿@page "/"
 @using System.Security.Claims
-@using Blog.Application.Interfaces.WebUIService
+@using Blog.Application.Interfaces.BlogUIService
+@using Blog.UI.Components.Pages.Blogs
 
-@inject IWebUIPostService PostService
+@inject IBlogUIPostService PostService
 
 @rendermode InteractiveServer
 
 <PageTitle>Home</PageTitle>
 
 
-<PageTitleSection Title="وبلاگ مسترکلاس بلیزور"
-                  SubTitle="لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است " />
+<PageTitleSection 
+Title="وبلاگ مسترکلاس بلیزور"
+SubTitle="لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است " />
 
 
-<ContetntSection>
-    <h1>Hello, world!</h1>
 
-    <AuthorizeView>
-        <Authorized Context="authContext">
-            <b class="text-success">شما با موفقیت وارد شده‌اید. خوش آمدید!</b>
-
-            <h3>وضعیت احراز هویت: @authContext.User.Identity?.IsAuthenticated</h3>
-            <h3>نام کاربری: @authContext.User.Identity?.Name</h3>
-            <h3>نام: @authContext.User.FindFirst(ClaimTypes.GivenName)?.Value</h3>
-        </Authorized>
-
-        <NotAuthorized>
-            <b class="text-danger">شما وارد سیستم نشده‌اید. لطفاً ابتدا وارد شوید.</b>
-        </NotAuthorized>
-    </AuthorizeView>
-    <br />
-    <br />
-</ContetntSection>
-
-
-@code {
-    protected override async Task OnInitializedAsync()
-    {
-        var data = await PostService.GetPostsAsync(1, 10, null);
-        ;
-    }
-}
+<BlogGrid></BlogGrid>
+ 
+ 

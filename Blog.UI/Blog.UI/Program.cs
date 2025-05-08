@@ -1,7 +1,7 @@
 ﻿using Blog.Application.Interfaces;
-using Blog.Application.Interfaces.WebUIService;
+using Blog.Application.Interfaces.BlogUIService;
 using Blog.Application.Services;
-using Blog.Application.Services.WebUIService;
+using Blog.Application.Services.BlogUIService;
 using Blog.Domain.Entities;
 using Blog.Domain.Interfaces;
 using Blog.Persistence.Contexts;
@@ -70,7 +70,7 @@ builder.Services.AddScoped<AuthenticationStateProvider, AuthStateRevalidator>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<ICategoryService, CategoryService>();
-builder.Services.AddScoped<IWebUIPostService, WebUIPostService>();
+builder.Services.AddScoped<IBlogUIPostService, BlogUIPostService>();
 
 
 
