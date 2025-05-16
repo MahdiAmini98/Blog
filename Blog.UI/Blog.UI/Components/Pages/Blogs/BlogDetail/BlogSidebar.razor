@@ -1,5 +1,191 @@
-﻿<h3>BlogSidebar</h3>
+﻿@using Blog.Application.DTOs
+@using Blog.Application.DTOs.Posts.BlogUIPosts
+@using Blog.Application.Interfaces.BlogUIService
+@inject IBlogSidebarService SidebarService
+
+<aside class="ps-55px xl-ps-50px lg-ps-15px sidebar">
+    <div class="mb-15 md-mb-50px xs-mb-35px">
+        <div class="fw-600 fs-19 lh-22 ls-minus-05px text-dark-gray border-bottom border-color-dark-gray border-2 d-block mb-30px pb-15px position-relative">پست های محبوب</div>
+        <ul class="popular-post-sidebar position-relative">
+            @if (PopularPosts == null)
+            {
+                <li>در حال بارگذاری...</li>
+            }
+            else
+            {
+                @foreach (var post in PopularPosts)
+                {
+                    <li class="d-flex align-items-center">
+                        <figure>
+                            <a href="@($"/blog/{post.Id}")">
+                                <img alt="@post.Title" src="@post.ImageUrl" data-no-retina="" />
+                            </a>
+                        </figure>
+                        <div class="media-body">
+                            <a class="fw-600 fs-17 text-dark-gray" href="@($"/blog/{post.Id}")">@post.Title</a>
+                            <div><a class="fs-15" href="#">@post.PublishedDate.ToString("dd MMM yyyy")</a></div>
+                        </div>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+    <div class="mb-15 md-mb-50px xs-mb-35px">
+        <div class="fw-600 fs-19 lh-22 ls-minus-05px text-dark-gray border-bottom border-color-dark-gray border-2 d-block mb-30px pb-15px position-relative">کاوش دسته</div>
+        <ul class="category-list-sidebar position-relative">
+            @if (Categories == null)
+            {
+                <li>در حال بارگذاری...</li>
+            }
+            else
+            {
+
+                @foreach (var category in Categories)
+                {
+                    <li class="d-inline-block category-item">
+                        <NavLink class="category-link" href="@($"/blog/category/{category.Id}")">
+                            @category.Name
+                        </NavLink>
+                    </li>
+                }
+
+            }
+
+        </ul>
+    </div>
+    <div class="mb-17 md-mb-50px xs-mb-35px">
+        <div class="bg-white box-shadow-extra-large p-14 xl-p-10 newsletter-style-05">
+            <div class="fw-600 fs-19 lh-22 ls-minus-05px text-dark-gray border-bottom border-color-dark-gray border-2 d-block mb-20px pb-15px position-relative">عضویت در خبرنامه</div>
+            <p class="fs-15 lh-24">به صورت رایگان ثبت نام کنید و اولین نفری باشید که از به روز رسانی های جدید مطلع می شوید.</p>
+            <form class="position-relative" method="post">
+                <input class="w-100 fs-15 input-small form-control box-shadow-medium-bottom border-radius-0px text-center required mb-10px is-invalid" name="email" placeholder="آدرس ایمیل خود را وارد کنید" type="email">
+                <input name="redirect" type="hidden" value="">
+                <button aria-label="submit now" class="btn btn-small btn-dark-gray w-100 btn-box-shadow submit">اکنون ارسال کنید</button>
+                <div class="d-flex fs-14 mt-10px">
+                    <div class="d-inline-block"><i class="line-icon-Handshake me-10px align-middle icon-very-medium"></i>محافظت از حریم خصوصی شما</div>
+                </div>
+                <div class="form-results border-radius-4px mt-10px lh-normal pt-10px pb-10px ps-15px pe-15px fs-16 w-100 text-center position-absolute z-index-1 d-none"></div>
+            </form>
+        </div>
+    </div>
+    <div class="mb-15 md-mb-50px xs-mb-35px elements-social social-icon-style-10">
+        <div class="fw-600 fs-19 lh-22 ls-minus-05px text-dark-gray border-bottom border-color-dark-gray border-2 d-block mb-30px pb-15px position-relative">متصل بمانید</div>
+        <div class="row row-cols-2 row-cols-lg-2 justify-content-center align-items-center g-0">
+            <div class="col border-bottom border-end border-color-extra-medium-gray ps-25px pe-25px xl-ps-15px xl-pe-15px lg-ps-10px lg-pe-10px pt-10px pb-10px">
+                <a class="facebook text-dark-gray" href="https://www.facebook.com/" target="_blank">
+                    <i class="fa-brands fa-facebook-f fs-18 me-10px"></i>
+                    <span class="fw-500">فیس بوک</span>
+                </a>
+            </div>
+            <div class="col border-bottom border-color-extra-medium-gray ps-25px pe-25px xl-ps-15px xl-pe-15px lg-ps-10px lg-pe-10px pt-10px pb-10px">
+                <a class="dribbble text-dark-gray" href="http://www.dribbble.com" target="_blank">
+                    <i class="fa-brands fa-dribbble fs-18 me-10px"></i>
+                    <span class="fw-500">دریبل</span>
+                </a>
+            </div>
+            <div class="col border-bottom border-end border-color-extra-medium-gray ps-25px pe-25px xl-ps-15px xl-pe-15px lg-ps-10px lg-pe-10px pt-10px pb-10px">
+                <a class="twitter text-dark-gray" href="https://www.twitter.com" target="_blank">
+                    <i class="fa-brands fa-twitter fs-18 me-10px"></i>
+                    <span class="fw-500">توییتر</span>
+                </a>
+            </div>
+            <div class="col border-bottom border-color-extra-medium-gray ps-25px pe-25px xl-ps-15px xl-pe-15px lg-ps-10px lg-pe-10px pt-10px pb-10px">
+                <a class="youtube text-dark-gray" href="https://www.youtube.com" target="_blank">
+                    <i class="fa-brands fa-youtube fs-18 me-10px"></i>
+                    <span class="fw-500">یوتیوب</span>
+                </a>
+            </div>
+            <div class="col border-bottom border-end border-color-extra-medium-gray ps-25px pe-25px xl-ps-15px xl-pe-15px lg-ps-10px lg-pe-10px pt-10px pb-10px">
+                <a class="instagram text-dark-gray" href="https://www.instagram.com" target="_blank">
+                    <i class="fa-brands fa-instagram fs-18 me-10px"></i>
+                    <span class="fw-500">اینستاگرام</span>
+                </a>
+            </div>
+            <div class="col border-bottom border-color-extra-medium-gray ps-25px pe-25px xl-ps-15px xl-pe-15px lg-ps-10px lg-pe-10px pt-10px pb-10px">
+                <a class="vimeo text-dark-gray" href="https://vimeo.com/" target="_blank">
+                    <i class="fa-brands fa-vimeo-v fs-18 me-10px"></i>
+                    <span class="fw-500">Vimeo</span>
+                </a>
+            </div>
+            <div class="col border-end border-color-extra-medium-gray ps-25px pe-25px xl-ps-15px xl-pe-15px lg-ps-10px lg-pe-10px pt-10px pb-10px">
+                <a class="linkedin text-dark-gray" href="https://www.linkedin.com/" target="_blank">
+                    <i class="fa-brands fa-linkedin-in fs-18 me-10px"></i>
+                    <span class="fw-500">لینکدین</span>
+                </a>
+            </div>
+            <div class="col ps-25px pe-25px xl-ps-15px xl-pe-15px lg-ps-10px lg-pe-10px pt-10px pb-10px">
+                <a class="behance text-dark-gray" href="http://www.behance.com/" target="_blank">
+                    <i class="fa-brands fa-behance fs-18 me-10px"></i>
+                    <span class="fw-500 fs-16">بیهانس</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="mb-15 md-mb-50px xs-mb-35px">
+        <div class="fw-600 fs-19 lh-22 ls-minus-05px text-dark-gray border-bottom border-color-dark-gray border-2 d-block mb-30px pb-15px position-relative">ابر برچسب ها</div>
+        <div class="tag-cloud">
+            @if (Tags == null)
+            {
+                <span>در حال بارگذاری...</span>
+            }
+            else
+            {
+                @foreach (var tag in Tags)
+                {
+                    <NavLink href="@($"/blog/tag/{tag.Id}")">@tag.Name</NavLink>
+                }
+            }
+        </div>
+    </div>
+    <div class="mb-15 md-mb-50px xs-mb-35px">
+        <div class="fw-600 fs-19 lh-22 ls-minus-05px text-dark-gray border-bottom border-color-dark-gray border-2 d-block mb-30px pb-15px position-relative">اینستاگرام</div>
+        <ul class="instafeed-grid instafeed-wrapper grid grid-3col xl-grid-3col lg-grid-3col md-grid-3col sm-grid-3col xs-grid-3col gutter-medium" data-total="6">
+            <li class="grid-item"><figure><a data-href="{{link}}" href="#" target="_blank"><img alt="" class="insta-image" data-src="{{image}}" src="#" data-no-retina=""><span class="insta-icon"><i class="fa-brands fa-instagram"></i>{{پسند}}</span></a></figure></li>
+            <div class="col-12"><span class="text-center">No Images Found</span></div>
+        </ul>
+    </div>
+</aside>
 
 @code {
 
+    private List<BlogUIPostListDto> PopularPosts { get; set; }
+    private List<CategoryDto> Categories { get; set; }
+    private List<TagDto> Tags { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        PopularPosts = await SidebarService.GetPopularPostsAsync();
+        Categories = await SidebarService.GetCategoriesAsync();
+        Tags = await SidebarService.GetTagsAsync();
+    }
+
 }
+
+
+<style>
+    .category-list-sidebar {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .category-item {
+    }
+
+    .category-link {
+        display: block;
+        background-color: #333;
+        color: #fff;
+        padding: 8px 16px;
+        border-radius: 4px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+        .category-link:hover {
+            background-color: #555;
+        }
+</style>

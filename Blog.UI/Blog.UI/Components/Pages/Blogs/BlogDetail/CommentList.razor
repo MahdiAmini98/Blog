@@ -1,5 +1,44 @@
-﻿<h3>CommentList</h3>
+﻿@using Blog.Application.DTOs
+<section>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-9 text-center mb-3">
+                <h4 class="text-dark-gray fw-600">@Comments.Count نظر</h4>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-9">
+                <ul class="blog-comment">
+
+                    @if (Comments != null)
+                    {
+                        @foreach (var comment in Comments)
+                        {
+                            <li>
+                                <div class="d-block d-md-flex align-items-center">
+                                    <div class="w-90px">
+                                        <img class="rounded-circle" src="@comment.AuthorAvatar" data-no-retina="" />
+                                    </div>
+                                    <div class="ps-35px">
+                                        <a class="text-dark-gray fw-500">@comment.AuthorName</a>
+                                        <a class="btn-reply text-uppercase">پاسخ دهید</a>
+                                        <div class="fs-14 lh-24 mb-15px">@comment.CreatedDate.ToString("dd MMM yyyy، HH:mm")</div>
+                                        <p>@(new MarkupString(comment.Content))</p>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
 
 @code {
 
+    [Parameter]
+    public List<CommentDto> Comments { get; set; } = new List<CommentDto>();
+
 }
+ 

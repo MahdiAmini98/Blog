@@ -71,6 +71,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IBlogUIPostService, BlogUIPostService>();
+builder.Services.AddScoped<IBlogSidebarService, BlogSidebarService>();
 
 
 
