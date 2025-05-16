@@ -1,0 +1,34 @@
+﻿@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+
+<div class="search-box">
+    <input @bind="searchText"
+           @bind:event="oninput"
+           @onkeydown="HandleKeyDown"
+           class="search-input"
+           placeholder="جستجو..." />
+    <i class="fa fa-search search-icon" @onclick="PerformSearch"></i>
+</div>
+
+@code {
+    private string searchText = string.Empty;
+
+    private void HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            PerformSearch();
+        }
+    }
+
+    private void PerformSearch()
+    {
+        if (!string.IsNullOrWhiteSpace(searchText))
+        {
+
+            var q = Uri.EscapeDataString(searchText);
+            Navigation.NavigateTo($"/?q={q}");
+        }
+    }
+}

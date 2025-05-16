@@ -13,7 +13,7 @@
                     <img alt="" class="mobile-logo" data-at2x="/Theme/assets/images/logo.png" src="/Theme/assets/images/logo.png">
                 </NavLink>
             </div>
-            <div class="col-auto col-lg-8 menu-order position-static">
+            <div class="col-auto col-lg-6 menu-order position-static">
                 <button aria-controls="navbarNav" aria-label="Toggle navigation" class="navbar-toggler float-start" data-bs-target="#navbarNav" data-bs-toggle="collapse" type="button">
                     <span class="navbar-toggler-line"></span>
                     <span class="navbar-toggler-line"></span>
@@ -24,60 +24,65 @@
                     <NavMenu />
                 </div>
             </div>
-            <div class="col-auto col-lg-2 text-end xs-pe-0">
-                <div class="header-icon">
-                    <div class="header-button text-nowrap">
-                        <AuthorizeView>
-                            <Authorized>
-                                <!-- منوی کشویی برای کاربر لاگین‌شده -->
-                                <div class="dropdown">
-                                    <a class="d-inline-flex align-items-center text-dark text-decoration-none dropdown-toggle"
-                                       href="#" role="button"
-                                       data-bs-toggle="dropdown"
-                                       aria-expanded="false">
+            
+            <div class="col-auto col-lg-4 text-end xs-pe-0">
+               
+                
+                <div class="d-flex align-items-center justify-content-end gap-3">
 
-                                        <img src="/images/avatar_placeholder.webp"
-                                             alt="Avatar"
-                                             width="32"
-                                             height="32"
-                                             class="rounded-circle me-1" />
+                    <SearchBar />
 
-                                        @context.User.FindFirst(System.Security.Claims.ClaimTypes.GivenName)?.Value
-                                    </a>
+                    <AuthorizeView>
+                        <Authorized>
+                            <!-- منوی کشویی برای کاربر لاگین‌شده -->
+                            <div class="dropdown">
+                                <a class="d-inline-flex align-items-center text-dark text-decoration-none dropdown-toggle"
+                                   href="#" role="button"
+                                   data-bs-toggle="dropdown"
+                                   aria-expanded="false">
 
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
-                                            <NavLink class="dropdown-item" href="/account/profile">
-                                                پروفایل
-                                            </NavLink>
-                                        </li>
-                                        <li>
-                                            <form action="/Account/logout" method="post" class="m-0 p-0">
-                                                <AntiforgeryToken />
-                                                <input type="hidden" name="returnUrl" value="/" />
-                                                <button type="submit" class="dropdown-item">
-                                                    خروج
-                                                </button>
-                                            </form>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </Authorized>
+                                    <img src="/images/avatar_placeholder.webp"
+                                         alt="Avatar"
+                                         width="32"
+                                         height="32"
+                                         class="rounded-circle me-1" />
 
-                            <NotAuthorized>
+                                    @context.User.FindFirst(System.Security.Claims.ClaimTypes.GivenName)?.Value
+                                </a>
 
-                                <div class="d-flex">
-                                    <NavLink href="/account/login" class="btn btn-primary">
-                                        ورود
-                                    </NavLink>
-                                    <NavLink href="/account/register" class="btn btn-outline-primary ms-2">
-                                        ثبت‌نام
-                                    </NavLink>
-                                </div>
-                            </NotAuthorized>
-                        </AuthorizeView>
-                    </div>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <NavLink class="dropdown-item" href="/account/profile">
+                                            پروفایل
+                                        </NavLink>
+                                    </li>
+                                    <li>
+                                        <form action="/Account/logout" method="post" class="m-0 p-0">
+                                            <AntiforgeryToken />
+                                            <input type="hidden" name="returnUrl" value="/" />
+                                            <button type="submit" class="dropdown-item">
+                                                خروج
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        </Authorized>
+
+                        <NotAuthorized>
+
+                            <div class="d-flex align-items-center gap-2">
+                                <NavLink href="/account/login" class="btn btn-primary">
+                                    ورود
+                                </NavLink>
+                                <NavLink href="/account/register" class="btn btn-outline-primary ms-2">
+                                    ثبت‌نام
+                                </NavLink>
+                            </div>
+                        </NotAuthorized>
+                    </AuthorizeView>
                 </div>
+
             </div>
         </div>
     </nav>

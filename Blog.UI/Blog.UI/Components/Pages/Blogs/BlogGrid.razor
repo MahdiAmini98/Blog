@@ -4,6 +4,7 @@
 @inject IBlogUIPostService PostService
 @inject IJSRuntime JSRuntime
 
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
@@ -64,25 +65,43 @@
 
         </div>
     </div>
-    <Pagination CurrentPage="CurrentPage" TotalPages="TotalPages" PageChanged="OnPageChanged"></Pagination>
+    <Pagination CurrentPage="CurrentPage" TotalPages="TotalPages" PageChanged="OnPageChanged" />
 </div>
 
 @code {
-    //pagination
-    private int CurrentPage { get; set; } = 1;
-    private int TotalPages { get; set; }
-    private int PageSize { get; set; } = 6;
-
 
     public PaginatedList<BlogUIPostListDto> Data { get; set; }
 
+    [Parameter]
+    public string SearchKey { get; set; } = string.Empty;
+
+
+    private int CurrentPage { get; set; } = 1;
+    private int TotalPages { get; set; }
+    private int pageSize = 20;
+
     protected override async Task OnInitializedAsync()
     {
-        Data = await PostService.GetPostsAsync(CurrentPage, PageSize, null);
+        Console.WriteLine($"-------------run OnInitializedAsync--   ------ SearchKey={SearchKey}");
 
-        TotalPages = (int)Math.Ceiling((double)Data.TotalCount / PageSize);
+        Data = await PostService.GetPostsAsync(1, pageSize, SearchKey);
+        TotalPages = (int)Math.Ceiling((double)Data.TotalCount / pageSize);
 
     }
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+        if (SearchKey is not null)
+        {
+            Console.WriteLine($"-------------run OnParametersSetAsync--   ------ SearchKey={SearchKey}------------");
+
+            Data = await PostService.GetPostsAsync(1, pageSize, SearchKey);
+            TotalPages = (int)Math.Ceiling((double)Data.TotalCount / pageSize);
+        }
+    }
+
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -92,8 +111,8 @@
     private async Task OnPageChanged(int newPage)
     {
         CurrentPage = newPage;
-        Data = await PostService.GetPostsAsync(CurrentPage, PageSize, null);
+        Data = await PostService.GetPostsAsync(CurrentPage, pageSize, null);
         await JSRuntime.InvokeVoidAsync("initializeBlogGrid");
     }
-}
 
+}
