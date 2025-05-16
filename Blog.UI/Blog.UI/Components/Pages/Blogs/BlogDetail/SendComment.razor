@@ -1,5 +1,98 @@
-﻿<h3>SendComment</h3>
+﻿@using Blog.Application.Interfaces.BlogUIService
+@rendermode InteractiveServer
+@inject IBlogCommentService CommentService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+
+
+<section class="pt-0" id="comments">
+    <div class="container">
+
+
+        <AuthorizeView Context="authContext">
+            <NotAuthorized>
+                <div class="row justify-content-center">
+                    <div class="col-12 col-lg-9 mb-4">
+                        <h5 class="text-dark-gray fw-600 mb-5px">ارسال کامنت</h5>
+                        <p>برای ارسال کامنت، لطفاً وارد حساب کاربری خود شوید.</p>
+                        <button class="btn btn-dark-gray" @onclick="RedirectToLogin">ورود به حساب کاربری</button>
+                    </div>
+                </div>
+            </NotAuthorized>
+            <Authorized>
+
+                <div class="row justify-content-center">
+                    <div class="col-12 col-lg-9 mb-4">
+                        <h5 class="text-dark-gray fw-600 mb-5px">یک نظر بنویسید</h5>
+                        <div class="mb-5px">آدرس ایمیل شما منتشر نخواهد شد. فیلدهای الزامی علامت گذاری شده اند *</div>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-12 col-lg-9">
+                        <EditForm Model="NewComment" OnValidSubmit="HandleValidSubmit" class="row contact-form-style-02">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary />
+
+
+                            <div class="col-md-12 mb-40px">
+                                <InputTextArea @bind-Value="NewComment.Content"
+                                               class="border-radius-4px form-control"
+                                               cols="40" name="comment"
+                                               placeholder="پیام شما" rows="4">
+                                </InputTextArea>
+                            </div>
+                            <div class="col-12">
+
+                                <button class="btn btn-dark-gray btn-small btn-round-edge fw-600" type="submit">ارسال نظر</button>
+                                <div class="form-results mt-20px d-none"></div>
+                            </div>
+                        </EditForm>
+                    </div>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+
+    </div>
+</section>
 
 @code {
+
+    [Parameter]
+    public Guid PostId { get; set; }
+
+    private NewCommentModel NewComment { get; set; } = new NewCommentModel();
+
+
+
+    private async Task HandleValidSubmit()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        if (!authState.User.Identity.IsAuthenticated)
+        {
+            return;
+        }
+
+        var userIdClaim =
+        authState
+        .User
+        .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
+
+        if (userIdClaim == null ||
+        !Guid.TryParse(userIdClaim.Value, out var userId))
+        {
+            return;
+        }
+
+        await CommentService.AddCommentAsync(PostId, NewComment, userId);
+
+        NewComment = new NewCommentModel();
+
+
+    }
+
+    private void RedirectToLogin()
+    {
+        Navigation.NavigateTo("/account/login");
+    }
 
 }
