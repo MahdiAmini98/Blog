@@ -16,7 +16,7 @@
             {
                 <BlogDetails PostDetail="PostDetail" />
                 <AuthorBox PostDetail="PostDetail" />
-                <RelatedPost />
+                <RelatedPost RelatedPosts = "PostDetail.RelatedPosts"/>
                 <CommentList />
                 <SendComment />
             }
@@ -40,4 +40,5 @@
     {
         PostDetail = await PostService.GetPostDetailBySlugAsync(Slug);
     }
+
 }

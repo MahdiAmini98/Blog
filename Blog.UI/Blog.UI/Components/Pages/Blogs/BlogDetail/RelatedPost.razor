@@ -1,5 +1,56 @@
-﻿<h3>RelatedPost</h3>
+﻿@using Blog.Application.DTOs.Posts.BlogUIPosts
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
+<section class="related-posts">
+    <div class="container">
+        <div class="row justify-content-center mb-2">
+            <div class="col-12 col-lg-7 text-center">
+                <span class="fs-15 fw-500 text-uppercase d-inline-block">شما هم ممکن است دوست داشته باشید</span>
+                <h4 class="text-dark-gray fw-600">پست‌های مرتبط</h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <ul class="blog-grid blog-wrapper grid grid-3col gutter-extra-large">
+                    <li class="grid-sizer"></li>
+                    @foreach (var post in RelatedPosts)
+                    {
+                        <li class="grid-item">
+                            <div class="card border-0 border-radius-4px box-shadow-extra-large">
+                                <div class="blog-image">
+                                    <NavLink @onclick=ScrollToTop class="d-block" href="@($"/blog/{post.Slug}")">
+                                        <img alt="@post.Title" src="@post.Image" data-no-retina="" />
+                                    </NavLink>
+                                    <div class="blog-categories">
+                                        <a class="categories-btn" href="#">@post.Category</a>
+                                    </div>
+                                </div>
+                                <div class="card-body p-12">
+                                    <NavLink @onclick=ScrollToTop class="card-title" href="@($"/blog/{post.Slug}")">@post.Title</NavLink>
+                                    <p>@post.ShortDescription</p>
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
 
 @code {
 
+    [Parameter]
+    public List<RelatedPostDto> RelatedPosts { get; set; } = new();
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JSRuntime.InvokeVoidAsync("initializeBlogGrid");
+    }
+
+    private async Task ScrollToTop()
+    {
+        await JSRuntime.InvokeVoidAsync("ScrollToTop");
+    }
 }
