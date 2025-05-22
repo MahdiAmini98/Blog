@@ -17,7 +17,7 @@
             {
                 @foreach (var item in Categories)
                 {
-                    string c_link = $"/category/{item.Id}";
+                    string c_link = $"/category/{item.Slug}";
 
                     <li class="dropdown">
                         <NavLink href="@c_link"> @item.Name  </NavLink>

@@ -18,21 +18,24 @@ namespace Blog.Application.Services.BlogUIService
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<PaginatedList<BlogUIPostListDto>> GetPostsAsync(int pageIndex, int pageSize, string? searchKey = null)
+        public async Task<PaginatedList<BlogUIPostListDto>> GetPostsAsync(
+          int pageIndex,
+          int pageSize,
+          string? searchKey = null,
+          string? categorySlug = null,
+          string? tagSlug = null,
+          DateTime? fromDate = null,
+          DateTime? toDate = null)
         {
-            var query = await _postRepository.GetAllAsync();
+            var spec = new PostAdvancedFilterSpecification(categorySlug, tagSlug, searchKey, fromDate, toDate);
 
-            if (!string.IsNullOrWhiteSpace(searchKey))
-            {
-                query = query.Where(p => p.Title.Contains(searchKey) || p.Content.Contains(searchKey));
-            }
 
-            int totalCount = query.Count();
+            int totalCount = await _postRepository.CountWithSpecificationAsync(spec);
 
-            var posts = query.OrderByDescending(p => p.PublishedDate)
-                                   .Skip((pageIndex - 1) * pageSize)
-                                   .Take(pageSize)
-                                   .ToList();
+
+            var posts = await _postRepository.FindWithSpecificationPagedAsync(spec, pageIndex, pageSize);
+
+            posts = posts.OrderByDescending(p => p.PublishedDate).ToList();
 
             var dtos = posts.Select(p => new BlogUIPostListDto
             {
@@ -41,7 +44,7 @@ namespace Blog.Application.Services.BlogUIService
                 Description = !string.IsNullOrWhiteSpace(p.Summary)
                               ? p.Summary.Length > 50 ? p.Summary.Substring(0, 50) + "..." : p.Summary
                               : (p.Content.Length > 50 ? p.Content.Substring(0, 50) + "..." : p.Content),
-                Author = p.Author != null ? p.Author.Name : "Unknown",
+                Author = p.Author != null ? p.Author.Name : "ناشناس",
                 ImageUrl = p.ThumbnailUrl ?? string.Empty,
                 Slug = p.Slug ?? string.Empty,
                 Reactions = p.Reactions.Select(r => r.Type).ToList(),
@@ -74,21 +77,22 @@ namespace Blog.Application.Services.BlogUIService
                 PublishedDate = post.PublishedDate,
                 AuthorName = post.Author?.Name ?? "ناشناس",
                 AuthorProfilePicture = post.Author?.ProfilePictureUrl ?? "images/avatar_placeholder.webp",
-                AuthorBio = string.IsNullOrWhiteSpace(post.Author?.Bio)
-                             ? "مهدی امینی، توسعه دهنده ارشد دات نت با بیش از ۵ سال تجربه؛ متخصص در بلیزور و تکنولوژی‌های مدرن وب هستم."
-                             : post.Author.Bio,
+                AuthorBio = post.Author?.Bio ?? string.Empty,
 
                 Categories = post.Categories
                     .Select(c => new CategoryDto
                     {
                         Id = c.Id,
-                        Name = c.Name
+                        Name = c.Name,
+                        Slug = c.Slug
+
                     }).ToList(),
                 Tags = post.Tags
                     .Select(t => new TagDto
                     {
                         Id = t.Id,
-                        Name = t.Name
+                        Name = t.Name,
+                        Slug = t.Slug
                     }).ToList(),
                 Comments = post.Comments
                     .Select(cm => new CommentDto

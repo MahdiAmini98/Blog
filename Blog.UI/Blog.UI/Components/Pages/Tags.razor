@@ -1,0 +1,13 @@
+﻿@page "/tag/{TagSlug}"
+@using Blog.UI.Components.Pages.Blogs
+
+<PageTitleSection Title="فیلتر بر اساس تگ ">
+          
+</PageTitleSection>
+
+<BlogGrid TagSlug="@TagSlug" />
+
+@code {
+    [Parameter]
+    public string TagSlug { get; set; }
+}

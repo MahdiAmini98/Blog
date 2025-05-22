@@ -1,8 +1,15 @@
 ﻿@using Blog.Application.DTOs
 @using Blog.Application.DTOs.Posts.BlogUIPosts
 @using Blog.Application.Interfaces.BlogUIService
+@using Blog.UI.Components.Pages.Blogs.BlogDetail
 @inject IBlogUIPostService PostService
 @inject IJSRuntime JSRuntime
+
+
+
+<b class="text-danger">Render Mode : @RendererInfo.Name</b>
+<br />
+<b class="text-danger">Render Mode Is Interactive : @RendererInfo.IsInteractive</b>
 
 
 <div class="container-fluid">
@@ -21,6 +28,7 @@
                         <li class="grid-item">
                             <div class="card border-0 border-radius-4px box-shadow-extra-large box-shadow-extra-large-hover">
                                 <!-- بخش تصویر پست -->
+
                                 <div class="blog-image position-relative overflow-hidden border-radius-4px">
                                     <a class="d-block" href="@($"/blog/{post.Slug}")">
                                         <img alt="@post.Title" src="@post.ImageUrl" data-no-retina="" />
@@ -33,6 +41,7 @@
                                     </div>
                                 </div>
                                 <!-- بخش محتوا -->
+
                                 <div class="card-body p-12">
                                     <a class="card-title mb-15px fw-600 fs-17 lh-26 text-dark-gray text-dark-gray-hover d-inline-block" href="@($"/blog/{post.Slug}")">
                                         @post.Title
@@ -48,13 +57,8 @@
                                                     @post.Author
                                                 </a>
                                             </div>
-                                        </div>
-                                        <div class="like-count">
-                                            <a href="@($"/blog/{post.Slug}")">
-                                                <i class="fa-regular fa-heart text-red d-inline-block"></i>
-                                                <span class="text-dark-gray align-middle fw-600">@post.Reactions?.Count()</span>
-                                            </a>
-                                        </div>
+                                        </div>                   
+                                        <PostReaction PostId="post.Id" />
                                     </div>
                                 </div>
                             </div>
@@ -68,6 +72,7 @@
     <Pagination CurrentPage="CurrentPage" TotalPages="TotalPages" PageChanged="OnPageChanged" />
 </div>
 
+ 
 @code {
 
     public PaginatedList<BlogUIPostListDto> Data { get; set; }
@@ -75,44 +80,42 @@
     [Parameter]
     public string SearchKey { get; set; } = string.Empty;
 
+    [Parameter]
+    public string? CategorySlug { get; set; }
+
+    [Parameter]
+    public string? TagSlug { get; set; }
+
+
 
     private int CurrentPage { get; set; } = 1;
     private int TotalPages { get; set; }
-    private int pageSize = 20;
+    private int pageSize = 4;
 
     protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine($"-------------run OnInitializedAsync--   ------ SearchKey={SearchKey}");
-
-        Data = await PostService.GetPostsAsync(1, pageSize, SearchKey);
+        Data = await PostService.GetPostsAsync(1, pageSize, SearchKey,CategorySlug,TagSlug);
         TotalPages = (int)Math.Ceiling((double)Data.TotalCount / pageSize);
-
     }
 
 
     protected override async Task OnParametersSetAsync()
     {
-
         if (SearchKey is not null)
         {
-            Console.WriteLine($"-------------run OnParametersSetAsync--   ------ SearchKey={SearchKey}------------");
-
             Data = await PostService.GetPostsAsync(1, pageSize, SearchKey);
             TotalPages = (int)Math.Ceiling((double)Data.TotalCount / pageSize);
         }
     }
-
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        await JSRuntime.InvokeVoidAsync("initializeBlogGrid");
-    }
+ 
 
     private async Task OnPageChanged(int newPage)
     {
         CurrentPage = newPage;
         Data = await PostService.GetPostsAsync(CurrentPage, pageSize, null);
-        await JSRuntime.InvokeVoidAsync("initializeBlogGrid");
+    
     }
 
 }
+ 
+

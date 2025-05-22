@@ -17,12 +17,12 @@
                 {
                     <li class="d-flex align-items-center">
                         <figure>
-                            <a href="@($"/blog/{post.Id}")">
+                            <a href="@($"/blog/{post.Slug}")">
                                 <img alt="@post.Title" src="@post.ImageUrl" data-no-retina="" />
                             </a>
                         </figure>
                         <div class="media-body">
-                            <a class="fw-600 fs-17 text-dark-gray" href="@($"/blog/{post.Id}")">@post.Title</a>
+                            <a class="fw-600 fs-17 text-dark-gray" href="@($"/blog/{post.Slug}")">@post.Title</a>
                             <div><a class="fs-15" href="#">@post.PublishedDate.ToString("dd MMM yyyy")</a></div>
                         </div>
                     </li>
@@ -43,7 +43,7 @@
                 @foreach (var category in Categories)
                 {
                     <li class="d-inline-block category-item">
-                        <NavLink class="category-link" href="@($"/blog/category/{category.Id}")">
+                        <NavLink class="category-link" href="@($"/category/{category.Slug}")">
                             @category.Name
                         </NavLink>
                     </li>
@@ -132,7 +132,7 @@
             {
                 @foreach (var tag in Tags)
                 {
-                    <NavLink href="@($"/blog/tag/{tag.Id}")">@tag.Name</NavLink>
+                    <NavLink href="@($"/tag/{tag.Slug}")">@tag.Name</NavLink>
                 }
             }
         </div>

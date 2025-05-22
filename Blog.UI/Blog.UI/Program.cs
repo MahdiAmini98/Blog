@@ -73,6 +73,7 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IBlogUIPostService, BlogUIPostService>();
 builder.Services.AddScoped<IBlogSidebarService, BlogSidebarService>();
 builder.Services.AddScoped<IBlogCommentService, BlogCommentService>();
+builder.Services.AddScoped<IBlogUIReactionService, BlogUIReactionService>();
 
 
 

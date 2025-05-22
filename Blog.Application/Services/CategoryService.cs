@@ -29,9 +29,11 @@ namespace Blog.Application.Services
             {
                 Id = c.Id,
                 Name = c.Name,
+                Slug = c.Slug,
                 Description = c.Description,
                 CreatedDate = c.CreatedDate,
-                LastModifiedDate = c.LastModifiedDate
+                LastModifiedDate = c.LastModifiedDate,
+
             });
         }
 

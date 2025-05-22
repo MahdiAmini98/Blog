@@ -55,7 +55,8 @@ namespace Blog.Application.Services.BlogUIService
             return categories.Select(c => new CategoryDto
             {
                 Id = c.Id,
-                Name = c.Name
+                Name = c.Name,
+                Slug = c.Slug,
             }).ToList();
         }
 
@@ -65,7 +66,8 @@ namespace Blog.Application.Services.BlogUIService
             return tags.Select(t => new TagDto
             {
                 Id = t.Id,
-                Name = t.Name
+                Name = t.Name,
+                Slug = t.Slug,
             }).ToList();
         }
     }

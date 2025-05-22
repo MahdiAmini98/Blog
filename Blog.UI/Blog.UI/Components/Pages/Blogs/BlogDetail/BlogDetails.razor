@@ -13,7 +13,7 @@
             {
                 foreach (var category in PostDetail.Categories)
                 {
-                    <a href="@($"/category/{category.Id}")">@category.Name</a>
+                    <a href="@($"/category/{category.Slug}")">@category.Name</a>
                     if (category != PostDetail.Categories.Last())
                     {
                         <span>, </span>
@@ -36,7 +36,7 @@
             {
                 foreach (var tag in PostDetail.Tags)
                 {
-                    <NavLink href="blog-grid.html">@tag.Name</NavLink>
+                    <NavLink href="@($"tag/{tag.Slug}")">@tag.Name</NavLink>
                 }
             }
         </div>

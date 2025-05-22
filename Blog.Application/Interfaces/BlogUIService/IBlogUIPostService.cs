@@ -6,7 +6,14 @@ namespace Blog.Application.Interfaces.BlogUIService
 {
     public interface IBlogUIPostService
     {
-        Task<PaginatedList<BlogUIPostListDto>> GetPostsAsync(int pageIndex, int pageSize, string? searchKey = null);
+        Task<PaginatedList<BlogUIPostListDto>> GetPostsAsync(
+                    int pageIndex,
+                    int pageSize,
+                    string? searchKey = null,
+                    string? categorySlug = null,
+                    string? tagSlug = null,
+                    DateTime? fromDate = null,
+                    DateTime? toDate = null);
         Task<PostDetailDto> GetPostDetailBySlugAsync(string slug);
     }
 }

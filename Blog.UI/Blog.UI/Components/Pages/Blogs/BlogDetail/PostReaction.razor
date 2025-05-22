@@ -1,0 +1,67 @@
+﻿@using Blog.Application.Interfaces.BlogUIService
+@inject IBlogUIReactionService ReactionService
+@inject IJSRuntime JSRuntime
+
+@rendermode InteractiveServer
+
+<div class="tag-cloud col-12 col-md-3 text-uppercase text-center text-md-end">
+    <span @onclick="ToggleLike" style="cursor: pointer;" class="likes-count fw-500 mx-0">
+        <i class="@(IsLiked ? "fa-solid fa-heart" : "fa-regular fa-heart") text-red  d-inline-block">
+
+        </i>
+        <span class="text-dark-gray text-dark-gray-hover"> @LikeCount  </span>
+    </span>
+</div>
+
+@code {
+    [Parameter]
+    public Guid PostId { get; set; }
+
+    private int LikeCount;
+    private bool IsLiked;
+    private bool IsAuthenticated;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        LikeCount = await ReactionService.GetLikeCountAsync(PostId);
+        var authState = await AuthenticationStateTask;
+        IsAuthenticated = authState.User.Identity.IsAuthenticated;
+        if (IsAuthenticated)
+        {
+            var userIdClaim = authState.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out Guid userId))
+            {
+                IsLiked = await ReactionService.HasUserLikedAsync(PostId, userId);
+            }
+        }
+    }
+
+
+    private async Task ToggleLike()
+    {
+        if (!IsAuthenticated)
+        {
+            // Toastr  or SweetAlert
+            await JSRuntime.InvokeVoidAsync("alert", "برای لایک کردن وارد حساب کاربری شوید.");
+            return;
+        }
+
+        var authState = await AuthenticationStateTask;
+        var userIdClaim = authState.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+        if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out Guid userId))
+
+        {
+            return;
+        }
+
+        await ReactionService.ToggleLikeAsync(PostId, userId);
+
+        IsLiked = !IsLiked;
+        LikeCount = await ReactionService.GetLikeCountAsync(PostId);
+        StateHasChanged();
+    }
+
+}
