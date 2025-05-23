@@ -1,0 +1,35 @@
+﻿@using Blog.UI.Utilities.Routes
+@* @page "/blog"
+@page "/blog/page/{page:int?}"
+@page "/tag/{TagSlug}"
+@page "/tag/{TagSlug}/page/{page:int?}"
+@page "/category/{categorySlug}"
+@page "/category/{categorySlug}/page/{page:int?}" *@
+
+
+@attribute [Route(BlogRoutes.BlogList)]
+@attribute [Route(BlogRoutes.BlogPage)]
+@attribute [Route(BlogRoutes.Tag)]
+@attribute [Route(BlogRoutes.TagPage)]
+@attribute [Route(BlogRoutes.Category)]
+@attribute [Route(BlogRoutes.CategoryPage)]
+
+
+<CascadingValue Value="CurrentPage">
+    <BlogGrid BaseUrl="/blog" TagSlug="@TagSlug" CategorySlug="@categorySlug" />
+</CascadingValue>
+
+
+@code {
+    [Parameter]
+    public int? page { get; set; }
+
+    private int CurrentPage => page ?? 1;
+
+
+
+    [Parameter]
+    public string? TagSlug { get; set; }
+    [Parameter]
+    public string? categorySlug { get; set; }
+}

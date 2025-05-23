@@ -28,7 +28,7 @@
         {
 
             var q = Uri.EscapeDataString(searchText);
-            Navigation.NavigateTo($"/?q={q}");
+            Navigation.NavigateTo($"/search?query={q}");
         }
     }
 }

@@ -2831,29 +2831,69 @@ function initMap() {
     });
 }
 
-// راه‌اندازی مجدد Isotope برای عنصر گرید
+
+//window.initializeBlogGrid = function () {
+//    $('.blog-wrapper').each(function () {
+//        var _this = $(this);
+//        _this.imagesLoaded(function () {
+//            _this.removeClass('grid-loading');
+//            if (typeof $.fn.isotope === 'function') {
+//                _this.isotope({
+//                    layoutMode: 'masonry',
+//                    itemSelector: '.grid-item',
+//                    percentPosition: true,
+//                    stagger: 0,
+//                    masonry: { columnWidth: '.grid-sizer' }
+//                });
+//            }
+//        });
+//    });};
+
+
+
 window.initializeBlogGrid = function () {
-    $('.blog-wrapper').each(function () {
-        var _this = $(this);
-        _this.imagesLoaded(function () {
-            _this.removeClass('grid-loading');
-            if (typeof $.fn.isotope === 'function') {
-                _this.isotope({
-                    layoutMode: 'masonry',
-                    itemSelector: '.grid-item',
-                    percentPosition: true,
-                    stagger: 0,
-                    masonry: { columnWidth: '.grid-sizer' }
-                });
-            }
+    const gridElem = document.querySelector('.grid');
+    if (!gridElem) return; // اگر المان گرید موجود نیست، خروج
+
+    // اگر Isotope قبلاً روی این المان اعمال شده، آن را از بین ببریم
+    if (gridElem._isotopeInstance) {
+        gridElem._isotopeInstance.destroy();
+    }
+
+    // منتظر لود شدن تمام تصاویر داخل گرید، سپس اجرای چینش
+    imagesLoaded(gridElem, () => {
+        // ایجاد نمونه Isotope با تنظیمات masonry
+        const iso = new Isotope(gridElem, {
+            itemSelector: '.grid-item',
+            layoutMode: 'masonry',
+            percentPosition: true,
+            stagger: 0,
+            masonry: { columnWidth: '.grid-sizer' }
+
         });
+        // نگهداری رفرنس نمونه جهت استفاده‌های بعدی (اختیاری)
+        gridElem._isotopeInstance = iso;
+        // اجرای دوباره layout برای اطمینان (اختیاری، معمولاً Isotope خودکار layout می‌کند)
+        iso.layout();
     });
+}
+
+
+
+
+
+
+if (window.Blazor) {
+    window.Blazor.addEventListener('enhancedload', () => {
+        setTimeout(() => {
+            if (document.querySelector('.blog-wrapper')) {
+                window.initializeBlogGrid();
+                window.scrollToTop();
+            }
+        }, 1);
+    });
+}
+
+window.scrollToTop = () => {
+    window.scrollTo({ top: 10, behavior: 'smooth' });
 };
-
-
-window.ScrollToTop = () => {
-    window.scrollTo({
-        top: 100,
-        behavior: "smooth",
-    });
-} 

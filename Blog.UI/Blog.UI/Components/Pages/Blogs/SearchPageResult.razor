@@ -1,0 +1,26 @@
+﻿@using Blog.UI.Utilities.Routes
+@attribute [Route(BlogRoutes.Search)]
+@attribute [Route(BlogRoutes.SearchPage)]
+
+
+<PageTitle>نتایج جستجو</PageTitle>
+
+<PageTitleSection Title="نتایج جستجو"
+                  SubTitle="عبارت مورد نظر خود را بررسی کنید">
+</PageTitleSection>
+<CascadingValue Value="CurrentPage">
+    <BlogGrid BaseUrl="/search" SearchKey="@SearchKey" />
+</CascadingValue>
+
+
+@code {
+
+    [Parameter]
+    public int? Page { get; set; }
+
+    private int CurrentPage => Page ?? 1;
+
+
+    [Parameter, SupplyParameterFromQuery(Name = "query")]
+    public string SearchKey { get; set; } = string.Empty;
+}
