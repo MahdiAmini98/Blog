@@ -8,9 +8,13 @@
 <PageTitleSection Title="نتایج جستجو"
                   SubTitle="عبارت مورد نظر خود را بررسی کنید">
 </PageTitleSection>
-<CascadingValue Value="CurrentPage">
-    <BlogGrid BaseUrl="/search" SearchKey="@SearchKey" />
-</CascadingValue>
+
+<ContetntSection>
+    <CascadingValue Value="CurrentPage">
+        <BlogGrid BaseUrl="/search" SearchKey="@SearchKey" />
+    </CascadingValue>
+</ContetntSection>
+
 
 
 @code {

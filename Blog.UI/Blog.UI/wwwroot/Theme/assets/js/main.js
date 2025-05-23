@@ -2883,17 +2883,39 @@ window.initializeBlogGrid = function () {
 
 
 
-if (window.Blazor) {
-    window.Blazor.addEventListener('enhancedload', () => {
-        setTimeout(() => {
-            if (document.querySelector('.blog-wrapper')) {
-                window.initializeBlogGrid();
-                window.scrollToTop();
-            }
-        }, 1);
-    });
-}
+
 
 window.scrollToTop = () => {
     window.scrollTo({ top: 10, behavior: 'smooth' });
 };
+
+
+function reloadMainJS() {
+
+    const oldScript = document.querySelector('script[src="/theme/assets/js/main.js"]');
+    if (oldScript) {
+        oldScript.remove();
+    }
+
+    const script = document.createElement('script');
+    script.src = "/theme/assets/js/main.js";
+    script.async = false;
+    document.body.appendChild(script);
+
+}
+
+if (window.Blazor) {
+    window.Blazor.addEventListener('enhancedload', () => {
+
+        if (document.querySelector('.blog-wrapper')) {
+            window.initializeBlogGrid();
+        }
+
+        //if (window.location.pathname === "/"){
+        //}
+        reloadMainJS();
+        window.scrollToTop();
+
+
+    });
+}

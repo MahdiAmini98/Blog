@@ -1,12 +1,4 @@
 ﻿@using Blog.UI.Utilities.Routes
-@* @page "/blog"
-@page "/blog/page/{page:int?}"
-@page "/tag/{TagSlug}"
-@page "/tag/{TagSlug}/page/{page:int?}"
-@page "/category/{categorySlug}"
-@page "/category/{categorySlug}/page/{page:int?}" *@
-
-
 @attribute [Route(BlogRoutes.BlogList)]
 @attribute [Route(BlogRoutes.BlogPage)]
 @attribute [Route(BlogRoutes.Tag)]
@@ -15,9 +7,18 @@
 @attribute [Route(BlogRoutes.CategoryPage)]
 
 
-<CascadingValue Value="CurrentPage">
-    <BlogGrid BaseUrl="/blog" TagSlug="@TagSlug" CategorySlug="@categorySlug" />
-</CascadingValue>
+
+<PageTitleSection Title="مقالات"
+                  SubTitle="متنی در مورد این صفحه بنویسید"
+                  BackgroundAddress="/theme/assets/images/elearning/blog.jpg">
+</PageTitleSection>
+
+<ContetntSection>
+    <CascadingValue Value="CurrentPage">
+        <BlogGrid BaseUrl="/blog" TagSlug="@TagSlug" CategorySlug="@categorySlug" />
+    </CascadingValue>
+</ContetntSection>
+
 
 
 @code {

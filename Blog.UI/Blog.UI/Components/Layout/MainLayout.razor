@@ -4,7 +4,7 @@
 
 <header class="">
     <!-- start navigation -->
-    <nav class="navbar navbar-expand-lg header-light bg-transparent header-reverse header-demo" data-header-hover="light">
+    <nav class="navbar navbar-expand-lg header-transparent bg-transparent header-reverse" data-header-hover="light">
         <div class="container-fluid">
             <div class="col-auto col-lg-2 me-lg-0 me-auto">
                 <NavLink class="navbar-brand" href="/">
@@ -12,29 +12,30 @@
                     <img alt="" class="alt-logo" data-at2x="/Theme/assets/images/logo.png" src="/Theme/assets/images/logo.png">
                     <img alt="" class="mobile-logo" data-at2x="/Theme/assets/images/logo.png" src="/Theme/assets/images/logo.png">
                 </NavLink>
+
             </div>
-            <div class="col-auto col-lg-6 menu-order position-static">
-                <button aria-controls="navbarNav" aria-label="Toggle navigation" class="navbar-toggler float-start" data-bs-target="#navbarNav" data-bs-toggle="collapse" type="button">
+            <div class="col-auto menu-order position-static">
+                <button aria-controls="#navbarNav-clone" aria-label="Toggle navigation" class="navbar-toggler float-start" data-bs-target="#navbarNav" data-bs-toggle="collapse" type="button" data-target="#navbarNav-clone">
                     <span class="navbar-toggler-line"></span>
                     <span class="navbar-toggler-line"></span>
                     <span class="navbar-toggler-line"></span>
                     <span class="navbar-toggler-line"></span>
                 </button>
-                <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                <div class="collapse navbar-collapse" id="navbarNav">
                     <NavMenu />
                 </div>
             </div>
-            
+
+
             <div class="col-auto col-lg-4 text-end xs-pe-0">
-               
-                
                 <div class="d-flex align-items-center justify-content-end gap-3">
+
 
                     <SearchBar />
 
                     <AuthorizeView>
                         <Authorized>
-                            <!-- منوی کشویی برای کاربر لاگین‌شده -->
+
                             <div class="dropdown">
                                 <a class="d-inline-flex align-items-center text-dark text-decoration-none dropdown-toggle"
                                    href="#" role="button"
@@ -81,26 +82,16 @@
                             </div>
                         </NotAuthorized>
                     </AuthorizeView>
-                </div>
 
+                </div>
             </div>
         </div>
     </nav>
     <!-- end navigation -->
 </header>
 
+@Body
 
-<section class="bg-very-light-gray">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <div class="main-content py-4">
-                    @Body
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 
 <footer class="footer-demo bg-dark-slate-blue pb-4 sm-pb-50px" style="background-image: url(/Theme/assets/images/demo-footer-pattern.svg)">
     <div class="container">
@@ -169,3 +160,4 @@
         </div>
     </div>
 </footer>
+
